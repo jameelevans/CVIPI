@@ -1,0 +1,70 @@
+/*
+Theme Name: CVIPI
+Author: Jameel Evans
+Description: This theme was designed by Laura Myers and Eduardo Minaya. The theme was coded by Jameel Evans.
+Version: 1.1
+Text Domain: cvipi
+*/
+
+/**
+--------------------------------------------------------------
+*! TABLE OF CONTENTS:
+--------------------------------------------------------------
+*  TODO: Import SCSS modules using @use and organize namespaces
+*
+* * | Abstracts |
+*   Variables  --> All project variables
+*   Mixins --> All project mixins
+*   Functions --> All project functions
+*
+* * | Base |
+*   Typography   --> All things typography in one place
+*   Base --> Basic project definition
+*   Animations --> All project animations
+*   Utilities --> All utility helper classes
+*
+* * | Components |
+*   Buttons
+*
+* * | Layout |
+*   Header
+*   Footer
+*
+* * | Pages |
+*   Login page
+*   Front page
+*   404 page
+*
+--------------------------------------------------------------
+*/
+
+//* --------| Abstracts |--------*//
+@use "abstracts/variables" as vars;
+@use "abstracts/mixins" as mixins;
+
+// @use "abstracts/functions" as funcs;
+
+//*--------| Base |--------*//
+@use "base/typography" as typo;
+@use "base/base" as base;
+// @use "base/animations" as anims;
+@use "base/utilities" as utils;
+
+//*--------| Components |--------*//
+@use "components/buttons" as btns;
+
+//*--------| Layouts |--------*//
+@use "layout/header" as header;
+@use "layout/footer" as footer;
+
+//*--------| Pages |--------*//
+@use "pages/login" as login;
+@use "pages/front-page" as frontpage;
+
+
+/* Optionally, if styles need to reference namespaced values
+Example:
+.my-component {
+    color: vars.$primary-color;
+    @include mixins.flex-center;
+} */

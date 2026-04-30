@@ -1,0 +1,111 @@
+@use "abstracts/mixins" as mixins;
+@use "abstracts/variables" as variables;
+@use "base/typography" as typography;
+
+//* Overall button styles
+.btn__black {
+  &,
+  &:link {
+    width: max-content;
+    overflow: hidden;
+    font-family: typography.$font-primary;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 0;
+    transition: all 0.3s ease-in-out;
+    padding: 0.5rem 2rem;
+    text-decoration: none;
+    text-transform: capitalize;
+    position: relative;
+    font-size: 1.8rem;
+    height: auto;
+    font-weight: 300;
+    margin-top: 1rem;
+    background-color: var(--color-black);
+    color: var(--color-white);
+    border: none;
+
+    &:hover {
+      background-color: var(--color-white);
+      color: var(--color-black);
+      transition: all 0.4s ease-in-out;
+      transform: translateY(-0.3rem);
+      box-shadow: 0 1rem 2rem rgba(var(--color-black-a), 0.2);
+    }
+
+    &:active,
+    &:focus {
+      transition: all 0.4s ease-in-out;
+      transform: translateY(-0.1rem);
+      box-shadow: 0 0.5rem 1rem rgba(var(--color-black-a), 0.2);
+    }
+
+    @include mixins.respond(medium) {
+      padding: 1.5rem 3.5rem;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 600;
+      border-radius: 5rem;
+    }
+  }
+}
+
+//* Overall button styles
+.btn__blue {
+  &,
+  &:link {
+    width: max-content;
+    overflow: hidden;
+    font-family: typography.$font-primary;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 0;
+    transition: all 0.3s ease-in-out;
+    padding: 0.5rem 2rem;
+    text-decoration: none;
+    text-transform: capitalize;
+    position: relative;
+    display: block;
+    font-size: 1.8rem;
+    height: auto;
+    font-weight: 300;
+    margin-top: 2.5rem;
+    background-color: var(--color-blue);
+    color: var(--color-white);
+    border: none;
+
+    &:hover {
+      background-color: var(--color-black);
+      color: var(--color-white);
+      transition: all 0.4s ease-in-out;
+      transform: translateY(-0.3rem);
+      box-shadow: 0 1rem 2rem rgba(var(--color-black-a), 0.2);
+    }
+
+    &:active,
+    &:focus {
+      transition: all 0.4s ease-in-out;
+      transform: translateY(-0.1rem);
+      box-shadow: 0 0.5rem 1rem rgba(var(--color-black-a), 0.2);
+    }
+
+    @include mixins.respond(medium) {
+      padding: 1.5rem 3.5rem;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 600;
+      border-radius: 5rem;
+    }
+  }
+}
+
+//* Show button only on mobile
+.only-on-mobile {
+  display: none;
+
+  @include mixins.respond(medium) {
+    display: inline-block;
+  }
+}

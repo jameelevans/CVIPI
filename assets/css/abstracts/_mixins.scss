@@ -1,0 +1,61 @@
+/**
+*
+* * All mixins for project can be found in this file (Except for typography mixins)
+**/
+
+// * --------| Utilities |-------- * //
+
+// * Center an element absolutely
+@mixin absCenter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+// * --------| Breakpoint Mixins |-------- * //
+
+/**
+* Breakpoint mixin directions
+* * --------| Order |-------- *
+*   1 Base & Typography
+*   2 Layout & Grid  
+*   3 Page & Layout
+*   4 Components
+*
+* * --------| Media Query Manager: Mobile first approach |-------- *
+*   TODO: Add your own custom breakpoints, convert px to em for breakpoints.
+*
+* * Breakpoint argument choices (px to em calculations):
+*   --> small 0 - 600px  (600px / 16 = 37.5em)
+*   --> medium 600 - 800px  (800px / 16 = 50em)
+*   --> medlg 800 - 900px (900px / 16 = 56.25em)
+*   --> large 900 - 1000px  (1000px / 16 = 62.5em)
+*   --> largest 1100 - 1200px  (1200px / 16 = 75em)
+**/
+
+// * Breakpoint Mixin (Mobile-first: min-width)
+@mixin respond($breakpoint) {
+    @if $breakpoint == small {
+        @media only screen and (min-width: 37.5em) { @content };  // 600px
+    }
+    @else if $breakpoint == medium {
+        @media only screen and (min-width: 50em) { @content };  // 800px
+    }
+    @else if $breakpoint == medlg {
+        @media only screen and (min-width: 56.25em) { @content };  // 900px
+    }
+    @else if $breakpoint == large {
+        @media only screen and (min-width: 62.5em) { @content };  // 1000px
+    }
+    @else if $breakpoint == largest {
+        @media only screen and (min-width: 75em) { @content };  // 1200px
+    }
+    @else {
+        @warn "Breakpoint `#{$breakpoint}` not defined!";
+    }
+}
+
+// * --------| Additional Project Mixins |-------- * //
+
+// Add additional utility or layout mixins below as needed

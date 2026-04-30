@@ -1,0 +1,149 @@
+//* Overall Login page
+.login {
+  background: var(--color-blue);
+  position: relative;
+
+  //* Login box
+  #login {
+    font-size: 1.6rem;
+    width: 32rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  //* Login logo and header
+  & h1 a {
+    color: var(--color-white);
+    background-image: url('assets/img/ovc-htc-logo.png');
+    background-size: 30rem;
+    height: 5rem;
+    width: auto;
+    padding-bottom: 2rem;
+    margin: 0 auto 5rem;
+  }
+
+  //* Login form
+  & form {
+    border: 2.5px solid var(--color-white);
+    background-color: transparent;
+    padding: 1.5rem 2.4rem 3.4rem;
+
+    //* Login labels
+    & label {
+      color: var(--color-white);
+      font-weight: 100;
+      margin-top: 5.5rem;
+    }
+
+    & input[type='checkbox'] {
+      border-radius: 0;
+
+      &:checked:before {
+        color: var(--color-white);
+        margin: -0.2rem 0 0 -0.5rem;
+        height: 2.5rem;
+        width: 2.5rem;
+      }
+
+      &:focus {
+        border-color: var(--color-teal);
+      }
+    }
+
+    & input[type='checkbox'],
+    & input[type='radio'] {
+      height: 2rem;
+      width: 2rem;
+    }
+
+    & input[type='color'],
+    & input[type='date'],
+    & input[type='datetime-local'],
+    & input[type='datetime'],
+    & input[type='email'],
+    & input[type='month'],
+    & input[type='number'],
+    & input[type='password'],
+    & input[type='search'],
+    & input[type='tel'],
+    & input[type='text'],
+    & input[type='time'],
+    & input[type='url'],
+    & input[type='week'],
+    select,
+    textarea {
+      border-radius: 0;
+      color: var(--color-charcoal);
+
+      &:focus {
+        border-color: var(--color-teal);
+        box-shadow: 0 0 0 1px var(--color-teal);
+      }
+    }
+
+    & .dashicons-visibility,
+    & .dashicons-hidden {
+      color: var(--color-teal);
+    }
+
+    & .submit {
+      display: block;
+    }
+
+    & .button-primary {
+      width: 12.5rem;
+      background: var(--color-teal);
+      font-size: 1.6rem;
+      color: var(--color-black);
+      cursor: pointer;
+      height: 3.5rem;
+      text-align: center;
+      border: none;
+      background-size: 450% 150%;
+      border-radius: 2px;
+      transition: all 0.3s ease-in-out;
+      margin: 5rem 0 3rem;
+      text-shadow: none;
+      box-shadow: none;
+      line-height: 1;
+
+      &:hover {
+        background: var(--color-dark-teal);
+        color: var(--color-black);
+        transition: all 0.3s ease-in-out;
+      }
+
+      &:active,
+      &:focus {
+        background: var(--color-dark-teal);
+        outline: none;
+        transition: all 0.3s ease-in-out;
+        box-shadow: none;
+      }
+    }
+
+    & .forgetmenot label {
+      color: var(--color-white);
+    }
+  }
+
+  & #backtoblog a,
+  & #nav a {
+    color: var(--color-white);
+
+    &:hover {
+      color: var(--color-white);
+    }
+  }
+
+  & .privacy-policy-page-link a {
+    color: var(--color-white);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--color-white);
+    }
+  }
+} //. Overall Login page

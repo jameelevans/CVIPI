@@ -1,0 +1,65 @@
+@use "abstracts/mixins" as mixins; 
+
+// * Simple CSS Reset
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+}
+
+html {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+
+    a:focus:not(.screen-reader-shortcut):not(.improve-trainings__link):not(.improve-training__cta):not(.staff-ckecklist__link):not(.staff__member):not(.bio__cta):not(.bios__link):not(.footer__link):not(.footer__social-link):not(.webinars__container){
+        outline: 2px dashed var(--color-white);
+        outline-offset: 1rem;
+      }
+}
+// Selection background color
+::selection {
+    background-color: var(--color-blue);
+    color: var(--color-white);
+  }
+// Screen reader shortcut link
+  .screen-reader-shortcut{
+    position: absolute;
+    top: -1000em;
+
+    &:focus {
+        position: absolute;
+        display: inline-block;
+        top: 4rem;
+        left: 8vw;
+        font-size: 1.6rem;
+        padding: 1rem 2rem;
+        background-color: var(--color-dark-blue);
+        color: var(--color-white);
+        outline: 2px dashed var(--color-white);
+        overflow: visible;
+        z-index: 10;
+        text-decoration: none;
+
+        @include mixins.respond(medium) {
+          left: 50%;
+          transform: translateX(-50%);
+          top: 9rem;
+          z-index: 99999;
+        }
+    }
+  }
+
+
+   
+
+
+
+
+  body{
+
+   
+  }
+
+

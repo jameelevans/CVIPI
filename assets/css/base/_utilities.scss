@@ -1,0 +1,18 @@
+//Utility class helpers
+.mb-sm { margin-bottom: 2rem;}
+.mb-md { margin-bottom: 3rem;}
+.mb-lg { margin-bottom: 4rem;}
+.mb-hg { margin-bottom: 8rem;}
+
+.sr-only {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.fixed-position {
+  position: fixed;
+}
