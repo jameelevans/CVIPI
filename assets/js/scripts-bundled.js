@@ -20,17 +20,6 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
-/***/ "./assets/js/modules/JsTest.js":
-/*!*************************************!*\
-  !*** ./assets/js/modules/JsTest.js ***!
-  \*************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n\n\nclass JsTest {\n  constructor() {\n    this.clickAreas = jquery__WEBPACK_IMPORTED_MODULE_0___default()('.header, #main-content, .footer');\n    this.events();\n  }\n\n  events() {\n    this.clickAreas.on('click', this.sayHello);\n  }\n\n  sayHello() {\n    alert('Hello from JS');\n  }\n}\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (JsTest);\n\n\n//# sourceURL=webpack://cvipi/./assets/js/modules/JsTest.js?");
-
-/***/ }),
-
 /***/ "./assets/js/scripts.js":
 /*!******************************!*\
   !*** ./assets/js/scripts.js ***!
@@ -38,7 +27,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _modules_BackTop__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/BackTop */ \"./assets/js/modules/BackTop.js\");\n/* harmony import */ var _modules_JsTest__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/JsTest */ \"./assets/js/modules/JsTest.js\");\n// 3rd party packages from NPM\n\n\n\n// Our modules/ classes\n\n\n\n\n\n// Instantiate a new object using our modules/classes\nlet jsTest = new _modules_JsTest__WEBPACK_IMPORTED_MODULE_2__[\"default\"]();\nlet backTop = new _modules_BackTop__WEBPACK_IMPORTED_MODULE_1__[\"default\"]();\n\n\n\n//# sourceURL=webpack://cvipi/./assets/js/scripts.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _modules_BackTop__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/BackTop */ \"./assets/js/modules/BackTop.js\");\n// 3rd party packages from NPM\n\n\n\n// Our modules/ classes\n\n\n\n\n// Instantiate a new object using our modules/classes\nlet backTop = new _modules_BackTop__WEBPACK_IMPORTED_MODULE_1__[\"default\"]();\n\n\n\n//# sourceURL=webpack://cvipi/./assets/js/scripts.js?");
 
 /***/ }),
 
