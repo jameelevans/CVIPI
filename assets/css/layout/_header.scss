@@ -1,8 +1,10 @@
 @use '../base/typography' as typography;
 
+// Site header shell.
 .header {
-  background-color: rgba(var(--color-deep-a), 0.92);
+  background-color: rgba(var(--color-deep-a), 1);
 
+  // Two-column layout: logo on the left, navigation on the right.
   &__inner {
     display: grid;
     grid-template-columns: 1fr 3fr;
@@ -13,6 +15,7 @@
     width: 100%;
   }
 
+  // Centers the logo vertically within the full header height.
   &__logo {
     display: flex;
     align-items: center;
@@ -26,14 +29,17 @@
     }
   }
 
+  // Allows the navigation area to stretch to match the header height.
   &__nav {
     display: flex;
   }
 }
 
+// Primary navigation.
 .navigation {
   display: flex;
 
+  // Typography and smoothing for the top-level nav links.
   &__nav {
     display: flex;
     font-family: typography.$font-secondary;
@@ -43,6 +49,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  // Keeps nav items in a single horizontal row.
   &__list {
     display: flex;
     align-items: stretch;
@@ -50,11 +57,12 @@
     list-style: none;
   }
 
+  // Each item owns the underline hover/focus state.
   &__item {
     display: flex;
     position: relative;
 
-    // purple underline pseudo-element
+    // Animated underline shown on hover and keyboard focus.
     &::after {
       content: '';
       position: absolute;
@@ -68,18 +76,21 @@
       transition: transform 0.3s ease;
     }
 
+    // Make the link fully opaque when hovering the item or focusing its child link.
     &:hover .navigation__link,
     &:focus-within .navigation__link {
       color: rgba(var(--color-white-a), 1);
       text-decoration: none;
     }
 
+    // Reveal the underline for both mouse and keyboard users.
     &:hover::after,
-    &:focus::after {
+    &:focus-within::after {
       transform: scaleX(1); // reveal underline on hover
     }
   }
 
+  // Full-height link target with centered text.
   &__link {
     display: flex;
     align-items: center;

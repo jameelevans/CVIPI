@@ -1,8 +1,16 @@
 //Utility class helpers
-.mb-sm { margin-bottom: 2rem;}
-.mb-md { margin-bottom: 3rem;}
-.mb-lg { margin-bottom: 4rem;}
-.mb-hg { margin-bottom: 8rem;}
+.mb-sm {
+  margin-bottom: 2rem;
+}
+.mb-md {
+  margin-bottom: 3rem;
+}
+.mb-lg {
+  margin-bottom: 4rem;
+}
+.mb-hg {
+  margin-bottom: 8rem;
+}
 
 .sr-only {
   position: absolute;
@@ -15,4 +23,11 @@
 
 .fixed-position {
   position: fixed;
+}
+
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 144rem;
+  width: 100%;
 }

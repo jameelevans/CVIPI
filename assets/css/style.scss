@@ -39,28 +39,28 @@ Text Domain: cvipi
 */
 
 //* --------| Abstracts |--------*//
-@use "abstracts/variables" as vars;
-@use "abstracts/mixins" as mixins;
+@use 'abstracts/variables' as vars;
+@use 'abstracts/mixins' as mixins;
 
 // @use "abstracts/functions" as funcs;
 
 //*--------| Base |--------*//
-@use "base/typography" as typo;
-@use "base/base" as base;
+@use 'base/typography' as typo;
+@use 'base/base' as base;
 // @use "base/animations" as anims;
-@use "base/utilities" as utils;
+@use 'base/utilities' as utils;
 
 //*--------| Components |--------*//
-@use "components/buttons" as btns;
+@use 'components/buttons' as btns;
 
 //*--------| Layouts |--------*//
-@use "layout/header" as header;
-@use "layout/footer" as footer;
+@use 'layout/header' as header;
+@use 'layout/banner' as banner;
+@use 'layout/footer' as footer;
 
 //*--------| Pages |--------*//
-@use "pages/login" as login;
-@use "pages/front-page" as frontpage;
-
+@use 'pages/login' as login;
+@use 'pages/front-page' as frontpage;
 
 /* Optionally, if styles need to reference namespaced values
 Example:
