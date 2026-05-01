@@ -1,3 +1,32 @@
 .header {
-  background-color: rgba(var(--color-blue-a), 0.92);
+  background-color: rgba(var(--color-deep-a), 0.92);
+
+  &__inner {
+  }
+
+  &__logo {
+    a {
+    }
+
+    img {
+      width: 60px;
+    }
+  }
+
+  &__nav {
+  }
+}
+
+.navigation {
+  &__nav {
+  }
+
+  &__list {
+  }
+
+  &__item {
+  }
+
+  &__link {
+  }
 }

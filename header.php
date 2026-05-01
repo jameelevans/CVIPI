@@ -26,7 +26,7 @@
 				<div class="header__inner">
 					<div class="header__logo">
 						<a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
-							<img src="<?php echo get_template_directory_uri(); ?>/assets/images/cvipi-logo-white.svg" alt="<?php bloginfo( 'name' ); ?>">
+							<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="<?php bloginfo( 'name' ); ?> logo">
 						</a>
 					</div><!-- .Header Logo -->
 
