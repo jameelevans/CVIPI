@@ -75,11 +75,13 @@
 		<div class="banner">
 			<div class="banner__inner container">
 				<div class="banner__left">
-					<p class="banner__subheader">Community Violence Intervention</p>
-					<h2 class="banner__heading"><span>It takes a</span> community to end violence</h2>
-					<p class="banner__details">The National Community Violence Intervention & Prevention Initiative (CVIPI) was created to be a source of information and practical resources on community violence intervention. 
-					This nationwide initiative brings together community residents, local government, law enforcement, hospitals, victim service providers, community-based organizations (CBOs), researchers, and other partners to help prevent and reduce violent crime to make our communities safer for generations to come.</p>
-					<a href="#" class="btn__copper">Access Resources &amp; Information</a>
+					<div class="banner__container">
+						<p class="banner__subheader">Community Violence Intervention</p>
+						<h2 class="banner__heading"><span>It takes a</span> community to end violence</h2>
+						<p class="banner__details">The National Community Violence Intervention & Prevention Initiative (CVIPI) was created to be a source of information and practical resources on community violence intervention. 
+						This nationwide initiative brings together community residents, local government, law enforcement, hospitals, victim service providers, community-based organizations (CBOs), researchers, and other partners to help prevent and reduce violent crime to make our communities safer for generations to come.</p>
+						<a href="#" class="btn__copper">Access Resources &amp; Information</a>
+					</div>
 				</div>
 				<div class="banner__right">
 					<div class="banner__stats">
