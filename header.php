@@ -73,28 +73,31 @@
 				</div><!-- .Header Inner -->
 		</header><!-- .Header -->
 		<div class="banner">
-			<div class="banner__inner container">
+			<div class="banner__inner">
 				<div class="banner__left">
 					<div class="banner__container">
 						<p class="banner__subheader">Community Violence Intervention</p>
-						<h2 class="banner__heading"><span>It takes a</span> community to end violence</h2>
-						<p class="banner__details">The National Community Violence Intervention & Prevention Initiative (CVIPI) was created to be a source of information and practical resources on community violence intervention. 
-						This nationwide initiative brings together community residents, local government, law enforcement, hospitals, victim service providers, community-based organizations (CBOs), researchers, and other partners to help prevent and reduce violent crime to make our communities safer for generations to come.</p>
+
+						<h2 class="banner__heading">It takes a <br /><em>community to end violence</em></h2>
+						<div class="banner__details">
+							<p>The National Community Violence Intervention & Prevention Initiative (CVIPI) was created to be a source of information and practical resources on community violence intervention. </p>
+							<p>This nationwide initiative brings together community residents, local government, law enforcement, hospitals, victim service providers, community-based organizations (CBOs), researchers, and other partners to help prevent and reduce violent crime to make our communities safer for generations to come.</p>
+						</div>
 						<a href="#" class="btn__copper">Access Resources &amp; Information</a>
 					</div>
 				</div>
 				<div class="banner__right">
 					<div class="banner__stats">
-						<span class="banner__org">300+</span>
-						<p class="banner__org-des">Grantee organizations<br /> supported nationwide</p>
+						<span class="banner__number">300+</span>
+						<p class="banner__description">Grantee organizations<br /> supported nationwide</p>
 					</div>
 					<div class="banner__stats">
-						<span class="banner__resources">1,200+</span>
-						<p class="banner__resources-des">Resources, guides & toolkits<br /> in the library</p>
+						<span class="banner__number">1,200+</span>
+						<p class="banner__description">Resources, guides & toolkits<br /> in the library</p>
 					</div>
 					<div class="banner__stats">
-						<span class="banner__webinars">50+</span>
-						<p class="banner__webinars-des">Webinars and trainings<br /> delivered annually</p>
+						<span class="banner__number">50+</span>
+						<p class="banner__description">Webinars and trainings<br /> delivered annually</p>
 					</div>
 				</div>
 			</div>

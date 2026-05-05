@@ -1,15 +1,15 @@
 @use '../base/typography' as typography;
 @use '../abstracts/variables' as variables;
+@use '../abstracts/mixins' as mixins;
 
 .banner {
   height: 100vh; // remove once we have real content spacing
   background-image:
     linear-gradient(
-      90.02deg,
-      rgba(7, 24, 32, 0.92) -0.88%,
-      rgba(8, 26, 46, 0.92) 18.08%,
-      rgba(11, 42, 69, 0.62) 44.66%,
-      rgba(11, 42, 69, 0.28) 99.99%
+      90deg,
+      rgba(var(--color-deep-a), 1) 0%,
+      rgba(var(--color-deep-a), 0.85) 40%,
+      rgba(var(--color-deep-a), 0) 100%
     ),
     url('assets/img/banner-img-1.webp');
   background-position: center;
@@ -18,7 +18,7 @@
 
   &__inner {
     display: grid;
-    grid-template-columns: 8fr 1fr;
+    grid-template-columns: 3fr 35rem;
     height: 100%;
   }
   // Left banner area
@@ -26,17 +26,58 @@
     margin-left: 1.8rem;
     display: flex;
     align-items: center;
+    color: var(--color-white);
+    width: 33%;
+  }
+
+  &__container {
+    padding-left: 9vw;
+
+    @include mixins.flow-space(2.5rem);
   }
 
   &__subheader {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 1.2rem;
+    font-family: typography.$font-secondary;
+    font-size: 1rem;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--color-copper);
+    margin-bottom: 2rem;
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 2.4rem;
+      height: 1px;
+      background-color: var(--color-copper);
+    }
   }
 
   &__heading {
-    span {
+    font-size: 8rem;
+    line-height: 0.9;
+
+    em {
+      color: var(--color-carmine);
+      font-weight: 250;
+      letter-spacing: -3.2px;
     }
   }
 
   &__details {
+    font-family: typography.$font-secondary;
+
+    p {
+      font-size: typography.$font-body;
+      line-height: 1.6;
+      font-weight: 100;
+      color: rgba(var(--color-white-a), 0.55);
+    }
+    @include mixins.flow-space(2.5rem);
   }
 
   // Right banner area
@@ -44,19 +85,27 @@
     background-color: rgba(var(--color-deep-a), 0.93);
     height: 100%;
     width: 100%;
+    padding: 3vw;
+    color: var(--color-white);
+    font-size: typography.$font-body;
+
+    > *:not(:last-child) {
+      border-bottom: 0.5px solid rgba(var(--color-dark-grey-a), 0.5);
+    }
   }
   &__stats {
+    padding: 3.7rem 0;
   }
-  &__org {
+  &__number {
+    display: block;
+    font-size: 5.3rem;
+    font-weight: 800;
+    letter-spacing: -1.8px;
+    margin-bottom: 0.5rem;
   }
-  &__org-des {
-  }
-  &__resources {
-  }
-  &__resources-des {
-  }
-  &__webinars {
-  }
-  &__webinars-des {
+  &__description {
+    font-family: typography.$font-secondary;
+    color: rgba(var(--color-white-a), 0.55);
+    margin-bottom: 1.5rem;
   }
 }

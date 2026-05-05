@@ -7,10 +7,17 @@
 
 // * Center an element absolutely
 @mixin absCenter {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// Margin bottom on all child elements except last
+@mixin flow-space($space: 2.5rem) {
+  > *:not(:last-child) {
+    margin-bottom: $space;
+  }
 }
 
 // * --------| Breakpoint Mixins |-------- * //
@@ -36,24 +43,29 @@
 
 // * Breakpoint Mixin (Mobile-first: min-width)
 @mixin respond($breakpoint) {
-    @if $breakpoint == small {
-        @media only screen and (min-width: 37.5em) { @content };  // 600px
-    }
-    @else if $breakpoint == medium {
-        @media only screen and (min-width: 50em) { @content };  // 800px
-    }
-    @else if $breakpoint == medlg {
-        @media only screen and (min-width: 56.25em) { @content };  // 900px
-    }
-    @else if $breakpoint == large {
-        @media only screen and (min-width: 62.5em) { @content };  // 1000px
-    }
-    @else if $breakpoint == largest {
-        @media only screen and (min-width: 75em) { @content };  // 1200px
-    }
-    @else {
-        @warn "Breakpoint `#{$breakpoint}` not defined!";
-    }
+  @if $breakpoint == small {
+    @media only screen and (min-width: 37.5em) {
+      @content;
+    } // 600px
+  } @else if $breakpoint == medium {
+    @media only screen and (min-width: 50em) {
+      @content;
+    } // 800px
+  } @else if $breakpoint == medlg {
+    @media only screen and (min-width: 56.25em) {
+      @content;
+    } // 900px
+  } @else if $breakpoint == large {
+    @media only screen and (min-width: 62.5em) {
+      @content;
+    } // 1000px
+  } @else if $breakpoint == largest {
+    @media only screen and (min-width: 75em) {
+      @content;
+    } // 1200px
+  } @else {
+    @warn "Breakpoint `#{$breakpoint}` not defined!";
+  }
 }
 
 // * --------| Additional Project Mixins |-------- * //

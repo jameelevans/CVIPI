@@ -13,23 +13,23 @@
     font-family: typography.$font-secondary;
     cursor: pointer;
     text-align: center;
-    border-radius: 0;
+    border-radius: 3px;
     transition: all 0.3s ease-in-out;
-    padding: 0.5rem 2rem;
+    padding: 1.2rem 3.5rem;
     text-decoration: none;
     text-transform: capitalize;
     position: relative;
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     height: auto;
-    font-weight: 300;
+    font-weight: 400;
     margin-top: 1rem;
+    letter-spacing: 0.4px;
     background-color: var(--color-copper);
     color: var(--color-white);
     border: none;
 
     &:hover {
-      background-color: var(--color-white);
-      color: var(--color-black);
+      filter: brightness(1.2);
       transition: all 0.4s ease-in-out;
       transform: translateY(-0.3rem);
       box-shadow: 0 1rem 2rem rgba(var(--color-black-a), 0.2);
