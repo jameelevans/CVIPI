@@ -2,8 +2,20 @@
 @use '../abstracts/variables' as variables;
 @use '../abstracts/mixins' as mixins;
 
+// ==========================================================================
+// Banner / Hero
+// ==========================================================================
+// Full-viewport homepage banner with a dark image overlay, primary message on
+// the left, and a compact stats panel on the right.
+
 .banner {
+  // Temporary full-height treatment for the hero. Once surrounding content and
+  // responsive spacing are finalized, this can be replaced with min-height or
+  // content-driven spacing.
   height: 100vh; // remove once we have real content spacing
+
+  // Layer 1: left-to-right dark gradient for text readability.
+  // Layer 2: photographic hero image.
   background-image:
     linear-gradient(
       90deg,
@@ -12,35 +24,61 @@
       rgba(var(--color-deep-a), 0) 100%
     ),
     url('assets/img/banner-img-1.webp');
+
+  // Centers and scales the background image so it fills the banner area without
+  // tiling.
   background-position: center;
   background-repeat: none;
   background-size: cover;
 
   &__inner {
+    // Main banner composition: wide content area plus a fixed-width stats rail.
     display: grid;
     grid-template-columns: 3fr 35rem;
+
+    // Allows both columns to fill the full viewport-height banner.
     height: 100%;
   }
-  // Left banner area
+
+  // --------------------------------------------------------------------------
+  // Left content area
+  // --------------------------------------------------------------------------
+
   &__left {
+    // Small left offset keeps the content from sitting directly against the
+    // viewport while the inner container handles the larger responsive inset.
     margin-left: 1.8rem;
+
+    // Vertically centers the headline group inside the hero.
     display: flex;
     align-items: center;
+
+    // Establishes the default text color for the left hero column.
     color: var(--color-white);
-    width: 33%;
+
+    // Keeps the text block narrow enough to sit inside the darker gradient
+    // portion of the background image.
+    width: 44%;
   }
 
   &__container {
+    // Viewport-based inset lets the text breathe more on larger screens.
     padding-left: 9vw;
 
+    // Applies consistent vertical rhythm between the direct children of the
+    // banner copy group.
     @include mixins.flow-space(2.5rem);
   }
 
   &__subheader {
+    // Inline-flex lets the decorative rule and label align as one compact unit.
     position: relative;
     display: inline-flex;
     align-items: center;
     gap: 1.2rem;
+
+    // Secondary uppercase treatment creates a small eyebrow above the main
+    // heading.
     font-family: typography.$font-secondary;
     font-size: 1rem;
     letter-spacing: 1.2px;
@@ -49,6 +87,7 @@
     margin-bottom: 2rem;
 
     &::before {
+      // Short leading rule that visually introduces the eyebrow text.
       content: '';
       display: inline-block;
       width: 2.4rem;
@@ -58,10 +97,14 @@
   }
 
   &__heading {
+    // Oversized hero headline with tight line-height for a strong editorial
+    // presence.
     font-size: 8rem;
     line-height: 0.9;
 
     em {
+      // Emphasized word uses the carmine accent and lighter weight to create a
+      // typographic contrast within the headline.
       color: var(--color-carmine);
       font-weight: 250;
       letter-spacing: -3.2px;
@@ -69,41 +112,64 @@
   }
 
   &__details {
+    // Body copy uses the secondary typeface to pair with the eyebrow and nav.
     font-family: typography.$font-secondary;
 
     p {
+      // Muted paragraph color keeps the body copy subordinate to the headline
+      // while still readable on the dark overlay.
       font-size: typography.$font-body;
       line-height: 1.6;
       font-weight: 100;
       color: rgba(var(--color-white-a), 0.55);
     }
+
+    // Maintains even spacing between multiple detail paragraphs or child items.
     @include mixins.flow-space(2.5rem);
   }
 
-  // Right banner area
+  // --------------------------------------------------------------------------
+  // Right stats rail
+  // --------------------------------------------------------------------------
+
   &__right {
+    // Semi-opaque panel separates the stats from the image while preserving
+    // some of the deep background character.
     background-color: rgba(var(--color-deep-a), 0.93);
     height: 100%;
     width: 100%;
+
+    // Responsive internal spacing keeps the stats panel proportional across
+    // desktop widths.
     padding: 3vw;
+
+    // Establishes shared text defaults for stat items.
     color: var(--color-white);
     font-size: typography.$font-body;
 
     > *:not(:last-child) {
+      // Fine divider between stat groups; skipped on the final item to avoid a
+      // dangling bottom border.
       border-bottom: 0.5px solid rgba(var(--color-dark-grey-a), 0.5);
     }
   }
+
   &__stats {
+    // Vertical breathing room around each individual stat group.
     padding: 3.7rem 0;
   }
+
   &__number {
+    // Large numeric value acts as the main visual anchor for each stat.
     display: block;
     font-size: 5.3rem;
     font-weight: 800;
     letter-spacing: -1.8px;
     margin-bottom: 0.5rem;
   }
+
   &__description {
+    // Muted label explains the statistic without competing with the number.
     font-family: typography.$font-secondary;
     color: rgba(var(--color-white-a), 0.55);
     margin-bottom: 1.5rem;

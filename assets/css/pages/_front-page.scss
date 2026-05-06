@@ -1,3 +1,93 @@
+@use '../abstracts/variables' as variables;
+@use '../base/typography' as typography;
+
 #main-content {
-  background-color: grey;
+  .about {
+    &__container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+
+      & > *:nth-child(odd) {
+        background: var(--color-dark-midnight-teal);
+      }
+
+      & > *:nth-child(even) {
+        background: var(--color-deep);
+      }
+    }
+
+    &__content {
+      padding: 7rem;
+    }
+
+    &__subheader {
+      // Inline-flex lets the decorative rule and label align as one compact unit.
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 1.2rem;
+
+      // Secondary uppercase treatment creates a small eyebrow above the main
+      // heading.
+      font-family: typography.$font-secondary;
+      font-size: 1rem;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--color-carmine);
+      margin-bottom: 2rem;
+      font-weight: 600;
+
+      &::before {
+        // Short leading rule that visually introduces the eyebrow text.
+        content: '';
+        display: inline-block;
+        width: 2.4rem;
+        height: 1px;
+        background-color: var(--color-carmine);
+      }
+    }
+
+    &__heading {
+      // Oversized hero headline with tight line-height for a strong editorial
+      // presence.
+      font-size: 3.5rem;
+      line-height: 0.9;
+      color: var(--color-white);
+      margin-bottom: 2.5rem;
+
+      em {
+        // Emphasized word uses the carmine accent and lighter weight to create a
+        // typographic contrast within the headline.
+        color: var(--color-carmine);
+        font-weight: 300;
+        letter-spacing: -1.8px;
+        display: block;
+        margin-top: 0.5rem;
+      }
+    }
+
+    &__image-wrap {
+      width: 100%;
+      height: 40rem;
+      overflow: hidden;
+    }
+
+    &__image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    &__description {
+      // Muted paragraph color keeps the body copy subordinate to the headline
+      // while still readable on the dark overlay.
+      font-size: typography.$font-body;
+      line-height: 1.6;
+      font-weight: 300;
+      color: rgba(var(--color-white-a), 0.75);
+      margin-bottom: 2.5rem;
+    }
+  }
 }

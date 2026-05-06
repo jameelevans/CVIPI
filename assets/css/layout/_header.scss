@@ -1,13 +1,26 @@
 @use '../base/typography' as typography;
 
-// Site header shell.
+// ==========================================================================
+// Header
+// ==========================================================================
+// Global site header containing the brand mark and primary navigation.
+// This file uses BEM-style class names so each element can be reasoned about
+// from the `.header` or `.navigation` block it belongs to.
+
 .header {
+  // Solid deep background gives the logo and low-opacity nav links enough
+  // contrast across the top of the page.
   background-color: rgba(var(--color-deep-a), 1);
 
-  // Two-column layout: logo on the left, navigation on the right.
+  // Constrains the header content on very wide screens while still allowing
+  // the background color to span the full viewport.
   &__inner {
+    // Two-column layout: logo area on the left, navigation area on the right.
     display: grid;
     grid-template-columns: 1fr 3fr;
+
+    // Stretch children so hover underlines can sit flush with the full header
+    // height instead of only the text line-height.
     align-items: stretch;
     margin-left: auto;
     margin-right: auto;
@@ -15,54 +28,75 @@
     width: 100%;
   }
 
-  // Centers the logo vertically within the full header height.
   &__logo {
+    // Flexbox keeps the linked logo vertically centered within the header.
     display: flex;
     align-items: center;
+
+    // Local spacing around the logo so it does not touch the viewport edge or
+    // adjacent nav column.
     margin: 1rem;
 
     a {
     }
 
     img {
+      // Fixed logo width keeps the header height predictable while preserving
+      // the image aspect ratio.
       width: 10rem;
     }
   }
 
-  // Allows the navigation area to stretch to match the header height.
   &__nav {
+    // Lets the nested `.navigation` block stretch to match the header row.
     display: flex;
   }
 }
 
-// Primary navigation.
+// ==========================================================================
+// Primary Navigation
+// ==========================================================================
+// Separated from `.header` so the navigation styling can stay focused on link
+// layout, typography, and interaction states.
+
 .navigation {
+  // Makes the navigation block participate in the full-height header layout.
   display: flex;
 
-  // Typography and smoothing for the top-level nav links.
   &__nav {
+    // Row layout for the menu container.
     display: flex;
+
+    // Secondary font gives the nav a distinct, UI-like voice compared to
+    // larger editorial headings.
     font-family: typography.$font-secondary;
     font-size: 1.3rem;
     letter-spacing: 0.13px;
     font-weight: 600;
   }
 
-  // Keeps nav items in a single horizontal row.
   &__list {
+    // Keeps top-level nav items in a single horizontal row and allows each item
+    // to stretch vertically for the underline treatment.
     display: flex;
     align-items: stretch;
+
+    // Explicit gap controls rhythm between links without relying on margins on
+    // individual list items.
     gap: 3.8rem;
+
+    // Removes browser default bullets from the semantic list markup.
     list-style: none;
   }
 
-  // Each item owns the underline hover/focus state.
   &__item {
+    // Flex makes each item fill the nav height; relative positioning anchors the
+    // underline pseudo-element to this list item.
     display: flex;
     position: relative;
 
-    // Animated underline shown on hover and keyboard focus.
     &::after {
+      // Decorative underline for hover and keyboard focus states.
       content: '';
       position: absolute;
       left: 0;
@@ -70,29 +104,36 @@
       bottom: 0;
       height: 3px;
       background: linear-gradient(90deg, #1a6a92 0%, #b8722a 100%);
-      transform: scaleX(0); // start hidden
-      transform-origin: left; // grow from left
+
+      // Start hidden, then grow from the left edge when the item is active.
+      transform: scaleX(0);
+      transform-origin: left;
       transition: transform 0.3s ease;
     }
 
-    // Make the link fully opaque when hovering the item or focusing its child link.
     &:hover .navigation__link,
     &:focus-within .navigation__link {
+      // Hover and focus-within both brighten the link, which keeps mouse and
+      // keyboard navigation visually consistent.
       color: rgba(var(--color-white-a), 1);
       text-decoration: none;
     }
 
-    // Reveal the underline for both mouse and keyboard users.
     &:hover::after,
     &:focus-within::after {
-      transform: scaleX(1); // reveal underline on hover
+      // Reveal the gradient underline for both mouse and keyboard users.
+      transform: scaleX(1);
     }
   }
 
-  // Full-height link target with centered text.
   &__link {
+    // The link itself becomes a full-height flex target so the click area and
+    // vertical alignment feel consistent across nav items.
     display: flex;
     align-items: center;
+
+    // Slightly muted default state; interaction states above move this to full
+    // white for clear feedback.
     color: rgba(var(--color-white-a), 0.62);
     text-decoration: none;
     transition: color 0.3s ease;

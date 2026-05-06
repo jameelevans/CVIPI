@@ -31,7 +31,48 @@
     &:hover {
       filter: brightness(1.2);
       transition: all 0.4s ease-in-out;
-      transform: translateY(-0.3rem);
+      transform: scale(1.025, 1.025);
+      box-shadow: 0 1rem 2rem rgba(var(--color-black-a), 0.2);
+    }
+
+    &:active,
+    &:focus {
+      transition: all 0.4s ease-in-out;
+      transform: translateY(-0.1rem);
+      box-shadow: 0 0.5rem 1rem rgba(var(--color-black-a), 0.2);
+    }
+  }
+}
+
+.btn__outline-white {
+  &,
+  &:link {
+    display: inline-flex;
+    align-items: center;
+    width: max-content;
+    overflow: hidden;
+    font-family: typography.$font-secondary;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 3px;
+    transition: all 0.3s ease-in-out;
+    padding: 1.2rem 3.5rem;
+    text-decoration: none;
+    text-transform: capitalize;
+    position: relative;
+    font-size: 1.4rem;
+    height: auto;
+    font-weight: 400;
+    margin-top: 1rem;
+    letter-spacing: 0.4px;
+    background-color: transparent;
+    color: var(--color-white);
+    border: 1.5px solid rgba(var(--color-white-a), 0.7);
+
+    &:hover {
+      filter: brightness(1.2);
+      transition: all 0.4s ease-in-out;
+      transform: scale(1.025, 1.025);
       box-shadow: 0 1rem 2rem rgba(var(--color-black-a), 0.2);
     }
 
