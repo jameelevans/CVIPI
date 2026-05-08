@@ -8,6 +8,7 @@
 get_header('general');
 ?>
 <main>
-   
+   yitfouygfuoygoiuygoui
 </main>
 <?php get_footer(); ?>
+ 

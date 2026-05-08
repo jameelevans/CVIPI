@@ -185,6 +185,14 @@
       border-radius: 3px;
       border-left: 3px solid var(--color-copper);
       text-decoration: none;
+      transition:
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.3s;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 28px rgba(var(--color-dark-midnight-teal-a), 0.08);
+      }
 
       &__container {
         display: grid;
@@ -210,6 +218,8 @@
 
       &__excerpt {
         color: var(--color-medium-blue);
+        font-size: 1.4rem;
+        line-height: 1.5;
       }
 
       &__tags {
@@ -233,32 +243,87 @@
   }
 
   .resources {
+    display: grid;
+    grid-template-columns: auto;
+    gap: 2.5rem;
+
     .resource {
+      transition:
+        transform 0.25s var(--ease-out),
+        box-shadow 0.25s;
+      cursor: pointer;
+      text-decoration: none;
+      transition:
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.3s;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 28px rgba(var(--color-dark-midnight-teal-a), 0.08);
+      }
+
       &__container {
+        display: grid;
+        grid-template-columns: 6.3rem 5fr;
+        background: var(--color-white);
+        gap: 2.5rem;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      &__type {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--color-dark-midnight-teal);
+        color: var(--color-white);
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
       }
 
       &__icon {
+        width: 2.5rem;
+        aspect-ratio: 1;
+        fill: var(--color-white);
       }
 
       &__content {
+        padding: 2.5rem;
+        display: grid;
+        grid-template-columns: auto;
+        gap: 0.8rem;
       }
 
       &__header {
       }
 
       &__category {
+        color: var(--color-dark-orange);
+        font-family: typography.$font-secondary;
+        font-weight: 700;
+        font-size: 1rem;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 0.8rem;
       }
 
       &__title {
+        font-size: typography.$font-h3;
+        color: var(--color-deep);
       }
 
       &__details {
+        color: var(--color-medium-blue);
+        font-size: 1.2rem;
+        line-height: 1.5;
       }
 
       &__date {
       }
 
-      &__lenght {
+      &__length {
+        display: inline;
       }
     }
   }

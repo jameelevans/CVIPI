@@ -142,8 +142,8 @@ get_header();
 						<div class="resources">
 							<a href="" class="resource">
 								<article class="resource__container">
-									<div class="resource__icon">
-										☹︎
+									<div class="resource__type">
+										<?php echo svg_icon('resource__icon', 'report1');?>
 									</div>
 									<div class="resource__content">
 										<header class="resource__header">
@@ -155,7 +155,7 @@ get_header();
 											<time class="resource__date" datetime="2026-05-07T14:00:00-04:00">
 												May 07, 2026 · 2:00 PM ET
 											</time> · 
-											<div class="resource__lenght">48 pages</div>
+											<span class="resource__length">48 pages</span>
 										</p>
 									</div>
 									
@@ -164,8 +164,8 @@ get_header();
 
 							<a href="" class="resource">
 								<article class="resource__container">
-									<div class="resource__icon">
-										☹︎
+									<div class="resource__type">
+										<?php echo svg_icon('resource__icon', 'file1');?>
 									</div>
 									<div class="resource__content">
 										<header class="resource__header">
@@ -177,7 +177,7 @@ get_header();
 											<time class="resource__date" datetime="2026-05-07T14:00:00-04:00">
 												May 07, 2026 · 2:00 PM ET
 											</time> · 
-											<div class="resource__lenght">48 pages</div>
+											<span class="resource__length">48 pages</span>
 										</p>
 									</div>
 									
@@ -186,8 +186,8 @@ get_header();
 
 							<a href="" class="resource">
 								<article class="resource__container">
-									<div class="resource__icon">
-										☹︎
+									<div class="resource__type">
+										<?php echo svg_icon('resource__icon', 'play1');?>
 									</div>
 									<div class="resource__content">
 										<header class="resource__header">
@@ -199,7 +199,7 @@ get_header();
 											<time class="resource__date" datetime="2026-05-07T14:00:00-04:00">
 												May 07, 2026 · 2:00 PM ET
 											</time> · 
-											<div class="resource__lenght">48 pages</div>
+											<span class="resource__length">48 pages</span>
 										</p>
 									</div>
 									
@@ -208,8 +208,8 @@ get_header();
 
 							<a href="" class="resource">
 								<article class="resource__container">
-									<div class="resource__icon">
-										☹︎
+									<div class="resource__type">
+										<?php echo svg_icon('resource__icon', 'gear');?>
 									</div>
 									<div class="resource__content">
 										<header class="resource__header">
@@ -221,7 +221,7 @@ get_header();
 											<time class="resource__date" datetime="2026-05-07T14:00:00-04:00">
 												May 07, 2026 · 2:00 PM ET
 											</time> · 
-											<div class="resource__lenght">48 pages</div>
+											<span class="resource__length">48 pages</span>
 										</p>
 									</div>
 									
