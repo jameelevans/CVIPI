@@ -85,35 +85,36 @@
   }
 }
 
-//* Overall button styles
-.btn__blue {
+.btn__outline-deep {
   &,
   &:link {
+    display: inline-flex;
+    align-items: center;
     width: max-content;
     overflow: hidden;
-    font-family: typography.$font-primary;
+    font-family: typography.$font-secondary;
     cursor: pointer;
     text-align: center;
-    border-radius: 0;
+    border-radius: 3px;
     transition: all 0.3s ease-in-out;
-    padding: 0.5rem 2rem;
+    padding: 1.2rem 3.5rem;
     text-decoration: none;
     text-transform: capitalize;
     position: relative;
-    display: block;
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     height: auto;
-    font-weight: 300;
-    margin-top: 2.5rem;
-    background-color: var(--color-blue);
-    color: var(--color-white);
-    border: none;
+    font-weight: 400;
+    margin-top: 1rem;
+    letter-spacing: 0.4px;
+    background-color: transparent;
+    color: var(--color-deep);
+    border: 1.5px solid rgba(var(--color-deep-a), 0.7);
 
     &:hover {
-      background-color: var(--color-black);
+      background-color: var(--color-deep);
       color: var(--color-white);
       transition: all 0.4s ease-in-out;
-      transform: translateY(-0.3rem);
+      transform: scale(1.025, 1.025);
       box-shadow: 0 1rem 2rem rgba(var(--color-black-a), 0.2);
     }
 
@@ -123,16 +124,15 @@
       transform: translateY(-0.1rem);
       box-shadow: 0 0.5rem 1rem rgba(var(--color-black-a), 0.2);
     }
-
-    @include mixins.respond(medium) {
-      padding: 1.5rem 3.5rem;
-      font-size: 2rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      font-weight: 600;
-      border-radius: 5rem;
-    }
   }
+}
+
+.story__button {
+  color: var(--color-deep);
+  text-transform: uppercase;
+  padding: 1rem 0;
+  background-color: transparent;
+  border-bottom: 2px solid var(--color-deep);
 }
 
 //* Show button only on mobile

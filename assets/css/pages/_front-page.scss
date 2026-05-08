@@ -106,7 +106,7 @@
 
   .highlights {
     background-color: var(--color-morning);
-    padding: 5rem;
+    padding: 12rem 5rem;
 
     &__section {
       max-width: 90rem;
@@ -324,6 +324,55 @@
 
       &__length {
         display: inline;
+      }
+    }
+  }
+
+  .stories {
+    &__container {
+    }
+
+    &__top {
+    }
+
+    &__header {
+    }
+
+    &__heading {
+    }
+
+    &__subheading {
+    }
+
+    &__cta {
+    }
+
+    &__posts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .story {
+      &__top {
+      }
+
+      &__img {
+      }
+
+      &__bottom {
+      }
+
+      &__header {
+      }
+
+      &__category {
+      }
+
+      &__heading {
+      }
+
+      &__excerpt {
       }
     }
   }

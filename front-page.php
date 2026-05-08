@@ -234,8 +234,84 @@ get_header();
 			</div>
 
 		</section>
-		<section class="">
-			<p class="about__subheader"></p>
+		<section class="stories">
+			<div class="stories__container">
+				<div class="stories__top">
+					<header class="stories__header">
+						<h2 class="stories__heading">Our Success <em>Stories</em></h2>
+						<p class="stories__subheading">These are some of our partner organizations and the programs
+	they created to transform their communities.</p>
+					</header>
+					<div class="stories__cta">
+						<a href="" class="btn__outline-deep">View Our Stories</a>
+					</div>
+				</div>
+
+				<div class="stories__posts">
+					<article class="story">
+						<div class="story__top">
+							<img src="<?php echo get_template_directory_uri(); ?>/assets/img/post-1.webp" alt="qwert" class="story__img">
+						</div>
+						
+
+						<div class="story__bottom">
+							<header class="story__header">
+								<p class="story__category">Chicago, IL</p>
+								<h3 class="story__heading">Communities Partnering 4 Peace</h3>
+							</header>
+							<p class="story__excerpt">Coordinating multi-site violence intervention across
+							Chicago's most impacted neighborhoods through street
+							outreach and victim services.</p>
+
+							<a href="" class="story__button">Read More</a>
+						</div>
+
+
+					</article>
+
+					<article class="story">
+						<div class="story__top">
+							<img src="<?php echo get_template_directory_uri(); ?>/assets/img/post-3.webp" alt="qwert" class="story__img">
+						</div>
+						
+
+						<div class="story__bottom">
+							<header class="story__header">
+								<p class="story__category">Chicago, IL</p>
+								<h3 class="story__heading">Communities Partnering 4 Peace</h3>
+							</header>
+							<p class="story__excerpt">Coordinating multi-site violence intervention across
+							Chicago's most impacted neighborhoods through street
+							outreach and victim services.</p>
+
+							<a href="" class="story__button">Read More</a>
+						</div>
+
+
+					</article>
+
+					<article class="story">
+						<div class="story__top">
+							<img src="<?php echo get_template_directory_uri(); ?>/assets/img/post-2.webp" alt="qwert" class="story__img">
+						</div>
+						
+
+						<div class="story__bottom">
+							<header class="story__header">
+								<p class="story__category">Chicago, IL</p>
+								<h3 class="story__heading">Communities Partnering 4 Peace</h3>
+							</header>
+							<p class="story__excerpt">Coordinating multi-site violence intervention across
+							Chicago's most impacted neighborhoods through street
+							outreach and victim services.</p>
+
+							<a href="" class="story__button">Read More</a>
+						</div>
+
+
+					</article>
+				</div>
+			</div>
 		</section>
 		<section class="">
 

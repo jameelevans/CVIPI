@@ -1,9 +1,13 @@
 const gulp = require('gulp');
 const browserSync = require('browser-sync').create();
+const fs = require('fs');
+const nodePath = require('path');
+const { execFile } = require('child_process');
 const dartSass = require('sass');
 const gulpSass = require('gulp-sass');
 const sass = require('gulp-sass')(require('sass'));
 const webpack = require('webpack');
+const glob = require('glob');
 const log = require('fancy-log');
 const PluginError = require('plugin-error');
 const postcss = require('gulp-postcss');
@@ -32,8 +36,58 @@ const paths = {
         src: ['./assets/js/modules/*.js', './assets/js/scripts.js'],
         watch: ['./assets/js/modules/*.js', './assets/js/scripts.js']
     },
+    images: {
+        src: 'assets/img/**/*.{jpg,jpeg,png}',
+        watch: 'assets/img/**/*.{jpg,jpeg,png}'
+    },
     php: './**/*.php'
 };
+
+function webpPathFor(imagePath) {
+    const parsedPath = nodePath.parse(imagePath);
+    return nodePath.join(parsedPath.dir, `${parsedPath.name}.webp`);
+}
+
+function shouldConvertImage(imagePath, webpPath) {
+    if (!fs.existsSync(webpPath)) {
+        return true;
+    }
+
+    const sourceStats = fs.statSync(imagePath);
+    const webpStats = fs.statSync(webpPath);
+    return sourceStats.mtimeMs > webpStats.mtimeMs;
+}
+
+function convertImageToWebp(imagePath) {
+    const webpPath = webpPathFor(imagePath);
+
+    if (!shouldConvertImage(imagePath, webpPath)) {
+        return Promise.resolve();
+    }
+
+    return new Promise((resolve, reject) => {
+        execFile('cwebp', ['-quiet', '-q', '85', imagePath, '-o', webpPath], (err) => {
+            if (err) {
+                reject(new PluginError('images', err));
+                return;
+            }
+
+            log(`Created ${nodePath.relative(__dirname, webpPath)}`);
+            resolve();
+        });
+    });
+}
+
+function images(done) {
+    glob(paths.images.src, { nodir: true }, (err, files) => {
+        if (err) {
+            done(err);
+            return;
+        }
+
+        Promise.all(files.map(convertImageToWebp)).then(() => done(), done);
+    });
+}
 
 // Compile SCSS into CSS with PostCSS
 function styles() {
@@ -82,10 +136,14 @@ function watch() {
 
     // Watch JS files
     gulp.watch(paths.scripts.watch, scripts);
+
+    // Watch source images and create matching WebP files
+    gulp.watch(paths.images.watch).on('add', convertImageToWebp).on('change', convertImageToWebp);
 }
 
 // Default task
 exports.styles = styles;
 exports.scripts = scripts;
+exports.images = images;
 exports.watch = gulp.series(styles, scripts, watch);
 exports.default = exports.watch;
