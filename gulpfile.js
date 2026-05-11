@@ -1,25 +1,16 @@
 const gulp = require('gulp');
-const browserSync = require('browser-sync').create();
 const fs = require('fs');
 const nodePath = require('path');
 const { execFile } = require('child_process');
-const dartSass = require('sass');
-const gulpSass = require('gulp-sass');
-const sass = require('gulp-sass')(require('sass'));
-const webpack = require('webpack');
-const glob = require('glob');
-const log = require('fancy-log');
-const PluginError = require('plugin-error');
-const postcss = require('gulp-postcss');
-const postcssLib = require('postcss');
-const cssnano = require('cssnano');
-const autoprefixer = require('autoprefixer');
+
+let browserSync;
 
 const themeHeader = `!\nTheme Name: CVIPI\nAuthor: Jameel Evans\nDescription: This theme was designed by Laura Myers and Eduardo Minaya. The theme was coded by Jameel Evans.\nVersion: 1.1\nText Domain: cvipi\n`;
 
 const addThemeHeader = () => ({
     postcssPlugin: 'add-theme-header',
     Once(root) {
+        const postcssLib = require('postcss');
         root.prepend(postcssLib.comment({ text: themeHeader }));
     }
 });
@@ -59,6 +50,8 @@ function shouldConvertImage(imagePath, webpPath) {
 }
 
 function convertImageToWebp(imagePath) {
+    const PluginError = require('plugin-error');
+    const log = require('fancy-log');
     const webpPath = webpPathFor(imagePath);
 
     if (!shouldConvertImage(imagePath, webpPath)) {
@@ -79,6 +72,8 @@ function convertImageToWebp(imagePath) {
 }
 
 function images(done) {
+    const glob = require('glob');
+
     glob(paths.images.src, { nodir: true }, (err, files) => {
         if (err) {
             done(err);
@@ -91,20 +86,34 @@ function images(done) {
 
 // Compile SCSS into CSS with PostCSS
 function styles() {
+    const sass = require('gulp-sass')(require('sass'));
+    const postcss = require('gulp-postcss');
+    const cssnano = require('cssnano');
+    const autoprefixer = require('autoprefixer');
     const plugins = [
         autoprefixer(),
         cssnano(),
         addThemeHeader()
     ];
-    return gulp.src(paths.styles.src)
+
+    let stream = gulp.src(paths.styles.src)
         .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
         .pipe(postcss(plugins))
-        .pipe(gulp.dest(paths.styles.dest)) // Output to the root of the theme
-        .pipe(browserSync.stream());
+        .pipe(gulp.dest(paths.styles.dest)); // Output to the root of the theme
+
+    if (browserSync && browserSync.active) {
+        stream = stream.pipe(browserSync.stream());
+    }
+
+    return stream;
 }
 
 // Compile scripts using Webpack
 function scripts(callback) {
+    const webpack = require('webpack');
+    const log = require('fancy-log');
+    const PluginError = require('plugin-error');
+
     log('Starting Webpack...');
     webpack(require('./webpack.config.js'), (err, stats) => {
         if (err) {
@@ -114,22 +123,42 @@ function scripts(callback) {
         }
         log('Webpack completed.');
         log(stats.toString({ colors: true }));
-        browserSync.reload();
+        if (browserSync && browserSync.active) {
+            browserSync.reload();
+        }
         callback();
     });
 }
 
 // Watch for changes
 function watch() {
-    log('Starting BrowserSync...');
-    browserSync.init({
-        proxy: 'http://cvipi.local', // Update to match your Local environment URL
-        notify: false,
-        ghostMode: false
-    });
+    const log = require('fancy-log');
+    const useBrowserSync = process.argv.includes('--sync');
+
+    if (useBrowserSync) {
+        log('Starting BrowserSync...');
+        browserSync = require('browser-sync').create();
+        browserSync.init({
+            proxy: 'http://cvipi.local', // Update to match your Local environment URL
+            listen: '127.0.0.1',
+            host: '127.0.0.1',
+            open: false,
+            notify: false,
+            ghostMode: false
+        });
+    } else {
+        log('BrowserSync disabled. Use `npm run gulpwatch:sync` to enable browser reloads.');
+    }
+
+    styles();
+    scripts(() => {});
 
     // Watch PHP files
-    gulp.watch(paths.php).on('change', browserSync.reload);
+    gulp.watch(paths.php).on('change', () => {
+        if (browserSync && browserSync.active) {
+            browserSync.reload();
+        }
+    });
 
     // Watch SCSS files
     gulp.watch(paths.styles.watch, styles);
@@ -145,5 +174,5 @@ function watch() {
 exports.styles = styles;
 exports.scripts = scripts;
 exports.images = images;
-exports.watch = gulp.series(styles, scripts, watch);
+exports.watch = watch;
 exports.default = exports.watch;

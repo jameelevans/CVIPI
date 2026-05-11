@@ -238,12 +238,12 @@ get_header();
 			<div class="stories__container">
 				<div class="stories__top">
 					<header class="stories__header">
+						<p class="stories__spotlight">Spotlight</p>
 						<h2 class="stories__heading">Our Success <em>Stories</em></h2>
-						<p class="stories__subheading">These are some of our partner organizations and the programs
-	they created to transform their communities.</p>
+						<p class="stories__subheading">These are some of our partner organizations and the programs they created to transform their communities.</p>
 					</header>
 					<div class="stories__cta">
-						<a href="" class="btn__outline-deep">View Our Stories</a>
+						<a href="" class="stories__btn btn__outline-deep">View Our Stories</a>
 					</div>
 				</div>
 
@@ -277,12 +277,10 @@ get_header();
 
 						<div class="story__bottom">
 							<header class="story__header">
-								<p class="story__category">Chicago, IL</p>
-								<h3 class="story__heading">Communities Partnering 4 Peace</h3>
+								<p class="story__category">Washington, D.C.</p>
+								<h3 class="story__heading">Safe Streets DC</h3>
 							</header>
-							<p class="story__excerpt">Coordinating multi-site violence intervention across
-							Chicago's most impacted neighborhoods through street
-							outreach and victim services.</p>
+							<p class="story__excerpt">Deploying credible messengers in community mediation and conflict resolution to interrupt cycles of retaliatory violence.</p>
 
 							<a href="" class="story__button">Read More</a>
 						</div>
@@ -298,12 +296,10 @@ get_header();
 
 						<div class="story__bottom">
 							<header class="story__header">
-								<p class="story__category">Chicago, IL</p>
-								<h3 class="story__heading">Communities Partnering 4 Peace</h3>
+								<p class="story__category">Oakland, CA</p>
+								<h3 class="story__heading">Oakland Ceasefire</h3>
 							</header>
-							<p class="story__excerpt">Coordinating multi-site violence intervention across
-							Chicago's most impacted neighborhoods through street
-							outreach and victim services.</p>
+							<p class="story__excerpt">Combining law enforcement partnership with community-based intervention and wraparound services for high-risk individuals.</p>
 
 							<a href="" class="story__button">Read More</a>
 						</div>
@@ -313,8 +309,60 @@ get_header();
 				</div>
 			</div>
 		</section>
-		<section class="">
+		<section class="providers">
+			<div class="providers__container">
+				<header class="providers__top">
+					<p class="providers__subheading">Our Network</p>
+					<h2 class="providers__heading">CVIPI <em>TA Providers</em></h2>
+				</header>
 
+				<div class="provider__container" aria-label="CVIPI TA providers">
+					<ul class="providers__list">
+						<li class="providers__item">
+							<a href="" class="providers__link">
+								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
+							</a>
+						</li>
+						<li class="providers__item">
+							<a href="" class="providers__link">
+								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
+							</a>
+						</li>
+						<li class="providers__item">
+							<a href="" class="providers__link">
+								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
+							</a>
+						</li>
+						<li class="providers__item">
+							<a href="" class="providers__link">
+								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
+							</a>
+						</li>
+					</ul>
+					<ul class="providers__list" aria-hidden="true">
+						<li class="providers__item">
+							<a href="" class="providers__link" tabindex="-1">
+								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
+							</a>
+						</li>
+						<li class="providers__item">
+							<a href="" class="providers__link" tabindex="-1">
+								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
+							</a>
+						</li>
+						<li class="providers__item">
+							<a href="" class="providers__link" tabindex="-1">
+								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
+							</a>
+						</li>
+						<li class="providers__item">
+							<a href="" class="providers__link" tabindex="-1">
+								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
 		</section>
 	</main>
 <?php get_footer(); ?>
