@@ -44,6 +44,30 @@
   }
 }
 
+.footer__btn {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  overflow: hidden;
+  font-family: typography.$font-secondary;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.3s ease-in-out;
+  padding: 1.5rem 3.2rem;
+  border-radius: 2px;
+  letter-spacing: 0.4px;
+  background-color: var(--color-copper);
+  color: var(--color-white);
+  line-height: 1;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
 .btn__outline-white {
   &,
   &:link {

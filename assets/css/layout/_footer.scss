@@ -1,3 +1,197 @@
+@use '../abstracts/variables' as variables;
+@use '../base/typography' as typography;
+@use '../abstracts/mixins' as mixins;
+
 .footer {
-  background-color: blue;
+  //display: grid;
+  //grid-template-columns: auto;
+
+  &__container {
+    width: 100%;
+  }
+
+  &__subscribe {
+    background: var(--color-dark-midnight-teal);
+    padding: 10rem 5rem;
+    text-align: center;
+  }
+
+  &__header {
+  }
+
+  &__wrapper {
+    margin: auto;
+    max-width: 90rem;
+  }
+
+  &__subheading {
+    // Inline-flex lets the decorative rule and label align as one compact unit.
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 1.2rem;
+
+    // Secondary uppercase treatment creates a small eyebrow above the main
+    // heading.
+    font-family: typography.$font-secondary;
+    font-size: 1rem;
+    letter-spacing: 2.6px;
+    text-transform: uppercase;
+    color: var(--color-carmine);
+    margin-bottom: 2rem;
+    font-weight: 600;
+
+    &::before {
+      // Short leading rule that visually introduces the eyebrow text.
+      content: '';
+      display: inline-block;
+      width: 2.4rem;
+      height: 1px;
+      background-color: var(--color-carmine);
+    }
+  }
+
+  &__heading {
+    color: var(--color-white);
+    font-size: 4.5rem;
+    margin-bottom: 1.5rem;
+    em {
+      color: var(--color-carmine);
+      font-weight: 350;
+    }
+  }
+
+  &__description {
+    // Muted paragraph color keeps the body copy subordinate to the headline
+    // while still readable on the dark overlay.
+    @include mixins.description(--color-white-a);
+    margin-bottom: 2.5rem;
+  }
+
+  &__form {
+    display: flex;
+    gap: 10px;
+    max-width: 52rem;
+    margin: 0 auto 1.5rem;
+  }
+
+  &__input {
+    padding: 1.5rem 1.8rem;
+    font-family: typography.$font-secondary;
+    flex: 1;
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: var(--color-white);
+    background: rgba(var(--color-white-a), 0.06);
+    border: 1.5px solid rgba(var(--color-white-a), 0.15);
+    border-radius: 2px;
+    outline: none;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s,
+      background 0.2s;
+
+    &:focus {
+      border-color: var(--color-copper);
+      box-shadow: 0 0 0 3px rgba(184, 114, 42, 0.15);
+      background: rgba(var(--color-white-a), 0.08);
+    }
+  }
+
+  &__button {
+    font-family: typography.$font-secondary;
+  }
+
+  &__privacy {
+    font-family: typography.$font-secondary;
+    font-size: 1.3rem;
+    font-weight: 300;
+    color: rgba(var(--color-white-a), 0.3);
+  }
+
+  &__main {
+    font-family: typography.$font-secondary;
+    background-color: var(--color-deep);
+    place-items: center;
+    padding: 12rem 5rem;
+    color: var(--color-white);
+    margin: auto;
+  }
+
+  &__top {
+  }
+
+  &__columns {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr;
+    gap: 12rem;
+    border-bottom: 1px solid var(--color-white);
+  }
+
+  &__header {
+  }
+
+  &__logo {
+    width: 8.5rem;
+  }
+
+  &__heading {
+    // Muted paragraph color keeps the body copy subordinate to the headline
+    // while still readable on the dark overlay.
+    @include mixins.description(--color-white-a, 0.4);
+  }
+
+  .social__list {
+    display: flex;
+    gap: 1.8rem;
+    list-style: none;
+
+    .social__item {
+      aspect-ratio: 1;
+    }
+
+    .social__link {
+    }
+    .social__icon {
+      width: 2rem;
+      height: 2rem;
+      background: rgba(var(--color-white-a), 0.06);
+      border-radius: 10rem;
+      padding: 1.3rem;
+      box-sizing: content-box;
+      fill: rgba(var(--color-white-a), 0.4);
+    }
+  }
+
+  &__menu {
+    .footer__heading {
+      text-transform: uppercase;
+      font-size: 1.2rem;
+      letter-spacing: 1.2px;
+      font-weight: 600;
+      opacity: 0.7;
+    }
+  }
+
+  &__nav {
+  }
+
+  &__list {
+    list-style: none;
+  }
+
+  &__item {
+    margin-bottom: 1.5rem;
+  }
+
+  &__link {
+    text-decoration: none;
+    @include mixins.description(--color-white-a, 0.4);
+  }
+
+  &__bottom {
+  }
+
+  &__copyright {
+  }
 }

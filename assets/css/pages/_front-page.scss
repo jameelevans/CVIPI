@@ -1,5 +1,6 @@
 @use '../abstracts/variables' as variables;
 @use '../base/typography' as typography;
+@use '../abstracts/mixins' as mixins;
 
 #main-content {
   .about {
@@ -96,10 +97,7 @@
     &__description {
       // Muted paragraph color keeps the body copy subordinate to the headline
       // while still readable on the dark overlay.
-      font-size: typography.$font-body;
-      line-height: 1.6;
-      font-weight: 300;
-      color: rgba(var(--color-white-a), 0.75);
+      @include mixins.description(--color-white-a);
       margin-bottom: 2.5rem;
     }
   }
@@ -396,10 +394,7 @@
     &__subheading {
       // Muted paragraph color keeps the body copy subordinate to the headline
       // while still readable on the dark overlay.
-      font-size: typography.$font-body;
-      line-height: 1.6;
-      font-weight: 300;
-      color: rgba(var(--color-deep), 0.75);
+      @include mixins.description;
       margin-bottom: 2.5rem;
       width: 70%;
     }
@@ -580,7 +575,7 @@
   .provider__container {
     display: flex;
     gap: clamp(6rem, 12vw, 20rem);
-    width: min(100%, 120rem);
+    width: 100%;
     overflow: hidden;
     position: relative;
     white-space: nowrap;

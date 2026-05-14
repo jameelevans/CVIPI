@@ -3,6 +3,8 @@
 * * All mixins for project can be found in this file (Except for typography mixins)
 **/
 
+@use '../abstracts/variables' as variables;
+
 // * --------| Utilities |-------- * //
 
 // * Center an element absolutely
@@ -11,6 +13,14 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+@mixin description($color: --color-deep-a, $alpha: 0.75) {
+  font-family: Syne, sans-serif;
+  font-size: clamp(1.5rem, 1.6vw, 1.6rem);
+  line-height: 1.6;
+  font-weight: 300;
+  color: rgba(var(#{$color}), $alpha);
 }
 
 // Margin bottom on all child elements except last
