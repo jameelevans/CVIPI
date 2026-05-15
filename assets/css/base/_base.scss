@@ -1,4 +1,6 @@
 @use 'abstracts/mixins' as mixins;
+@use '../base/typography' as typography;
+@use '../abstracts/variables' as variables;
 
 // * Simple CSS Reset
 *,
@@ -21,7 +23,7 @@ html {
 }
 // Selection background color
 ::selection {
-  background-color: var(--color-blue);
+  background-color: var(--color-deep);
   color: var(--color-white);
 }
 // Screen reader shortcut link
@@ -31,12 +33,13 @@ html {
 
   &:focus {
     position: absolute;
+    font-family: typography.$font-secondary;
     display: inline-block;
     top: 4rem;
     left: 8vw;
     font-size: 1.6rem;
     padding: 1rem 2rem;
-    background-color: var(--color-dark-blue);
+    background-color: var(--color-deep);
     color: var(--color-white);
     outline: 2px dashed var(--color-white);
     overflow: visible;

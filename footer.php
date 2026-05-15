@@ -39,12 +39,12 @@
                             <ul class="social__list">
                                 <li class="social__item">
                                     <a href="" class="social__link">
-                                        <?php echo svg_icon('social__icon', 'arrow-right');?>
+                                        <?php echo svg_icon('social__icon', 'x');?>
                                     </a>
                                 </li>
                                 <li class="social__item">
                                     <a href="" class="social__link">
-                                        <?php echo svg_icon('social__icon', 'arrow-right');?>
+                                        <?php echo svg_icon('social__icon', 'linkedin');?>
                                     </a>
                                 </li>
                                 <li class="social__item">
@@ -102,7 +102,7 @@
                 </div> 
             </div>
         </div>
-        <a href="#main-content" class="back__top"><?php echo svg_icon('social__icon', 'arrow-right');?></a>
+        <a href="#main-content" class="backtop" aria-label="Go back to the top"><?php echo svg_icon('backtop__icon', 'up');?><span class="sr-only">Back Top</span></a>
         
     </footer>
   

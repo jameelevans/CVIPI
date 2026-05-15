@@ -69,6 +69,78 @@
 									</ul>
 							</nav>
 						</div><!-- .navigation -->
+
+						<!-- Mobile navigation 
+						<div class="mobile-navigation">
+							 Hidden menu label for accessibility
+							<span hidden="" id="mobile-menu">Main menu</span>
+
+							<button class="mobile-navigation__menu" aria-controls="mobile-navigation" tabindex="0" aria-expanded="false" aria-labelledby="mobile-menu">
+
+							navigation menu icon
+								<i class="mobile-navigation__icon" alt="Menu icon" aria-hidden="true">&nbsp;</i>
+							</button>
+
+
+							<nav class="mobile-navigation__nav" aria-label="Mobile menu" aria-labelledby="mobile-menu" aria-hidden="true">
+								
+								<ul class="mobile-navigation__list">
+									
+									<li class="mobile-navigation__item">
+										<a href="#"
+										class="mobile-navigation__link"
+										title="Go to Home page">
+										Home
+										</a>
+									</li>
+									<li class="mobile-navigation__item">
+										<a href="#"
+										class="mobile-navigation__link"
+										title="Go to Home page">
+										What is CVIPI?
+										</a>
+									</li><li class="mobile-navigation__item">
+										<a href="#"
+										class="mobile-navigation__link"
+										title="Go to Home page">
+										Who We Serve
+										</a>
+									</li><li class="mobile-navigation__item">
+										<a href="#"
+										class="mobile-navigation__link"
+										title="Go to Home page">
+										Our Stories
+										</a>
+									</li>
+									<li class="mobile-navigation__item">
+										<a href="#"
+										class="mobile-navigation__link"
+										title="Go to Home page">
+										Resources
+										</a>
+									</li>
+									<li class="mobile-navigation__item">
+										<a href="#"
+										class="mobile-navigation__link"
+										title="Go to Home page">
+										Events
+										</a>
+									</li>
+									<li class="mobile-navigation__item">
+										<a href="#"
+										class="mobile-navigation__link"
+										title="Go to Home page">
+										Contacts
+										</a>
+									</li>
+
+									
+									</ul>
+
+								
+							</nav>
+							
+						</div> Nav end -->
 					</div><!-- .Header Nav -->
 				</div><!-- .Header Inner -->
 		</header><!-- .Header -->

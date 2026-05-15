@@ -52,6 +52,7 @@ Text Domain: cvipi
 
 //*--------| Components |--------*//
 @use 'components/buttons' as btns;
+@use 'components/backtop' as backtop;
 
 //*--------| Layouts |--------*//
 @use 'layout/header' as header;
