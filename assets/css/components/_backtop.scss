@@ -1,5 +1,11 @@
 @use 'abstracts/mixins' as mixins;
 
+// ==========================================================================
+// Back To Top
+// ==========================================================================
+// Floating scroll helper. The JS module toggles `backtop--is-visible` once the
+// visitor scrolls into the main content area.
+
 .backtop {
   background-color: var(--color-deep);
   border-radius: 10rem;

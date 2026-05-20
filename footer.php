@@ -6,9 +6,10 @@
  */
 
 ?>
-    <!--Footer-->
+    <!-- Site footer: newsletter signup, footer navigation, legal copy, and back-to-top control. -->
     <footer class="footer">
        <div class="footer__container">
+             <!-- Newsletter signup block. Form action is intentionally blank until an email provider is connected. -->
              <div class="footer__subscribe">
                 <div class="footer__wrapper">
                     <header class="footer__header">
@@ -28,7 +29,8 @@
                 </div>
 
             </div>
-       </div>
+        </div>
+        <!-- Primary footer content: brand summary, social links, navigation groups, and grant language. -->
         <div class="footer__main">
             <div class="footer__wrapper">
                 <div class="footer__top">

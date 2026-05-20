@@ -3,10 +3,14 @@ const fs = require('fs');
 const nodePath = require('path');
 const { execFile } = require('child_process');
 
+// Gulp handles local theme build tasks: Sass compilation, Webpack bundling,
+// optional BrowserSync reloads, and source image conversion to WebP.
 let browserSync;
 
+// WordPress requires this theme header at the top of the compiled root style.css.
 const themeHeader = `!\nTheme Name: CVIPI\nAuthor: Jameel Evans\nDescription: This theme was designed by Laura Myers and Eduardo Minaya. The theme was coded by Jameel Evans.\nVersion: 1.1\nText Domain: cvipi\n`;
 
+// PostCSS plugin that prepends the WordPress theme header after CSS processing.
 const addThemeHeader = () => ({
     postcssPlugin: 'add-theme-header',
     Once(root) {
@@ -35,11 +39,13 @@ const paths = {
 };
 
 function webpPathFor(imagePath) {
+    // Output the optimized WebP beside the original source image.
     const parsedPath = nodePath.parse(imagePath);
     return nodePath.join(parsedPath.dir, `${parsedPath.name}.webp`);
 }
 
 function shouldConvertImage(imagePath, webpPath) {
+    // Skip conversion when the existing WebP is newer than its source image.
     if (!fs.existsSync(webpPath)) {
         return true;
     }
@@ -50,6 +56,7 @@ function shouldConvertImage(imagePath, webpPath) {
 }
 
 function convertImageToWebp(imagePath) {
+    // Convert one image with cwebp. This expects cwebp to be installed locally.
     const PluginError = require('plugin-error');
     const log = require('fancy-log');
     const webpPath = webpPathFor(imagePath);

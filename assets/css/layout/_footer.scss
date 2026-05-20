@@ -2,6 +2,12 @@
 @use '../base/typography' as typography;
 @use '../abstracts/mixins' as mixins;
 
+// ==========================================================================
+// Footer
+// ==========================================================================
+// Site-wide footer with newsletter signup, brand summary, social links, footer
+// navigation columns, and grant/legal copy.
+
 .footer {
   position: relative;
 
@@ -10,6 +16,7 @@
   }
 
   &__subscribe {
+    // Top band dedicated to email signup and short newsletter positioning copy.
     background: var(--color-dark-midnight-teal);
     padding: 10rem 5rem;
     text-align: center;
@@ -113,6 +120,7 @@
   }
 
   &__main {
+    // Main footer band contains the logo, footer nav groups, and legal copy.
     font-family: typography.$font-secondary;
     background-color: var(--color-deep);
     place-items: center;
@@ -149,6 +157,7 @@
   }
 
   .social__list {
+    // Social icons are scoped under footer so they do not affect other icon lists.
     display: flex;
     gap: 1.8rem;
     list-style: none;
@@ -216,6 +225,7 @@
   }
 
   &__bottom {
+    // Grant/copyright copy lives below the footer nav columns.
     padding: 2.5rem 0 0;
 
     & > *:not(:last-child) {

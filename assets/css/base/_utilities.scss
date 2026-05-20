@@ -1,4 +1,10 @@
-//Utility class helpers
+// ==========================================================================
+// Utilities
+// ==========================================================================
+// Small single-purpose classes that can be reused across templates without
+// creating a component-specific selector.
+
+// Spacing helpers for quick vertical rhythm adjustments.
 .mb-sm {
   margin-bottom: 2rem;
 }
@@ -13,6 +19,7 @@
 }
 
 .sr-only {
+  // Visually hides text while keeping it available to screen readers.
   position: absolute;
   left: -10000px;
   top: auto;
@@ -22,10 +29,12 @@
 }
 
 .fixed-position {
+  // Used by overlays/menus when the page underneath should not scroll.
   position: fixed;
 }
 
 .container {
+  // Shared content constraint for sections that need a centered max width.
   margin-left: auto;
   margin-right: auto;
   max-width: 144rem;

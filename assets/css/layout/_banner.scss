@@ -12,18 +12,13 @@
   // Temporary full-height treatment for the hero. Once surrounding content and
   // responsive spacing are finalized, this can be replaced with min-height or
   // content-driven spacing.
+  position: relative;
+  overflow: hidden;
   height: 100vh; // remove once we have real content spacing
 
-  // Layer 1: left-to-right dark gradient for text readability.
-  // Layer 2: photographic hero image.
-  background-image:
-    linear-gradient(
-      90deg,
-      rgba(var(--color-deep-a), 1) 0%,
-      rgba(var(--color-deep-a), 0.85) 40%,
-      rgba(var(--color-deep-a), 0) 100%
-    ),
-    url('assets/img/banner-img-1.webp');
+  // Static fallback image remains visible when no home-page videos are set.
+  background-color: var(--color-deep);
+  background-image: url('assets/img/banner-img-1.webp');
 
   // Centers and scales the background image so it fills the banner area without
   // tiling.
@@ -31,8 +26,39 @@
   background-repeat: none;
   background-size: cover;
 
+  &::before {
+    // Left-to-right dark gradient for text readability over image or video.
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      rgba(var(--color-deep-a), 1) 0%,
+      rgba(var(--color-deep-a), 0.85) 40%,
+      rgba(var(--color-deep-a), 0) 100%
+    );
+  }
+
+  &__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-color: var(--color-deep);
+  }
+
+  &__video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   &__inner {
     // Main banner composition: wide content area plus a fixed-width stats rail.
+    position: relative;
+    z-index: 2;
     display: grid;
     grid-template-columns: 3fr 35rem;
 

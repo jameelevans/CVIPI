@@ -11,6 +11,7 @@
  */
 
 //* Project options
+// Local URL used by BrowserSync when previewing the WordPress site.
 exports.urlToPreview =  'http://cvipi.local/'; // Local project URL of your already running WordPress site. Could be something like wpgulp.local or localhost:3000 depending upon your local WordPress setup.
 exports.productURL = './'; // Theme URL. Leave it like it is, since gulpfile.js lives in the root folder.
 
@@ -37,6 +38,8 @@ exports.watchJsMain = './assets/js/scripts.js'; // Path to all main JS file
 exports.watchPhp = './**/*.php'; // Path to all PHP files
 
 //* Browsers you care about for autoprefixing
+// Autoprefixer support matrix. Update this if the project's browser support
+// policy changes.
 exports.BROWSERS_LIST = [
     'last 2 version',
     '> 1%',

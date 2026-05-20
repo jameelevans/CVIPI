@@ -1,9 +1,22 @@
-<?php get_header(); ?>
+<?php
+/**
+ * Search results template.
+ *
+ * Runs a custom post query against the current search term and renders matching
+ * posts as cards. This template can be replaced with the default WordPress loop
+ * later if search needs pagination or multiple post types.
+ *
+ * @package cvipi
+ */
+
+get_header();
+?>
 
 
 <main>
     
     <?php
+    // Capture the submitted search term and pass it into a focused posts query.
     $s=get_search_query();
     $args = array(
       'post_type'=>'post',
@@ -11,7 +24,7 @@
         'posts_per_page'=>-1,
                     's' =>$s
                 );
-        // The Query
+        // Build the search results loop.
         $the_query = new WP_Query( $args );
         if ( $the_query->have_posts() ) {
             _e('<section class="webinars">
@@ -21,6 +34,7 @@
                         <div class="webinars__grid">');
             while ( $the_query->have_posts() ) {
               $the_query->the_post();
+              // Use the first category for the result card label/link.
               $get_cat  = get_the_category();
               $first_cat      = $get_cat[0];
               $category_name  = $first_cat->cat_name;

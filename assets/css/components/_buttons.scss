@@ -2,7 +2,13 @@
 @use 'abstracts/variables' as variables;
 @use 'base/typography' as typography;
 
-//* Overall button styles
+// ==========================================================================
+// Buttons
+// ==========================================================================
+// Reusable CTA/link treatments. Button classes are intentionally independent
+// from page sections so the same visual language can be reused across templates.
+
+//* Copper filled primary CTA.
 .btn__copper {
   &,
   &:link {
@@ -44,6 +50,8 @@
   }
 }
 
+// Footer form submit button. Kept separate because its sizing is tied to the
+// newsletter form rather than the general CTA pattern.
 .footer__btn {
   display: inline-flex;
   align-items: center;
@@ -68,6 +76,7 @@
   }
 }
 
+// Light outline CTA for dark backgrounds.
 .btn__outline-white {
   &,
   &:link {
@@ -109,6 +118,7 @@
   }
 }
 
+// Dark outline CTA for light backgrounds.
 .btn__outline-deep {
   &,
   &:link {
@@ -151,6 +161,7 @@
   }
 }
 
+// Small text-link treatment used inside story cards.
 .story__button {
   color: var(--color-deep);
   text-transform: uppercase;

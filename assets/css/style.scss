@@ -10,6 +10,9 @@ Text Domain: cvipi
 --------------------------------------------------------------
 *! TABLE OF CONTENTS:
 --------------------------------------------------------------
+* Main Sass entry point. This file should only import partials; component,
+* layout, and page-specific styles should live in the files below.
+*
 *  TODO: Import SCSS modules using @use and organize namespaces
 *
 * * | Abstracts |

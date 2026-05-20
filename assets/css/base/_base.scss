@@ -2,6 +2,11 @@
 @use '../base/typography' as typography;
 @use '../abstracts/variables' as variables;
 
+// ==========================================================================
+// Base
+// ==========================================================================
+// Global reset and document-level helpers shared by every template.
+
 // * Simple CSS Reset
 *,
 *::before,

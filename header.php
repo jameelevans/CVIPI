@@ -144,7 +144,61 @@
 					</div><!-- .Header Nav -->
 				</div><!-- .Header Inner -->
 		</header><!-- .Header -->
-		<div class="banner">
+		<?php
+		/*
+		 * Homepage banner video data.
+		 *
+		 * ACF field group expected on the front page:
+		 * - banner_videos: repeater
+		 * - video: file field, returned as an array or URL
+		 * - poster_image: optional image field, returned as an array or URL
+		 *
+		 * The front-end carousel reads the encoded data from data-banner-videos.
+		 * If no videos are present, the SCSS fallback background image remains visible.
+		 */
+		$banner_videos = array();
+		$banner_page_id = get_queried_object_id();
+
+		if ( is_front_page() && function_exists( 'get_field' ) ) {
+			$banner_video_rows = get_field( 'banner_videos', $banner_page_id );
+
+			if ( $banner_video_rows ) {
+				foreach ( $banner_video_rows as $banner_video_row ) {
+					$banner_video = isset( $banner_video_row['video'] ) ? $banner_video_row['video'] : null;
+					$banner_poster = isset( $banner_video_row['poster_image'] ) ? $banner_video_row['poster_image'] : null;
+					$banner_video_url = is_array( $banner_video ) && isset( $banner_video['url'] ) ? $banner_video['url'] : $banner_video;
+					$banner_poster_url = is_array( $banner_poster ) && isset( $banner_poster['url'] ) ? $banner_poster['url'] : '';
+
+					if ( $banner_video_url ) {
+						$banner_videos[] = array(
+							'src'    => esc_url_raw( $banner_video_url ),
+							'poster' => esc_url_raw( $banner_poster_url ),
+						);
+					}
+				}
+			}
+		}
+
+		$banner_video_data = wp_json_encode( $banner_videos );
+		$banner_has_videos = ! empty( $banner_videos );
+		$banner_first_video = $banner_has_videos ? $banner_videos[0] : null;
+		?>
+		<!-- Homepage banner: media layer sits behind the content and stats columns. -->
+		<div class="banner<?php echo $banner_has_videos ? ' banner--has-video' : ''; ?>"<?php echo $banner_has_videos ? ' data-banner-videos="' . esc_attr( $banner_video_data ) . '"' : ''; ?>>
+			<?php if ( $banner_has_videos ) : ?>
+				<!-- Decorative autoplay video; hidden from assistive tech because the copy below carries the meaning. -->
+				<div class="banner__media" aria-hidden="true">
+					<video
+						class="banner__video"
+						src="<?php echo esc_url( $banner_first_video['src'] ); ?>"
+						<?php echo ! empty( $banner_first_video['poster'] ) ? 'poster="' . esc_url( $banner_first_video['poster'] ) . '"' : ''; ?>
+						muted
+						playsinline
+						autoplay
+						preload="metadata"
+					></video>
+				</div>
+			<?php endif; ?>
 			<div class="banner__inner">
 				<div class="banner__left">
 					<div class="banner__container">

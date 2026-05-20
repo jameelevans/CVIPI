@@ -2,7 +2,13 @@
 @use '../abstracts/variables' as variables;
 @use '../base/typography' as typography;
 
-////// Mobile navigation styles
+// ==========================================================================
+// Mobile Navigation
+// ==========================================================================
+// Styles for the off-canvas mobile menu and its nested submenu panels. The
+// current header markup has the mobile navigation commented out, but these
+// styles are kept here for when that feature is re-enabled.
+
 .mobile-navigation {
   display: block;
   position: relative;

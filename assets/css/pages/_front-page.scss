@@ -2,8 +2,15 @@
 @use '../base/typography' as typography;
 @use '../abstracts/mixins' as mixins;
 
+// ==========================================================================
+// Front Page
+// ==========================================================================
+// Homepage sections below the header/banner. The markup is currently mostly
+// static, so section comments map directly to the blocks in front-page.php.
+
 #main-content {
   .about {
+    // Alternating two-column intro rows.
     & > *:nth-child(odd) {
       background: var(--color-dark-midnight-teal);
     }
@@ -103,6 +110,7 @@
   }
 
   .highlights {
+    // Split layout for events and resources teasers.
     background-color: var(--color-morning);
     padding: 12rem 5rem;
 
@@ -173,6 +181,7 @@
   }
 
   .events {
+    // Event cards inside the highlights section.
     display: grid;
     grid-template-columns: auto;
     gap: 2.5rem;
@@ -241,6 +250,7 @@
   }
 
   .resources {
+    // Resource cards inside the highlights section.
     display: grid;
     grid-template-columns: auto;
     gap: 2.5rem;
@@ -327,6 +337,7 @@
   }
 
   .stories {
+    // Three-card story spotlight band.
     background-color: var(--color-sand);
     padding: 12rem 5rem;
 
@@ -461,6 +472,7 @@
   }
 
   .providers {
+    // Logo marquee section for TA providers.
     background-color: var(--color-deep);
 
     place-items: center;
@@ -574,6 +586,7 @@
   }
 
   .provider__container {
+    // Masked marquee viewport. The duplicate list in markup creates an infinite loop.
     display: flex;
     gap: clamp(6rem, 12vw, 20rem);
     width: 100%;

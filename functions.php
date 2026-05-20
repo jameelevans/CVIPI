@@ -1,19 +1,19 @@
 <?php
-/** 
- * Custom Functions
+/**
+ * Theme functions and WordPress hooks.
  *
- * ! What the custom functions do:
- * *    1. Enqueues all styles and scripts
- * *    2. Asynchronously load scripts for speed optimization
+ * This file registers global theme behavior: front-end assets, theme support,
+ * login-screen customization, SVG helper output, and Customizer settings.
  *      
+ * @package cvipi
  */
 
 // * * --------| Actions and filters in order |-------- *
 
-  // Action to enque styles and scripts
+  // Register front-end styles and scripts.
   add_action( 'wp_enqueue_scripts', 'theme_enqueue_scripts' );
 
-  // Asynchronously load scripts
+  // Adds async loading to script URLs that include the #asyncload marker.
   add_filter( 'clean_url', 'async_scripts', 11, 1 ); 
 
 
@@ -21,7 +21,7 @@
 
 // * * --------| Functions in order |-------- *
 
-  //Enqueuing styles and scripts
+  // Enqueue the compiled JavaScript bundle and the root WordPress theme stylesheet.
   function theme_enqueue_scripts() {
   wp_enqueue_script( 'Bundled_js', get_template_directory_uri() . '/assets/js/scripts-bundled.js#asyncload', array(), '1.0.0', true );
   wp_enqueue_style('allball_main_styles', get_stylesheet_uri());
@@ -29,7 +29,7 @@
 
 
 
-  // Asynchronously load scripts
+  // Convert the #asyncload marker into an async attribute for front-end script tags.
   function async_scripts($url){
   if ( strpos( $url, '#asyncload') === false )
     return $url;
@@ -39,7 +39,7 @@
     return str_replace( '#asyncload', '', $url )."' async='async";
   }
 
-   //* 3. Activates the ability to add custom logo in customizer
+//* Register theme supports and custom image sizes.
 function jameelevans_custom_logo_setup() {
   $defaults = array(
       'height'      => 38,
@@ -50,7 +50,7 @@ function jameelevans_custom_logo_setup() {
   );
   add_theme_support( 'custom-logo', $defaults );
 
-  //* 4. Enable support for custom sized Post Thumbnails on posts and pages
+  // Custom image sizes available to templates and media functions.
   add_image_size( 'my-thumbnail', 300, 169, false);
   add_image_size( 'x-small', 450, 253, false);
   add_image_size( 'small', 600, 338, false);
@@ -103,7 +103,8 @@ function ourLoginTitle() {
 add_filter('login_headertitle', 'ourLoginTitle');
 // .Add theme title to login screen
 
- //* 7.  Display inline svg icon from sprite sheet with custom class
+ //* Display an inline SVG icon from the theme sprite sheet.
+ // The $class argument lets templates apply BEM-specific icon styling.
 function svg_icon($class, $icon) { ?>
   <svg class="<?php echo $class ?>" aria-hidden="true">
     <use
@@ -143,7 +144,6 @@ function allball_customize_register($wp_customize) {
   ));
 }
 add_action('customize_register', 'allball_customize_register');
-
 
 
 
