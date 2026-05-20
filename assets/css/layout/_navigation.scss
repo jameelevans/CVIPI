@@ -1,518 +1,291 @@
-@use 'abstracts/mixins' as mixins;
-@use '../abstracts/variables' as variables;
 @use '../base/typography' as typography;
+@use '../abstracts/mixins' as mixins;
+
+// ==========================================================================
+// Primary Navigation
+// ==========================================================================
+// Separated from `.header` so the navigation styling can stay focused on link
+// layout, typography, and interaction states.
+
+.navigation {
+  // Makes the navigation block participate in the full-height header layout.
+
+  display: none;
+
+  &__nav {
+    // Row layout for the menu container.
+    display: flex;
+
+    // Secondary font gives the nav a distinct, UI-like voice compared to
+    // larger editorial headings.
+    font-family: typography.$font-secondary;
+    font-size: 1.3rem;
+    letter-spacing: 0.13px;
+    font-weight: 600;
+  }
+
+  &__list {
+    // Keeps top-level nav items in a single horizontal row and allows each item
+    // to stretch vertically for the underline treatment.
+    display: flex;
+    align-items: stretch;
+
+    // Explicit gap controls rhythm between links without relying on margins on
+    // individual list items.
+    gap: 3.8rem;
+
+    // Removes browser default bullets from the semantic list markup.
+    list-style: none;
+  }
+
+  &__item {
+    // Flex makes each item fill the nav height; relative positioning anchors the
+    // underline pseudo-element to this list item.
+    display: flex;
+    position: relative;
+
+    &::after {
+      // Decorative underline for hover and keyboard focus states.
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #1a6a92 0%, #b8722a 100%);
+
+      // Start hidden, then grow from the left edge when the item is active.
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover .navigation__link,
+    &:focus-within .navigation__link {
+      // Hover and focus-within both brighten the link, which keeps mouse and
+      // keyboard navigation visually consistent.
+      color: rgba(var(--color-white-a), 1);
+      text-decoration: none;
+    }
+
+    &:hover::after,
+    &:focus-within::after {
+      // Reveal the gradient underline for both mouse and keyboard users.
+      transform: scaleX(1);
+    }
+  }
+
+  &__link {
+    // The link itself becomes a full-height flex target so the click area and
+    // vertical alignment feel consistent across nav items.
+    display: flex;
+    align-items: center;
+
+    // Slightly muted default state; interaction states above move this to full
+    // white for clear feedback.
+    color: rgba(var(--color-white-a), 0.62);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+}
+
+@include mixins.respond(medium) {
+  .navigation {
+    display: flex;
+  }
+
+  .header__inner {
+    // grid-template-columns: 1fr auto;
+  }
+}
 
 // ==========================================================================
 // Mobile Navigation
 // ==========================================================================
-// Styles for the off-canvas mobile menu and its nested submenu panels. The
-// current header markup has the mobile navigation commented out, but these
-// styles are kept here for when that feature is re-enabled.
+// Off-canvas mobile menu. MobileNav.js controls the open/closed state,
+// aria-expanded, aria-hidden, inert, focus trapping, and body scroll lock.
 
 .mobile-navigation {
-  display: block;
-  position: relative;
-  text-align: center;
-  margin-top: 7.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
 
-  @include mixins.respond(smlmd) {
+  @media only screen and (min-width: 50em) {
     display: none;
-    text-align: center;
-    margin-top: 0;
   }
-  // Mobile menu outer grey box
+
   &__menu {
-    position: absolute;
+    position: relative;
+    z-index: 1600;
+    display: grid;
+    place-items: center;
+    width: 5.2rem;
+    height: 5.2rem;
+    margin-right: 1.5rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  &__menu:focus-visible,
+  &__close:focus-visible,
+  &__link:focus-visible {
+    outline: 2px dashed var(--color-carmine);
+    outline-offset: 4px;
+  }
+
+  &__icon,
+  &__icon::before,
+  &__icon::after {
+    display: block;
+    width: 2.8rem;
+    height: 2px;
     background-color: var(--color-white);
-    border: 2px solid var(--color-grey);
-    height: 7rem;
-    width: 7rem;
-    border-radius: 3px;
-    top: -4rem;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-    box-shadow: none;
-
-    &:focus {
-      outline: 2px dashed var(--color-white);
-      outline-offset: 1rem;
-    }
+    border-radius: 2px;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
   }
 
-  //Mobile menu icon
   &__icon {
-    position: absolute;
-    top: 0;
-
-    @include mixins.respond(medium) {
-      display: none;
-    }
-
-    //Mobile menu base styles for two icon lines
-    &::before,
-    &::after {
-      width: 4.5rem;
-      height: 3px;
-      border-radius: 1px;
-      background-color: var(--color-white);
-      display: inline-block;
-    }
-
-    //Content must be set empty for sudo elements
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      left: -2rem;
-      transition: all 0.3s ease-in-out;
-    }
-
-    //Individual positioining for 1st and 3rd icon lines
-    &::before {
-      top: 2.5rem;
-    }
-
-    &::after {
-      top: 4rem;
-    }
+    position: relative;
   }
 
-  &__checkbox {
-    display: none;
+  &__icon::before,
+  &__icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
   }
 
-  &__button {
-    position: absolute;
-    height: 7rem;
-    width: 7rem;
-    border-radius: 3px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2000;
-    cursor: pointer;
-    box-shadow: none;
+  &__icon::before {
+    top: -0.8rem;
   }
 
-  &__background {
-    height: 6rem;
-    width: 6rem;
-    border-radius: 5%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  &__icon::after {
+    top: 0.8rem;
+  }
+
+  &__menu--is-active &__icon {
     background-color: transparent;
-    z-index: 1000;
-    transition: all 0.8s cubic-bezier(0.86, 0, 0.07, 1);
-
-    &--is-scrolled {
-      position: fixed !important;
-      top: 3.5rem !important;
-    }
   }
 
-  ////////////// Mobile navigation wrapper - Initially hidden
-  &__nav {
-    height: 100%;
-    width: 100%;
-    position: fixed;
+  &__menu--is-active &__icon::before {
     top: 0;
-    background: green;
-    right: 0;
+    transform: rotate(45deg);
+  }
+
+  &__menu--is-active &__icon::after {
+    top: 0;
+    transform: rotate(-45deg);
+  }
+
+  &__nav {
+    position: fixed;
+    inset: 0;
     z-index: 1500;
-    transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    //opacity: 0;
-    //visibility: hidden;
-    pointer-events: none; // 🔹 can't be clicked when hidden
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 9rem 3rem 5rem;
+    background: rgba(var(--color-deep-a), 0.98);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(100%);
+    transition:
+      opacity 0.25s ease,
+      visibility 0.25s ease,
+      transform 0.3s ease;
   }
 
   &__nav--is-visible {
     opacity: 1;
-    width: 100%;
-    top: 0;
     visibility: visible;
-    pointer-events: auto; // 🔹 now catches all clicks
+    pointer-events: auto;
+    transform: translateX(0);
   }
 
-  .mobile-navigation__current-page {
-    background-position: 100% !important;
-    font-weight: 500 !important;
-    color: var(--color-black) !important;
-    background-color: var(--color-teal) !important;
+  &__controls {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
   }
 
   &__close {
-    position: absolute;
-    top: 2rem;
-    right: 2rem;
-    height: 8rem;
-    width: 8rem;
-    border-radius: 50%;
-    background-color: yellow;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 5.2rem;
+    height: 5.2rem;
     padding: 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-
-    &:focus-visible {
-      outline: 2px dashed var(--color-white);
-      outline-offset: 3px;
-    }
+    background: transparent;
+    border: 1px solid rgba(var(--color-white-a), 0.28);
+    border-radius: 3px;
+    cursor: pointer;
   }
 
-  &__x {
+  &__close-icon,
+  &__close-icon::before {
     display: block;
-    width: 4rem;
-    height: 4rem;
-    fill: var(--color-white);
+    width: 2.8rem;
+    height: 2px;
+    background-color: var(--color-white);
+    border-radius: 2px;
   }
 
-  // Mobile list
+  &__close-icon {
+    transform: rotate(45deg);
+  }
+
+  &__close-icon::before {
+    content: '';
+    transform: rotate(90deg);
+  }
+
   &__list {
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    width: 100%;
-    transform: translate(-50%, -50%);
+    display: grid;
+    gap: 2rem;
+    width: min(100%, 42rem);
     list-style: none;
     text-align: center;
   }
 
-  // Mobile list items
-  &__item {
-    .mobile-navigation__icon {
-      fill: var(--color-dark-grey);
-      position: absolute;
-      right: 12px; // move slightly away from edge
-      top: 50%; // center vertically
-      transform: translateY(-50%);
-      width: 18px;
-      height: 18px;
-      pointer-events: none; // so it doesn’t block clicks on the input
-      z-index: 2;
-    }
-    &:not(:last-of-type) {
-      margin-block-end: 3rem;
-    }
-  }
-
-  // Mobile links
   &__link {
-    &:link,
-    &:visited {
-      display: inline-block;
-      font-size: 2.5rem;
-      font-weight: 300;
-      //width: 100%;
-      padding: 1rem 2rem;
-      color: var(--color-black);
-      background-color: transparent;
-      text-decoration: none;
-      transition: all 0.4s;
-    }
-
-    &:hover,
-    &:focus,
-    &:active {
-      background-position: 100%;
-      font-weight: 500;
-      color: var(--color-black);
-      background-color: var(--color-dark-midnight-teal);
-      transform: translateX(1rem);
-    }
+    display: block;
+    padding: 1.1rem 1.5rem;
+    color: var(--color-white);
+    font-family: typography.$font-secondary;
+    font-size: clamp(2.2rem, 8vw, 3.2rem);
+    font-weight: 600;
+    line-height: 1.1;
+    text-decoration: none;
+    transition:
+      color 0.2s ease,
+      transform 0.2s ease;
   }
 
-  &__search {
-    left: 50%;
-    transform: translateX(-50%);
-    color: var(--color-grey);
-    height: 6rem;
-    width: 40rem;
-    position: relative;
+  &__link:hover,
+  &__link:focus-visible {
+    color: var(--color-carmine);
+    transform: translateX(0.4rem);
   }
+}
 
-  &__search input {
-    height: 100%;
-    width: 100%;
-    border: none;
-    padding: 0 1rem;
-    font-size: 1.6rem;
-    outline: none;
-  }
+.mobile-navigation-open {
+  overflow: hidden;
+}
 
-  &__search input::placeholder {
-    color: rgba(var(--color-dark-grey-a), 0.5);
-  }
-
-  &__search button {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    background: none;
-    border: none;
-    padding: 0 1rem;
-    cursor: pointer;
-  }
-
-  //FUNCTIONALITY
-  &__checkbox:checked ~ &__background {
-    transform: scale(60);
-    background-color: var(--color-deep);
-  }
-
-  &__checkbox:checked ~ &__nav {
-    opacity: 1;
-    width: 100%;
-    top: 0;
-    visibility: visible;
-  }
-
-  //When checkbox is selected --> slecte its sibling, then select the buttons child (icon) then remove middle icon line
-  &__checkbox:checked + &__button &__icon {
-    background-color: transparent;
-  }
-
-  //Rotate top icon line on menu click
-  &__checkbox:checked + &__button &__icon::before {
-    top: 3rem;
-    transform: rotate(135deg);
-  }
-
-  //Rotate bottom icon line on menu click
-  &__checkbox:checked + &__button &__icon::after {
-    top: 3rem;
-    transform: rotate(-135deg);
-  }
-
-  /* ---------------------------------------------------------
-   Toggle visibility of Close / Back buttons via aria-hidden
-   ---------------------------------------------------------
-   aria-hidden alone does NOT visually hide elements,
-   so we explicitly map aria-hidden state to display.
-  --------------------------------------------------------- */
-
-  .mobile-navigation__back[aria-hidden='true'],
-  .mobile-navigation__close[aria-hidden='true'] {
-    display: none;
-  }
-
-  /* =========================================================
-      MOBILE SLIDE-IN SUBMENUS (Level 2 panels)
-      ---------------------------------------------------------
-      Goal:
-      - Tap chevron on a parent item -> submenu slides in from right
-      - Main menu stays underneath (blur/dim) and becomes non-interactive
-      - Back button appears in the same location as the Close (X) button
-      - Uses ARIA state (aria-hidden="false") to determine which submenu is active
-      ========================================================= */
-
-  /* ---------------------------------------------------------
-      CONTROLS (Close + Back)
-      ---------------------------------------------------------
-      This wrapper sits at the top of the mobile panel.
-      We set pointer-events: none so it doesn't block clicks on the menu,
-      and then re-enable pointer-events on the actual buttons.
-    --------------------------------------------------------- */
-  &__controls {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 12rem; /* reserve space so list doesn’t collide with buttons */
-    z-index: 5; /* above menus */
-    pointer-events: none;
-  }
-
-  /* Ensure the Close button remains clickable inside the pointer-events: none wrapper */
-  &__close {
-    pointer-events: auto;
-  }
-
-  /* Back button mirrors the Close button positioning + style */
-  &__back {
-    position: absolute;
-    top: 2rem;
-    right: 2rem;
-    height: 8rem;
-    width: 8rem;
-    border-radius: 50%;
-    background-color: var(--color-white);
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    pointer-events: auto;
-
-    /* Keyboard accessibility */
-    &:focus-visible {
-      outline: 2px dashed var(--color-white);
-      outline-offset: 3px;
-    }
-
-    /* Icon sizing */
-    svg {
-      width: 4rem;
-      height: 4rem;
-      fill: var(--color-white);
-      transform: translateX(-3px);
-    }
-  }
-
-  /* ---------------------------------------------------------
-    MAIN MENU ROWS (Parent link + chevron button)
-    --------------------------------------------------------- */
-  &__row {
-    //display: grid;
-    //grid-template-columns: 1fr auto;
-    align-items: center;
-    position: relative;
-    width: 100%;
-  }
-
-  /* Chevron “open submenu” button */
-  &__submenu-toggle {
-    height: 6rem;
-    width: 6rem;
-    border-radius: 50%;
-    border: none;
-    position: absolute;
-    right: 10rem;
-    background: transparent;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-
-    svg {
-      width: 3rem;
-      height: 3rem;
-      fill: var(--color-white);
-    }
-
-    &:focus-visible {
-      outline: 2px dashed var(--color-white);
-      outline-offset: 6px;
-    }
-  }
-
-  /* ---------------------------------------------------------
-   SUBMENU LAYER (holds the 3 different submenu <ul>s)
-   ---------------------------------------------------------
-   This container sits on top of the main list.
-   We keep it non-interactive until submenu-open state is active.
-  --------------------------------------------------------- */
-  &__submenus {
-    position: absolute;
-    inset: 0; /* top/right/bottom/left: 0 */
-    z-index: 4;
-    pointer-events: none;
-  }
-
-  /* ---------------------------------------------------------
-   SUBMENU PANELS (each <ul> panel)
-   ---------------------------------------------------------
-   Default: off-canvas to the right
-   Active: translateX(0) so it slides into view
-    --------------------------------------------------------- */
-  &__submenu {
-    position: absolute;
-    inset: 0;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-
-    /* Match your main list layout (centered vertically) */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    /* Slide-in animation */
-    transform: translateX(100%);
-    transition: transform 0.35s ease;
-
-    /* Only active submenu should be clickable */
-    pointer-events: none;
-
-    /* Same background as the mobile nav so it feels like a new “screen” */
-    background: var(--color-black);
-
-    /* ACTIVE STATE:
-     Instead of relying on a class, we use aria-hidden="false"
-     because your JS is already toggling that attribute correctly. */
-    &[aria-hidden='false'] {
-      transform: translateX(0);
-      pointer-events: auto;
-    }
-  }
-
-  /* Submenu items spacing (slightly tighter so long category lists fit better) */
-  &__submenu-item {
-    margin-block-end: 2.5rem;
-  }
-
-  /* Submenu links mirror the main menu link styling */
-  &__sublink {
-    &:link,
-    &:focus,
-    &:visited {
-      display: inline-block;
-      font-size: 2.5rem;
-      font-weight: 300;
-      padding: 1rem 2rem;
-      color: var(--color-black);
-      background-color: transparent;
-      text-decoration: none;
-      transition: all 0.4s;
-      text-align: center;
-    }
-
-    &:hover,
-    &:focus,
-    &:active {
-      font-weight: 500;
-      color: var(--color-black);
-      background-color: var(--color-midnight-teal);
-      transform: translateX(1rem);
-    }
-  }
-
-  /* ---------------------------------------------------------
-   SUBMENU-OPEN MODE
-   ---------------------------------------------------------
-   The JS adds `.mobile-navigation__nav--submenu-open` to the panel.
-   In this mode:
-   - Main menu stays visible but blurred/dimmed
-   - Main menu becomes non-interactive
-   - Submenu layer becomes interactive
-    --------------------------------------------------------- */
-  &__nav--submenu-open {
-    .mobile-navigation__list {
-      filter: blur(2px);
-      opacity: 0.35;
-      pointer-events: none;
-    }
-
-    .mobile-navigation__submenus {
-      pointer-events: auto;
-    }
-  }
-
-  /* ---------------------------------------------------------
-   REDUCED MOTION
-   ---------------------------------------------------------
-   Respect user motion preferences by removing transitions.
-    --------------------------------------------------------- */
-  @media (prefers-reduced-motion: reduce) {
-    &__submenu {
-      transition: none !important;
-    }
+@media (prefers-reduced-motion: reduce) {
+  .mobile-navigation__nav,
+  .mobile-navigation__icon,
+  .mobile-navigation__icon::before,
+  .mobile-navigation__icon::after,
+  .mobile-navigation__link {
+    transition: none;
   }
 }

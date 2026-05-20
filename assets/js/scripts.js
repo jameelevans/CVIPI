@@ -4,13 +4,13 @@ import $ from 'jquery';
 
 // Our modules/ classes
 import BackTop from './modules/BackTop';
-//import MobileNav from './modules/MobileNav';
+import MobileNav from './modules/MobileNav';
 
 
 
 // Instantiate a new object using our modules/classes
 let backTop = new BackTop();
-//const mobilenav = new MobileNav();
+const mobilenav = new MobileNav();
 
 // Homepage banner video carousel.
 // PHP renders the first video immediately for fast display, then stores the

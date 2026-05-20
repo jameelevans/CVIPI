@@ -70,77 +70,42 @@
 							</nav>
 						</div><!-- .navigation -->
 
-						<!-- Mobile navigation 
+						<!-- Mobile navigation: hidden on desktop and controlled by MobileNav.js. -->
 						<div class="mobile-navigation">
-							 Hidden menu label for accessibility
-							<span hidden="" id="mobile-menu">Main menu</span>
+							<span class="sr-only" id="mobile-menu-label">Main menu</span>
 
-							<button class="mobile-navigation__menu" aria-controls="mobile-navigation" tabindex="0" aria-expanded="false" aria-labelledby="mobile-menu">
-
-							navigation menu icon
-								<i class="mobile-navigation__icon" alt="Menu icon" aria-hidden="true">&nbsp;</i>
+							<button class="mobile-navigation__menu" type="button" aria-controls="mobile-navigation" aria-expanded="false" aria-labelledby="mobile-menu-label">
+								<span class="mobile-navigation__icon" aria-hidden="true"></span>
 							</button>
 
-
-							<nav class="mobile-navigation__nav" aria-label="Mobile menu" aria-labelledby="mobile-menu" aria-hidden="true">
+							<nav id="mobile-navigation" class="mobile-navigation__nav" aria-label="Mobile menu" aria-hidden="true">
 								
+
 								<ul class="mobile-navigation__list">
-									
 									<li class="mobile-navigation__item">
-										<a href="#"
-										class="mobile-navigation__link"
-										title="Go to Home page">
-										Home
-										</a>
+										<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="mobile-navigation__link">Home</a>
 									</li>
 									<li class="mobile-navigation__item">
-										<a href="#"
-										class="mobile-navigation__link"
-										title="Go to Home page">
-										What is CVIPI?
-										</a>
-									</li><li class="mobile-navigation__item">
-										<a href="#"
-										class="mobile-navigation__link"
-										title="Go to Home page">
-										Who We Serve
-										</a>
-									</li><li class="mobile-navigation__item">
-										<a href="#"
-										class="mobile-navigation__link"
-										title="Go to Home page">
-										Our Stories
-										</a>
+										<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="mobile-navigation__link">What is CVIPI?</a>
 									</li>
 									<li class="mobile-navigation__item">
-										<a href="#"
-										class="mobile-navigation__link"
-										title="Go to Home page">
-										Resources
-										</a>
+										<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="mobile-navigation__link">Who We Serve</a>
 									</li>
 									<li class="mobile-navigation__item">
-										<a href="#"
-										class="mobile-navigation__link"
-										title="Go to Home page">
-										Events
-										</a>
+										<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="mobile-navigation__link">Our Stories</a>
 									</li>
 									<li class="mobile-navigation__item">
-										<a href="#"
-										class="mobile-navigation__link"
-										title="Go to Home page">
-										Contacts
-										</a>
+										<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="mobile-navigation__link">Resources</a>
 									</li>
-
-									
-									</ul>
-
-								
+									<li class="mobile-navigation__item">
+										<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="mobile-navigation__link">Events</a>
+									</li>
+									<li class="mobile-navigation__item">
+										<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="mobile-navigation__link">Contacts</a>
+									</li>
+								</ul>
 							</nav>
-							
-						</div> Nav end -->
+						</div><!-- .mobile-navigation -->
 					</div><!-- .Header Nav -->
 				</div><!-- .Header Inner -->
 		</header><!-- .Header -->

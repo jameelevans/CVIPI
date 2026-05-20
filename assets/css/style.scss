@@ -59,6 +59,7 @@ Text Domain: cvipi
 
 //*--------| Layouts |--------*//
 @use 'layout/header' as header;
+@use 'layout/navigation' as navigation;
 @use 'layout/banner' as banner;
 @use 'layout/footer' as footer;
 

@@ -14,7 +14,6 @@
   // content-driven spacing.
   position: relative;
   overflow: hidden;
-  height: 100vh; // remove once we have real content spacing
 
   // Static fallback image remains visible when no home-page videos are set.
   background-color: var(--color-deep);
@@ -33,12 +32,16 @@
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background: linear-gradient(
-      90deg,
-      rgba(var(--color-deep-a), 1) 0%,
-      rgba(var(--color-deep-a), 0.85) 40%,
-      rgba(var(--color-deep-a), 0) 100%
-    );
+    background: rgba(var(--color-deep-a), 0.93);
+
+    @include mixins.respond(medium) {
+      background: linear-gradient(
+        90deg,
+        rgba(var(--color-deep-a), 1) 0%,
+        rgba(var(--color-deep-a), 0.85) 40%,
+        rgba(var(--color-deep-a), 0) 100%
+      );
+    }
   }
 
   &__media {
@@ -60,10 +63,13 @@
     position: relative;
     z-index: 2;
     display: grid;
-    grid-template-columns: 3fr 35rem;
-
+    grid-template-columns: auto;
     // Allows both columns to fill the full viewport-height banner.
     height: 100%;
+
+    @include mixins.respond(medium) {
+      grid-template-columns: 3fr 35rem;
+    }
   }
 
   // --------------------------------------------------------------------------
@@ -71,9 +77,7 @@
   // --------------------------------------------------------------------------
 
   &__left {
-    // Small left offset keeps the content from sitting directly against the
-    // viewport while the inner container handles the larger responsive inset.
-    margin-left: 1.8rem;
+    margin-left: 0;
 
     // Vertically centers the headline group inside the hero.
     display: flex;
@@ -81,19 +85,33 @@
 
     // Establishes the default text color for the left hero column.
     color: var(--color-white);
+    width: 100%;
 
-    // Keeps the text block narrow enough to sit inside the darker gradient
-    // portion of the background image.
-    width: 44%;
+    @include mixins.respond(medium) {
+      // Keeps the text block narrow enough to sit inside the darker gradient
+      // portion of the background image.
+      width: 44%;
+      // Small left offset keeps the content from sitting directly against the
+      // viewport while the inner container handles the larger responsive inset.
+      margin-left: 1.8rem;
+    }
   }
 
   &__container {
-    // Viewport-based inset lets the text breathe more on larger screens.
-    padding-left: 9vw;
-
+    padding: 5rem 9vw;
     // Applies consistent vertical rhythm between the direct children of the
     // banner copy group.
     @include mixins.flow-space(2.5rem);
+    display: flex;
+    flex-direction: column;
+    place-items: center;
+    gap: 3rem;
+
+    @include mixins.respond(medium) {
+      // Viewport-based inset lets the text breathe more on larger screens.
+      padding: 0 0 0 9vw;
+      display: block;
+    }
   }
 
   &__subheader {
@@ -106,7 +124,7 @@
     // Secondary uppercase treatment creates a small eyebrow above the main
     // heading.
     font-family: typography.$font-secondary;
-    font-size: 1rem;
+    font-size: 1.4rem;
     letter-spacing: 1.2px;
     text-transform: uppercase;
     color: var(--color-copper);
@@ -120,13 +138,16 @@
       height: 1px;
       background-color: var(--color-copper);
     }
+
+    @include mixins.respond(medium) {
+      font-size: 1rem;
+    }
   }
 
   &__heading {
-    // Oversized hero headline with tight line-height for a strong editorial
-    // presence.
-    font-size: 8rem;
-    line-height: 0.9;
+    font-size: 9.5rem;
+    line-height: 0.8;
+    text-align: center;
 
     em {
       // Emphasized word uses the carmine accent and lighter weight to create a
@@ -134,6 +155,14 @@
       color: var(--color-carmine);
       font-weight: 250;
       letter-spacing: -3.2px;
+    }
+
+    @include mixins.respond(medium) {
+      // Oversized hero headline with tight line-height for a strong editorial
+      // presence.
+      font-size: 8rem;
+      line-height: 0.9;
+      text-align: left;
     }
   }
 
@@ -144,10 +173,20 @@
     p {
       // Muted paragraph color keeps the body copy subordinate to the headline
       // while still readable on the dark overlay.
-      font-size: typography.$font-body;
       line-height: 1.6;
-      font-weight: 100;
       color: rgba(var(--color-white-a), 0.55);
+      font-size: 2rem;
+      text-shadow: 0 0 5px var(--color-black);
+      text-align: center;
+      font-weight: 300;
+
+      @include mixins.respond(medium) {
+        // Muted paragraph color keeps the body copy subordinate to the headline
+        // while still readable on the dark overlay.
+        font-size: typography.$font-body;
+        text-align: left;
+        font-weight: 100;
+      }
     }
 
     // Maintains even spacing between multiple detail paragraphs or child items.
@@ -172,11 +211,16 @@
     // Establishes shared text defaults for stat items.
     color: var(--color-white);
     font-size: typography.$font-body;
+    text-align: center;
 
     > *:not(:last-child) {
       // Fine divider between stat groups; skipped on the final item to avoid a
       // dangling bottom border.
       border-bottom: 0.5px solid rgba(var(--color-dark-grey-a), 0.5);
+    }
+
+    @include mixins.respond(medium) {
+      text-align: left;
     }
   }
 
