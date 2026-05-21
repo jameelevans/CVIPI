@@ -49,13 +49,20 @@
     inset: 0;
     z-index: 0;
     background-color: var(--color-deep);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 
   &__video {
-    display: block;
+    display: none;
     width: 100%;
     height: 100%;
     object-fit: cover;
+
+    @include mixins.respond(medium) {
+      display: block;
+    }
   }
 
   &__inner {
@@ -65,10 +72,12 @@
     display: grid;
     grid-template-columns: auto;
     // Allows both columns to fill the full viewport-height banner.
+
     height: 100%;
 
     @include mixins.respond(medium) {
       grid-template-columns: 3fr 35rem;
+      height: 100vh;
     }
   }
 
@@ -88,6 +97,10 @@
     width: 100%;
 
     @include mixins.respond(medium) {
+      width: 70%;
+    }
+
+    @include mixins.respond(large) {
       // Keeps the text block narrow enough to sit inside the darker gradient
       // portion of the background image.
       width: 44%;
@@ -212,6 +225,7 @@
     color: var(--color-white);
     font-size: typography.$font-body;
     text-align: center;
+    align-content: center;
 
     > *:not(:last-child) {
       // Fine divider between stat groups; skipped on the final item to avoid a

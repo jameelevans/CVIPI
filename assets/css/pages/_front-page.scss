@@ -21,7 +21,23 @@
 
     &__container {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: auto;
+
+      &:nth-child(2) {
+        .about__content {
+          order: -1;
+        }
+      }
+
+      @include mixins.respond(smed) {
+        grid-template-columns: 1fr 1fr;
+
+        &:nth-child(2) {
+          .about__content {
+            order: initial;
+          }
+        }
+      }
     }
 
     &__content {
@@ -29,6 +45,16 @@
       align-content: center;
       max-width: 60rem;
       margin: auto;
+      display: flex;
+      flex-direction: column;
+      place-items: center;
+      text-align: center;
+
+      @include mixins.respond(smed) {
+        display: block;
+        text-align: left;
+        place-items: unset;
+      }
     }
 
     &__subheader {
@@ -41,7 +67,7 @@
       // Secondary uppercase treatment creates a small eyebrow above the main
       // heading.
       font-family: typography.$font-secondary;
-      font-size: 1rem;
+      font-size: 1.4rem;
       letter-spacing: 1.2px;
       text-transform: uppercase;
       color: var(--color-carmine);
@@ -56,12 +82,16 @@
         height: 1px;
         background-color: var(--color-carmine);
       }
+
+      @include mixins.respond(medium) {
+        font-size: 1rem;
+      }
     }
 
     &__heading {
       // Oversized hero headline with tight line-height for a strong editorial
       // presence.
-      font-size: 3.5rem;
+      font-size: 4rem;
       line-height: 0.9;
       color: var(--color-white);
       margin-bottom: 2.5rem;
@@ -74,6 +104,10 @@
         letter-spacing: -1.8px;
         display: block;
         margin-top: 0.5rem;
+      }
+
+      @include mixins.respond(medium) {
+        font-size: 3.5rem;
       }
     }
 
@@ -104,8 +138,17 @@
     &__description {
       // Muted paragraph color keeps the body copy subordinate to the headline
       // while still readable on the dark overlay.
-      @include mixins.description(--color-white-a);
+      font-size: 2rem;
       margin-bottom: 2.5rem;
+      color: rgba(var(--color-white-a), 0.75);
+      line-height: 1.4;
+
+      @include mixins.respond(medium) {
+        // Muted paragraph color keeps the body copy subordinate to the headline
+        // while still readable on the dark overlay.
+        font-size: clamp(1.5rem, 1.6vw, 1.6rem);
+        line-height: normal;
+      }
     }
   }
 
@@ -421,8 +464,12 @@
 
     &__posts {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: auto;
       gap: 1.5rem;
+
+      @include mixins.respond(smed) {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
 
     .story {
@@ -431,15 +478,19 @@
       overflow: hidden;
 
       &__top {
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
       }
 
       &__img {
+        display: block;
         width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
 
       &__bottom {
         padding: 2.5rem 2.5rem 3.5rem 2.5rem;
-        margin-top: -5.5px;
       }
 
       &__header {
@@ -449,24 +500,36 @@
         color: var(--color-dark-orange);
         font-family: typography.$font-secondary;
         font-weight: 600;
-        font-size: 1rem;
+        font-size: 1.4rem;
         letter-spacing: 1.5px;
         text-transform: uppercase;
         margin-bottom: 0.8rem;
+
+        @include mixins.respond(smed) {
+          font-size: 1rem;
+        }
       }
 
       &__heading {
-        font-size: typography.$font-h3;
+        font-size: 3rem;
         color: var(--color-deep);
         line-height: 1.2;
         margin-bottom: 1rem;
+
+        @include mixins.respond(smed) {
+          font-size: typography.$font-h3;
+        }
       }
 
       &__excerpt {
         color: var(--color-medium-blue);
-        font-size: 1.4rem;
+        font-size: 1.9rem;
         line-height: 1.5;
         margin-bottom: 1rem;
+
+        @include mixins.respond(smed) {
+          font-size: 1.4rem;
+        }
       }
     }
   }

@@ -96,11 +96,9 @@
     text-align: center;
     border-radius: 3px;
     transition: all 0.3s ease-in-out;
-    padding: 1.2rem 3.5rem;
     text-decoration: none;
     text-transform: capitalize;
     position: relative;
-    font-size: 1.4rem;
     height: auto;
     font-weight: 400;
     margin-top: 1rem;
@@ -108,6 +106,8 @@
     background-color: transparent;
     color: var(--color-white);
     border: 1.5px solid rgba(var(--color-white-a), 0.7);
+    font-size: 1.8rem;
+    padding: 1.9rem 3.5rem;
 
     &:hover {
       filter: brightness(1.2);
@@ -121,6 +121,11 @@
       transition: all 0.4s ease-in-out;
       transform: translateY(-0.1rem);
       box-shadow: 0 0.5rem 1rem rgba(var(--color-black-a), 0.2);
+    }
+
+    @include mixins.respond(medium) {
+      font-size: 1.4rem;
+      padding: 1.2rem 3.5rem;
     }
   }
 }
@@ -170,15 +175,23 @@
 
 // Small text-link treatment used inside story cards.
 .story__button {
+  display: inline-block;
   color: var(--color-deep);
   text-transform: uppercase;
-  font-size: 1.2rem;
+  font-size: 1.8rem;
+  letter-spacing: 1.3px;
   font-family: typography.$font-secondary;
   padding: 2px 0;
   background-color: transparent;
   border-bottom: 2px solid var(--color-deep);
   text-decoration: none;
   font-weight: 500;
+  margin-top: 1.2rem;
+
+  @include mixins.respond(smed) {
+    font-size: 1.2rem;
+    margin-top: 0;
+  }
 }
 
 //* Show button only on mobile

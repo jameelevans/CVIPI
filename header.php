@@ -147,20 +147,19 @@
 		$banner_video_data = wp_json_encode( $banner_videos );
 		$banner_has_videos = ! empty( $banner_videos );
 		$banner_first_video = $banner_has_videos ? $banner_videos[0] : null;
+		$banner_first_poster = $banner_first_video && ! empty( $banner_first_video['poster'] ) ? $banner_first_video['poster'] : '';
 		?>
 		<!-- Homepage banner: media layer sits behind the content and stats columns. -->
 		<div class="banner<?php echo $banner_has_videos ? ' banner--has-video' : ''; ?>"<?php echo $banner_has_videos ? ' data-banner-videos="' . esc_attr( $banner_video_data ) . '"' : ''; ?>>
 			<?php if ( $banner_has_videos ) : ?>
-				<!-- Decorative autoplay video; hidden from assistive tech because the copy below carries the meaning. -->
-				<div class="banner__media" aria-hidden="true">
+				<!-- Decorative media; hidden from assistive tech because the copy below carries the meaning. -->
+				<div class="banner__media"<?php echo $banner_first_poster ? ' style="background-image: url(' . esc_url( $banner_first_poster ) . ');"' : ''; ?> aria-hidden="true">
 					<video
 						class="banner__video"
-						src="<?php echo esc_url( $banner_first_video['src'] ); ?>"
 						<?php echo ! empty( $banner_first_video['poster'] ) ? 'poster="' . esc_url( $banner_first_video['poster'] ) . '"' : ''; ?>
 						muted
 						playsinline
-						autoplay
-						preload="metadata"
+						preload="none"
 					></video>
 				</div>
 			<?php endif; ?>

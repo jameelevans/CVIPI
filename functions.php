@@ -24,7 +24,7 @@
   // Enqueue the compiled JavaScript bundle and the root WordPress theme stylesheet.
   function theme_enqueue_scripts() {
   wp_enqueue_script( 'Bundled_js', get_template_directory_uri() . '/assets/js/scripts-bundled.js#asyncload', array(), '1.0.0', true );
-  wp_enqueue_style('allball_main_styles', get_stylesheet_uri());
+  wp_enqueue_style('cvipi_main_styles', get_stylesheet_uri());
   }
 
 
@@ -40,13 +40,13 @@
   }
 
 //* Register theme supports and custom image sizes.
-function jameelevans_custom_logo_setup() {
+function cvipi_custom_logo_setup() {
   $defaults = array(
       'height'      => 38,
       'width'       => 38,
       'flex-height' => true,
       'flex-width'  => true,
-      'header-text' => array( 'Jameel Evans', 'Wordpress Developer & Consultant' ),
+      'header-text' => array( 'CVIPI', 'The National Community Violence Intervention & Prevention Initiative' ),
   );
   add_theme_support( 'custom-logo', $defaults );
 
@@ -61,10 +61,9 @@ function jameelevans_custom_logo_setup() {
   add_image_size( 'x-large', 2000, 1125, false);
   add_image_size( 'xx-large', 3000, 1688, false);
   add_image_size( 'full-size', 3200, 1801, false);
-  add_image_size( 'staff-headshot', 304, 350, true);
   add_image_size('pageBanner', 1300, 700, true);
 }
-add_action( 'after_setup_theme', 'jameelevans_custom_logo_setup' );
+add_action( 'after_setup_theme', 'cvipi_custom_logo_setup' );
 add_theme_support( 'post-thumbnails' );
 // .Activate the ability to add custom logo in customizer
 // .Enable support for Post Thumbnails on posts and pages
@@ -82,17 +81,17 @@ add_filter('login_headerurl', 'ourHeaderUrl');
 
 
 //* 4. Make css styles available to login screen
-function allball_login_css() {
-  wp_enqueue_style('allball_main_styles', get_stylesheet_uri());
+function cvipi_login_css() {
+  wp_enqueue_style('cvipi_main_styles', get_stylesheet_uri());
   }
-add_action('login_enqueue_scripts', 'allball_login_css');
+add_action('login_enqueue_scripts', 'cvipi_login_css');
 // .Make css styles available to login screen
 
 //* 5. Replace WP logo with site title name on login screen
-function allball_login_title() {
+function cvipi_login_title() {
   return get_bloginfo('name');
 }
-add_filter('login_headertitle', 'allball_login_title');
+add_filter('login_headertitle', 'cvipi_login_title');
 // .Replace WP logo with site title name on login screen
 
 
@@ -120,34 +119,55 @@ function svg_icon($class, $icon) { ?>
  
 
 // Add Footer Text Setting to Customizer
-function allball_customize_register($wp_customize) {
+function cvipi_customize_register($wp_customize) {
   // Add Footer Section
-  $wp_customize->add_section('allball_footer_section', array(
-      'title'       => __('Footer Settings', 'allball'),
+  $wp_customize->add_section('cvipi_footer_section', array(
+      'title'       => __('Footer Settings', 'cvipi'),
       'priority'    => 200,
       'description' => 'Customize the footer text',
   ));
 
   // Add Footer Text Setting
-  $wp_customize->add_setting('allball_footer_text', array(
+  $wp_customize->add_setting('cvipi_footer_text', array(
       'default'           => '', // Default is blank; admin must provide text
       'sanitize_callback' => 'wp_kses_post', // Allows safe HTML for formatting
       'transport'         => 'refresh',
   ));
 
   // Add Footer Text Control
-  $wp_customize->add_control('allball_footer_text_control', array(
-      'label'       => __('Footer Text', 'allball'),
-      'section'     => 'allball_footer_section',
-      'settings'    => 'allball_footer_text',
+  $wp_customize->add_control('cvipi_footer_text_control', array(
+      'label'       => __('Footer Text', 'cvipi'),
+      'section'     => 'cvipi_footer_section',
+      'settings'    => 'cvipi_footer_text',
       'type'        => 'textarea', // Allows for longer text
   ));
 }
-add_action('customize_register', 'allball_customize_register');
+add_action('customize_register', 'cvipi_customize_register');
 
 
 
+ //* 8.  Enable custom post types
+function custom_post_types() {
+
+// TA Providers Post Type
+register_post_type('ta_provider', array(
+  'show_in_rest' => true,
+  'supports' => array('title', 'editor', 'page-attributes'),
+  'rewrite' => array('slug' => 'ta-providers'),
+  'taxonomies'  => array( 'category' ),
+  'public' => true,
+  'labels' => array(
+    'name' => 'TA Providers',
+    'add_new_item' => 'Add New TA Provider',
+    'edit_item' => 'Edit TA Provider',
+    'all_items' => 'All TA Providers',
+    'singular_name' => 'TA Provider'
+  ),
+  'menu_icon' => 'dashicons-groups'
+));
 
 
-
-
+}
+ 
+  add_action('init', 'custom_post_types');
+  // . 8 Enable custom post types

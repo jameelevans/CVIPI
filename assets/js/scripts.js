@@ -13,11 +13,12 @@ let backTop = new BackTop();
 const mobilenav = new MobileNav();
 
 // Homepage banner video carousel.
-// PHP renders the first video immediately for fast display, then stores the
-// full ACF video list in data-banner-videos for this script to rotate through.
+// PHP renders the first poster immediately, then stores the full ACF video list
+// in data-banner-videos for desktop viewports to rotate through.
 const initBannerVideoCarousel = () => {
   const banner = document.querySelector('.banner[data-banner-videos]');
   const video = banner ? banner.querySelector('.banner__video') : null;
+  const desktopMedia = window.matchMedia('(min-width: 50em)');
 
   if (!banner || !video) {
     return;
@@ -39,14 +40,14 @@ const initBannerVideoCarousel = () => {
   video.muted = true;
   video.playsInline = true;
 
-  if (videos.length === 1) {
-    // Native looping is enough when editors upload only one banner video.
-    video.loop = true;
-    video.play().catch(() => {});
-    return;
-  }
-
   let currentVideo = 0;
+  let hasEndedListener = false;
+
+  const unloadVideo = () => {
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+  };
 
   const playVideo = (index) => {
     const nextVideo = videos[index];
@@ -68,13 +69,39 @@ const initBannerVideoCarousel = () => {
     video.play().catch(() => {});
   };
 
-  video.addEventListener('ended', () => {
-    // Move forward one item and wrap back to the first video forever.
-    currentVideo = (currentVideo + 1) % videos.length;
-    playVideo(currentVideo);
-  });
+  const enableDesktopVideo = () => {
+    if (videos.length === 1) {
+      // Native looping is enough when editors upload only one banner video.
+      video.loop = true;
+    } else if (!hasEndedListener) {
+      video.addEventListener('ended', () => {
+        // Move forward one item and wrap back to the first video forever.
+        currentVideo = (currentVideo + 1) % videos.length;
+        playVideo(currentVideo);
+      });
 
-  video.play().catch(() => {});
+      hasEndedListener = true;
+    }
+
+    playVideo(currentVideo);
+  };
+
+  const syncVideoToViewport = () => {
+    if (desktopMedia.matches) {
+      enableDesktopVideo();
+      return;
+    }
+
+    unloadVideo();
+  };
+
+  syncVideoToViewport();
+
+  if (desktopMedia.addEventListener) {
+    desktopMedia.addEventListener('change', syncVideoToViewport);
+  } else if (desktopMedia.addListener) {
+    desktopMedia.addListener(syncVideoToViewport);
+  }
 };
 
 if (document.readyState === 'loading') {

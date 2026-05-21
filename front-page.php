@@ -242,7 +242,7 @@ get_header();
 				<div class="stories__top">
 					<header class="stories__header">
 						<p class="stories__spotlight">Spotlight</p>
-						<h2 class="stories__heading">Our Success <em>Stories</em></h2>
+						<h2 class="stories__heading">Success <em>Stories</em></h2>
 						<p class="stories__subheading">These are some of our partner organizations and the programs they created to transform their communities.</p>
 					</header>
 					<div class="stories__cta">
@@ -251,64 +251,57 @@ get_header();
 				</div>
 
 				<div class="stories__posts">
-					<article class="story">
-						<div class="story__top">
-							<img src="<?php echo get_template_directory_uri(); ?>/assets/img/post-1.webp" alt="qwert" class="story__img">
-						</div>
-						
+					<?php
+					$story_query = new WP_Query(
+						array(
+							'post_type'           => 'post',
+							'posts_per_page'      => 3,
+							'post_status'         => 'publish',
+							'ignore_sticky_posts' => true,
+							'no_found_rows'       => true,
+						)
+					);
 
-						<div class="story__bottom">
-							<header class="story__header">
-								<p class="story__category">Chicago, IL</p>
-								<h3 class="story__heading">Communities Partnering 4 Peace</h3>
-							</header>
-							<p class="story__excerpt">Coordinating multi-site violence intervention across
-							Chicago's most impacted neighborhoods through street
-							outreach and victim services.</p>
+					if ( $story_query->have_posts() ) :
+						while ( $story_query->have_posts() ) :
+							$story_query->the_post();
+							$story_categories = get_the_category();
+							$story_category   = ! empty( $story_categories ) ? $story_categories[0]->name : '';
+							?>
+							<article class="story">
+								<?php if ( has_post_thumbnail() ) : ?>
+									<div class="story__top">
+										<?php
+										echo wp_get_attachment_image(
+											get_post_thumbnail_id(),
+											'regular',
+											false,
+											array(
+												'class' => 'story__img',
+												'sizes' => '(min-width: 900px) 280px, (min-width: 600px) 33vw, 100vw',
+											)
+										);
+										?>
+									</div>
+								<?php endif; ?>
 
-							<a href="" class="story__button">Read More</a>
-						</div>
+								<div class="story__bottom">
+									<header class="story__header">
+										<?php if ( $story_category ) : ?>
+											<p class="story__category"><?php echo esc_html( $story_category ); ?></p>
+										<?php endif; ?>
+										<h3 class="story__heading"><?php echo esc_html( get_the_title() ); ?></h3>
+									</header>
+									<p class="story__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 22 ) ); ?></p>
 
-
-					</article>
-
-					<article class="story">
-						<div class="story__top">
-							<img src="<?php echo get_template_directory_uri(); ?>/assets/img/post-3.webp" alt="qwert" class="story__img">
-						</div>
-						
-
-						<div class="story__bottom">
-							<header class="story__header">
-								<p class="story__category">Washington, D.C.</p>
-								<h3 class="story__heading">Safe Streets DC</h3>
-							</header>
-							<p class="story__excerpt">Deploying credible messengers in community mediation and conflict resolution to interrupt cycles of retaliatory violence.</p>
-
-							<a href="" class="story__button">Read More</a>
-						</div>
-
-
-					</article>
-
-					<article class="story">
-						<div class="story__top">
-							<img src="<?php echo get_template_directory_uri(); ?>/assets/img/post-2.webp" alt="qwert" class="story__img">
-						</div>
-						
-
-						<div class="story__bottom">
-							<header class="story__header">
-								<p class="story__category">Oakland, CA</p>
-								<h3 class="story__heading">Oakland Ceasefire</h3>
-							</header>
-							<p class="story__excerpt">Combining law enforcement partnership with community-based intervention and wraparound services for high-risk individuals.</p>
-
-							<a href="" class="story__button">Read More</a>
-						</div>
-
-
-					</article>
+									<a href="<?php echo esc_url( get_permalink() ); ?>" class="story__button">Read More</a>
+								</div>
+							</article>
+							<?php
+						endwhile;
+						wp_reset_postdata();
+					endif;
+					?>
 				</div>
 			</div>
 		</section>
@@ -320,52 +313,82 @@ get_header();
 					<h2 class="providers__heading">CVIPI <em>TA Providers</em></h2>
 				</header>
 
-				<div class="provider__container" aria-label="CVIPI TA providers">
+				<?php
+				$provider_query = new WP_Query(
+					array(
+						'post_type'           => 'ta_provider',
+						'posts_per_page'      => -1,
+						'post_status'         => 'publish',
+						'ignore_sticky_posts' => true,
+						'no_found_rows'       => true,
+						'orderby'             => 'menu_order title',
+						'order'               => 'ASC',
+					)
+				);
+				$provider_items = '';
+
+				if ( $provider_query->have_posts() ) {
+					ob_start();
+
+					while ( $provider_query->have_posts() ) {
+						$provider_query->the_post();
+						$provider_logo = function_exists( 'get_field' ) ? get_field( 'provider_logo' ) : null;
+						$provider_logo_id = 0;
+						$provider_logo_url = '';
+
+						if ( is_array( $provider_logo ) ) {
+							$provider_logo_id  = ! empty( $provider_logo['ID'] ) ? absint( $provider_logo['ID'] ) : 0;
+							$provider_logo_url = ! empty( $provider_logo['url'] ) ? $provider_logo['url'] : '';
+						} elseif ( is_numeric( $provider_logo ) ) {
+							$provider_logo_id = absint( $provider_logo );
+						} elseif ( is_string( $provider_logo ) ) {
+							$provider_logo_url = $provider_logo;
+						}
+
+						if ( ! $provider_logo_id && ! $provider_logo_url ) {
+							continue;
+						}
+						?>
+						<li class="providers__item">
+							<a href="<?php echo esc_url( get_permalink() ); ?>" class="providers__link">
+								<?php
+								if ( $provider_logo_id ) {
+									echo wp_get_attachment_image(
+										$provider_logo_id,
+										'medium',
+										false,
+										array(
+											'class' => 'providers__img',
+											'alt'   => get_the_title(),
+											'sizes' => '150px',
+										)
+									);
+								} else {
+									?>
+									<img src="<?php echo esc_url( $provider_logo_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" class="providers__img">
+									<?php
+								}
+								?>
+							</a>
+						</li>
+						<?php
+					}
+
+					$provider_items = ob_get_clean();
+					wp_reset_postdata();
+				}
+				?>
+
+				<?php if ( $provider_items ) : ?>
+					<div class="provider__container" aria-label="CVIPI TA providers">
 					<ul class="providers__list">
-						<li class="providers__item">
-							<a href="" class="providers__link">
-								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
-							</a>
-						</li>
-						<li class="providers__item">
-							<a href="" class="providers__link">
-								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
-							</a>
-						</li>
-						<li class="providers__item">
-							<a href="" class="providers__link">
-								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
-							</a>
-						</li>
-						<li class="providers__item">
-							<a href="" class="providers__link">
-								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
-							</a>
-						</li>
+						<?php echo $provider_items; ?>
 					</ul>
 					<ul class="providers__list" aria-hidden="true">
-						<li class="providers__item">
-							<a href="" class="providers__link" tabindex="-1">
-								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
-							</a>
-						</li>
-						<li class="providers__item">
-							<a href="" class="providers__link" tabindex="-1">
-								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
-							</a>
-						</li>
-						<li class="providers__item">
-							<a href="" class="providers__link" tabindex="-1">
-								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
-							</a>
-						</li>
-						<li class="providers__item">
-							<a href="" class="providers__link" tabindex="-1">
-								<img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="" class="providers__img">
-							</a>
-						</li>
+						<?php echo str_replace( 'class="providers__link"', 'class="providers__link" tabindex="-1"', $provider_items ); ?>
 					</ul>
-				</div>
+					</div>
+				<?php endif; ?>
 			</div>
 		</section>
 	</main>
