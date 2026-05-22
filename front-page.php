@@ -44,12 +44,108 @@ get_header();
 		<!-- Highlights section: paired event and resource teasers for the homepage. -->
 		<section class="highlights">
 			<div class="highlights__section">
+
+				<header class="highlights__header">
+					<p class="highlights__spotlight">Browse by Category</p>
+					<h2 class="highlights__heading">Find what <em>you need</em></h2>
+					<p class="highlights__subheading">Explore our library organized by resource type, or search across everything below.</p>
+				</header>
+
 				<div class="highlights__container">
-					<div class="highlights__left">
+
+					<div class="highlights__resources">
 						<div class="highlights__top">
-							<header class="highlights__header">
-								<h2 class="highlights__heading">Upcoming Events</h2>
-							</header>
+							<h2 class="highlights__section-heading">Resources</h2>
+							<a href="" class="highlights__link">Browse Library <?php echo svg_icon('highlights__icon', 'arrow-right');?></a>
+						</div>
+						<div class="resources">
+							<a href="" class="resource">
+								<article class="resource__container">
+									
+									<div class="resource__content">
+										<header class="resource__header">
+											<div class="resource__type">
+												<?php echo svg_icon('resource__icon', 'report1');?>
+											</div>
+											<p class="resource__category">24 resources</p>
+											<h3 class="resource__title">Archived Events &amp; Webinars</h3>
+										</header>
+
+										<p class="resource__details">
+											Recordings from past CVIPI webinars, peer learning circles, conferences, and panel discussions.</p>
+										<p class="resource__cta">Browse recordings <?php echo svg_icon('resource__cta-icon', 'arrow-right');?></p>
+									</div>
+									
+								</article>
+							</a>
+
+							<a href="" class="resource">
+								<article class="resource__container">
+									
+									<div class="resource__content">
+										<header class="resource__header">
+											<div class="resource__type">
+										<?php echo svg_icon('resource__icon', 'file1');?>
+									</div>
+											<p class="resource__category">Toolkit</p>
+											<h3 class="resource__title">Title Here</h3>
+										</header>
+
+										<p class="resource__details">
+											Recordings from past CVIPI webinars, peer learning circles, conferences, and panel discussions.</p>
+										<p class="resource__cta">Browse recordings <?php echo svg_icon('resource__cta-icon', 'arrow-right');?></p>
+									</div>
+									
+								</article>
+							</a>
+
+							<a href="" class="resource">
+								<article class="resource__container">
+									
+									<div class="resource__content">
+										<header class="resource__header">
+											<div class="resource__type">
+										<?php echo svg_icon('resource__icon', 'play1');?>
+									</div>
+											<p class="resource__category">Toolkit</p>
+											<h3 class="resource__title">Title Here</h3>
+										</header>
+
+										<p class="resource__details">
+											Recordings from past CVIPI webinars, peer learning circles, conferences, and panel discussions.</p>
+										<p class="resource__cta">Browse recordings <?php echo svg_icon('resource__cta-icon', 'arrow-right');?></p>
+									</div>
+									
+								</article>
+							</a>
+
+							<a href="" class="resource">
+								<article class="resource__container">
+									
+									<div class="resource__content">
+										<header class="resource__header">
+											<div class="resource__type">
+										<?php echo svg_icon('resource__icon', 'gear');?>
+									</div>
+											<p class="resource__category">Toolkit</p>
+											<h3 class="resource__title">Title Here</h3>
+										</header>
+
+										<p class="resource__details">
+											Recordings from past CVIPI webinars, peer learning circles, conferences, and panel discussions.</p>
+										<p class="resource__cta">Browse recordings <?php echo svg_icon('resource__cta-icon', 'arrow-right');?></p>
+									</div>
+									
+								</article>
+							</a>
+						</div>
+					</div>
+
+					<div class="highlights__events">
+						<div class="highlights__top">
+							
+							<h2 class="highlights__section-heading">Upcoming Events</h2>
+							
 							<a href="" class="highlights__link">View All <?php echo svg_icon('highlights__icon', 'arrow-right');?></a>
 						</div>
 						<div class="events">
@@ -134,104 +230,11 @@ get_header();
 					
 						</div>
 					</div>
-					<div class="highlights__right">
-						<div class="highlights__top">
-							<header class="highlights__header">
-								<h2 class="highlights__heading">Resources</h2>
-							</header>
-							<a href="" class="highlights__link">Browse Library <?php echo svg_icon('highlights__icon', 'arrow-right');?></a>
-						</div>
-						<div class="resources">
-							<a href="" class="resource">
-								<article class="resource__container">
-									<div class="resource__type">
-										<?php echo svg_icon('resource__icon', 'report1');?>
-									</div>
-									<div class="resource__content">
-										<header class="resource__header">
-											<p class="resource__category">Toolkit</p>
-											<h3 class="resource__title">Title Here</h3>
-										</header>
 
-										<p class="resource__details">
-											<time class="resource__date" datetime="2026-05-07T14:00:00-04:00">
-												May 07, 2026 · 2:00 PM ET
-											</time> · 
-											<span class="resource__length">48 pages</span>
-										</p>
-									</div>
-									
-								</article>
-							</a>
-
-							<a href="" class="resource">
-								<article class="resource__container">
-									<div class="resource__type">
-										<?php echo svg_icon('resource__icon', 'file1');?>
-									</div>
-									<div class="resource__content">
-										<header class="resource__header">
-											<p class="resource__category">Toolkit</p>
-											<h3 class="resource__title">Title Here</h3>
-										</header>
-
-										<p class="resource__details">
-											<time class="resource__date" datetime="2026-05-07T14:00:00-04:00">
-												May 07, 2026 · 2:00 PM ET
-											</time> · 
-											<span class="resource__length">48 pages</span>
-										</p>
-									</div>
-									
-								</article>
-							</a>
-
-							<a href="" class="resource">
-								<article class="resource__container">
-									<div class="resource__type">
-										<?php echo svg_icon('resource__icon', 'play1');?>
-									</div>
-									<div class="resource__content">
-										<header class="resource__header">
-											<p class="resource__category">Toolkit</p>
-											<h3 class="resource__title">Title Here</h3>
-										</header>
-
-										<p class="resource__details">
-											<time class="resource__date" datetime="2026-05-07T14:00:00-04:00">
-												May 07, 2026 · 2:00 PM ET
-											</time> · 
-											<span class="resource__length">48 pages</span>
-										</p>
-									</div>
-									
-								</article>
-							</a>
-
-							<a href="" class="resource">
-								<article class="resource__container">
-									<div class="resource__type">
-										<?php echo svg_icon('resource__icon', 'gear');?>
-									</div>
-									<div class="resource__content">
-										<header class="resource__header">
-											<p class="resource__category">Toolkit</p>
-											<h3 class="resource__title">Title Here</h3>
-										</header>
-
-										<p class="resource__details">
-											<time class="resource__date" datetime="2026-05-07T14:00:00-04:00">
-												May 07, 2026 · 2:00 PM ET
-											</time> · 
-											<span class="resource__length">48 pages</span>
-										</p>
-									</div>
-									
-								</article>
-							</a>
-						</div>
-					</div>
+					
 				</div>
+
+
 				
 			</div>
 

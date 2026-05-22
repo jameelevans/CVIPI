@@ -162,16 +162,65 @@
       margin: auto;
     }
 
+    &__header {
+    }
+
+    &__spotlight {
+      // Inline-flex lets the decorative rule and label align as one compact unit.
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 1.2rem;
+
+      // Secondary uppercase treatment creates a small eyebrow above the main
+      // heading.
+      font-family: typography.$font-secondary;
+      font-size: 1rem;
+      letter-spacing: 2.6px;
+      text-transform: uppercase;
+      color: var(--color-dark-midnight-teal);
+      margin-bottom: 2rem;
+      font-weight: 600;
+
+      &::before {
+        // Short leading rule that visually introduces the eyebrow text.
+        content: '';
+        display: inline-block;
+        width: 2.4rem;
+        height: 1px;
+        background-color: var(--color-dark-midnight-teal);
+      }
+    }
+
+    &__heading {
+      // Oversized hero headline with tight line-height for a strong editorial
+      // presence.
+      font-size: 5rem;
+      line-height: 0.9;
+      color: var(--color-deep);
+      margin-bottom: 2.5rem;
+
+      em {
+        // Emphasized word uses the carmine accent and lighter weight to create a
+        // typographic contrast within the headline.
+        color: inherit;
+        font-weight: 300;
+        letter-spacing: -1.8px;
+      }
+    }
+
+    &__subheading {
+      // Muted paragraph color keeps the body copy subordinate to the headline
+      // while still readable on the dark overlay.
+      @include mixins.description;
+      margin-bottom: 2.5rem;
+      width: 70%;
+    }
+
     &__container {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: auto;
       gap: 5rem;
-    }
-
-    &__left {
-    }
-
-    &__right {
     }
 
     &__top {
@@ -188,7 +237,7 @@
     &__header {
     }
 
-    &__heading {
+    &__section-heading {
       font-size: 3rem;
       font-weight: 800;
       margin-bottom: -6px;
@@ -295,29 +344,66 @@
   .resources {
     // Resource cards inside the highlights section.
     display: grid;
-    grid-template-columns: auto;
-    gap: 2.5rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
 
     .resource {
-      transition:
-        transform 0.25s var(--ease-out),
-        box-shadow 0.25s;
+      position: relative;
+      display: block;
+      overflow: hidden;
+      background: var(--color-white);
+      border-radius: 3px;
       cursor: pointer;
       text-decoration: none;
       transition:
-        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-        box-shadow 0.3s;
+        transform 0.3s ease-in-out,
+        box-shadow 0.3s ease-in-out;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(
+          to right,
+          var(--teal-l, var(--color-light-blue)),
+          var(--water, var(--color-dark-blue))
+        );
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
 
       &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 28px rgba(var(--color-dark-midnight-teal-a), 0.08);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 36px rgba(13, 51, 68, 0.1);
+      }
+
+      &:hover::after {
+        transform: scaleX(1);
+      }
+
+      &:hover .resource__icon,
+      &:hover .resource__cta-icon {
+        fill: var(--color-copper);
+      }
+
+      &:hover .resource__cta {
+        color: var(--color-copper);
+      }
+
+      &:hover .resource__cta-icon {
+        transform: translate(3px, 2px);
       }
 
       &__container {
-        display: grid;
-        grid-template-columns: 6.3rem 5fr;
+        //display: grid;
+        //grid-template-columns: 6.3rem 5fr;
         background: var(--color-white);
-        gap: 2.5rem;
+        height: 100%;
+        //gap: 2.5rem;
         border-radius: 3px;
         overflow: hidden;
       }
@@ -331,16 +417,21 @@
         font-size: 1rem;
         font-weight: 600;
         letter-spacing: 0.06em;
+        width: 5.7rem;
+        aspect-ratio: 1;
+        border-radius: 8px;
+        margin-bottom: 2rem;
       }
 
       &__icon {
         width: 2.5rem;
         aspect-ratio: 1;
         fill: var(--color-white);
+        transition: fill 0.3s ease-in-out;
       }
 
       &__content {
-        padding: 2.5rem;
+        padding: 3.7rem;
         display: grid;
         grid-template-columns: auto;
         gap: 0.8rem;
@@ -353,7 +444,7 @@
         color: var(--color-dark-orange);
         font-family: typography.$font-secondary;
         font-weight: 700;
-        font-size: 1rem;
+        font-size: 8px;
         letter-spacing: 1.5px;
         text-transform: uppercase;
         margin-bottom: 0.8rem;
@@ -368,13 +459,30 @@
         color: var(--color-medium-blue);
         font-size: 1.2rem;
         line-height: 1.5;
+        margin-bottom: 1rem;
       }
 
-      &__date {
+      &__cta {
+        text-align: left;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: var(--color-deep);
+        font-family: typography.$font-secondary;
+        font-weight: 600;
+        // letter-spacing: 1.5px;
+        transition: color 0.3s ease-in-out;
+        white-space: nowrap;
+        font-size: 1.1rem;
       }
 
-      &__length {
-        display: inline;
+      &__cta-icon {
+        fill: var(--color-deep);
+        width: 1rem;
+        height: 1rem;
+        transform: translateY(2px);
+        transition:
+          fill 0.3s ease-in-out,
+          transform 0.3s ease-in-out;
       }
     }
   }
