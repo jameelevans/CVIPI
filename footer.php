@@ -58,7 +58,7 @@
                         </header>
 
                         <div class="footer__menu">
-                            <h4 class="footer__heading">Navigate</h4>
+                            <h4 class="footer__cat-heading">Navigate</h4>
                             <nav class="footer__nav">
                                 <ul class="footer__list">
                                     <li class="footer__item"><a href="" class="footer__link">Home</a></li>
@@ -70,7 +70,7 @@
                         </div>
 
                         <div class="footer__menu">
-                            <h4 class="footer__heading">Connect</h4>
+                            <h4 class="footer__cat-heading">Connect</h4>
                             <nav class="footer__nav">
                                 <ul class="footer__list">
                                     <li class="footer__item"><a href="" class="footer__link">Our Stories</a></li>
@@ -82,7 +82,7 @@
                         </div>
 
                         <div class="footer__menu">
-                            <h4 class="footer__heading">legal</h4>
+                            <h4 class="footer__cat-heading">legal</h4>
                             <nav class="footer__nav">
                                 <ul class="footer__list">
                                     <li class="footer__item"><a href="" class="footer__link">Privacy Policy</a></li>

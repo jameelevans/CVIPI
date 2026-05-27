@@ -134,26 +134,75 @@
 
   &__columns {
     display: grid;
-    grid-template-columns: 3fr repeat(3, max-content);
-    gap: 12rem;
+    grid-template-columns: auto;
+    place-content: center;
+    place-items: center;
+    text-align: center;
+    gap: 2rem;
     border-bottom: 2px solid rgba(var(--color-white-a), 0.06);
     padding-bottom: 5.6rem;
+
+    @include mixins.respond(medium) {
+      grid-template-columns: 3fr repeat(3, max-content);
+      gap: 6rem;
+      text-align: left;
+      place-content: unset;
+      place-items: unset;
+    }
+
+    @include mixins.respond(large) {
+      gap: 12rem;
+    }
+
+    .footer__header {
+      color: rgba(var(--color-white-a), 0.4);
+      font-family: Syne, sans-serif;
+      font-size: clamp(1.5rem, 1.6vw, 1.6rem);
+      font-weight: 300;
+      line-height: 1.6;
+      line-height: 1.4;
+      margin-bottom: 2rem;
+
+      @include mixins.respond(medium) {
+        font-size: 1.1rem;
+      }
+
+      @include mixins.respond(large) {
+      }
+    }
   }
 
   &__header {
   }
 
   &__logo {
-    width: 8.5rem;
+    width: 20rem;
     margin-bottom: 2rem;
+
+    @include mixins.respond(medium) {
+      width: 8.5rem;
+    }
+
+    @include mixins.respond(large) {
+    }
   }
 
   &__heading {
     // Muted paragraph color keeps the body copy subordinate to the headline
     // while still readable on the dark overlay.
-    @include mixins.description(--color-white-a, 0.4);
-    line-height: 1.4;
-    margin-bottom: 2rem;
+    font-family: Syne, sans-serif;
+    font-size: 2.3rem;
+    line-height: 1.6;
+    font-weight: 300;
+    color: rgba(var(--color-white-a), 0.4);
+    margin-bottom: 2.3rem;
+
+    @include mixins.respond(medium) {
+      font-size: clamp(1.5rem, 1.6vw, 1.6rem);
+    }
+
+    @include mixins.respond(large) {
+    }
   }
 
   .social__list {
@@ -161,6 +210,7 @@
     display: flex;
     gap: 1.8rem;
     list-style: none;
+    place-content: center;
 
     .social__item {
       aspect-ratio: 1;
@@ -195,12 +245,13 @@
   }
 
   &__menu {
-    .footer__heading {
+    .footer__cat-heading {
       text-transform: uppercase;
       font-size: 1.1rem;
       letter-spacing: 1.2px;
+      margin-bottom: 2.5rem;
+      opacity: 0.3;
       font-weight: 600;
-      opacity: 0.7;
     }
   }
 

@@ -147,8 +147,15 @@ function watch() {
         browserSync = require('browser-sync').create();
         browserSync.init({
             proxy: 'http://cvipi.local', // Update to match your Local environment URL
-            listen: '127.0.0.1',
-            host: '127.0.0.1',
+            // Bind to the LAN so physical devices can preview the proxied Local site.
+            listen: '0.0.0.0',
+            // Keep WordPress-generated asset and page URLs on the BrowserSync origin.
+            rewriteRules: [
+                {
+                    match: /http:\/\/cvipi\.local/g,
+                    fn: () => ''
+                }
+            ],
             open: false,
             notify: false,
             ghostMode: false
