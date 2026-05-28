@@ -11,6 +11,9 @@
   // Solid deep background gives the logo and low-opacity nav links enough
   // contrast across the top of the page.
   background-color: rgba(var(--color-deep-a), 1);
+  position: fixed;
+  z-index: 99999;
+  width: 100%;
 
   // Constrains the header content on very wide screens while still allowing
   // the background color to span the full viewport.

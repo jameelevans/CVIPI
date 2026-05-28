@@ -87,6 +87,7 @@
 
   &__left {
     margin-left: 0;
+    padding-top: 7.5rem;
 
     // Vertically centers the headline group inside the hero.
     display: flex;
@@ -158,9 +159,12 @@
   }
 
   &__heading {
+    opacity: 0;
+    transform: translateY(1.8rem);
     font-size: 9.5rem;
     line-height: 0.8;
     text-align: center;
+    animation: fadeUp 1s 0.55s var(--ease-out) forwards;
 
     em {
       // Emphasized word uses the carmine accent and lighter weight to create a

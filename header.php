@@ -148,6 +148,12 @@
 		$banner_has_videos = ! empty( $banner_videos );
 		$banner_first_video = $banner_has_videos ? $banner_videos[0] : null;
 		$banner_first_poster = $banner_first_video && ! empty( $banner_first_video['poster'] ) ? $banner_first_video['poster'] : '';
+		$banner_heading = wp_specialchars_decode( get_option( 'blogdescription' ), ENT_QUOTES );
+		$banner_cta = null;
+
+		if ( is_front_page() && function_exists( 'get_field' ) ) {
+			$banner_cta = get_field( 'banner_cta', $banner_page_id );
+		}
 		?>
 		<!-- Homepage banner: media layer sits behind the content and stats columns. -->
 		<div class="banner<?php echo $banner_has_videos ? ' banner--has-video' : ''; ?>"<?php echo $banner_has_videos ? ' data-banner-videos="' . esc_attr( $banner_video_data ) . '"' : ''; ?>>
@@ -168,12 +174,23 @@
 					<div class="banner__container">
 						<p class="banner__subheader">Community Violence Intervention</p>
 
-						<h2 class="banner__heading">It takes a <br /><em>community to end violence</em></h2>
+						<?php if ( $banner_heading ) : ?>
+							<h2 class="banner__heading"><?php echo wp_kses_post( $banner_heading ); ?></h2>
+						<?php endif; ?>
 						<div class="banner__details">
 							<p>The National Community Violence Intervention & Prevention Initiative (CVIPI) was created to be a source of information and practical resources on community violence intervention. </p>
 							<p>This nationwide initiative brings together community residents, local government, law enforcement, hospitals, victim service providers, community-based organizations (CBOs), researchers, and other partners to help prevent and reduce violent crime to make our communities safer for generations to come.</p>
 						</div>
-						<a href="#" class="btn__copper">Access Resources &amp; Information</a>
+						<?php if ( is_array( $banner_cta ) && ! empty( $banner_cta['url'] ) && ! empty( $banner_cta['title'] ) ) : ?>
+							<a
+								href="<?php echo esc_url( $banner_cta['url'] ); ?>"
+								class="btn__copper banner__cta"
+								<?php echo ! empty( $banner_cta['target'] ) ? 'target="' . esc_attr( $banner_cta['target'] ) . '"' : ''; ?>
+								<?php echo isset( $banner_cta['target'] ) && '_blank' === $banner_cta['target'] ? 'rel="noopener noreferrer"' : ''; ?>
+							>
+								<?php echo esc_html( $banner_cta['title'] ); ?>
+							</a>
+						<?php endif; ?>
 					</div>
 				</div>
 				<div class="banner__right">

@@ -22,6 +22,44 @@
     &__container {
       display: grid;
       grid-template-columns: auto;
+      overflow: hidden;
+
+      > * {
+        min-width: 0;
+        will-change: opacity, transform;
+      }
+
+      &--ready {
+        > * {
+          opacity: 0;
+          transition:
+            opacity 700ms ease,
+            transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        > *:first-child {
+          transform: translateX(-3rem);
+        }
+
+        > *:last-child {
+          transform: translateX(3rem);
+        }
+      }
+
+      &--is-visible {
+        > * {
+          opacity: 1;
+        }
+
+        > *:first-child,
+        > *:last-child {
+          transform: translateX(0);
+        }
+
+        > *:last-child {
+          transition-delay: 110ms;
+        }
+      }
 
       &:nth-child(2) {
         .about__content {
@@ -36,6 +74,16 @@
           .about__content {
             order: initial;
           }
+        }
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &__container {
+        > * {
+          opacity: 1;
+          transform: none;
+          transition: none;
         }
       }
     }
@@ -175,12 +223,17 @@
       // Secondary uppercase treatment creates a small eyebrow above the main
       // heading.
       font-family: typography.$font-secondary;
-      font-size: 1rem;
       letter-spacing: 2.6px;
       text-transform: uppercase;
       color: var(--color-dark-midnight-teal);
-      margin-bottom: 2rem;
       font-weight: 600;
+      font-size: 1.5rem;
+      margin-bottom: 2.5rem;
+
+      @include mixins.respond(small) {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+      }
 
       &::before {
         // Short leading rule that visually introduces the eyebrow text.
@@ -212,9 +265,18 @@
     &__subheading {
       // Muted paragraph color keeps the body copy subordinate to the headline
       // while still readable on the dark overlay.
-      @include mixins.description;
-      margin-bottom: 2.5rem;
+      font-family: Syne, sans-serif;
+      line-height: 1.6;
+      font-weight: 300;
+      color: rgba(var(--color-deep-a), 0.75);
+      margin: 0 auto;
       width: 70%;
+      font-size: 1.8rem;
+
+      @include mixins.respond(small) {
+        margin: 0 0 2.5rem 0;
+        @include mixins.description;
+      }
     }
 
     &__container {
@@ -224,23 +286,48 @@
     }
 
     &__top {
-      padding-bottom: 2.5rem;
+      padding-bottom: 8rem;
       margin-bottom: 2.5rem;
       border-bottom: 1px solid rgba(var(--color-light-blue-a), 0.25);
-      display: flex;
-      flex-wrap: wrap;
       align-items: end;
-      justify-content: space-between;
-      gap: 1.5rem;
+      justify-content: unset;
+      gap: 2rem;
+      display: grid;
+      grid-template-columns: auto;
+      text-align: center;
+      margin-top: 2.5rem;
+
+      @include mixins.respond(small) {
+        grid-template-columns: 3fr max-content;
+        text-align: left;
+        gap: 1.5rem;
+        justify-content: space-between;
+        margin-top: 0;
+        padding-bottom: 2.5rem;
+      }
     }
 
     &__header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+
+      @include mixins.respond(small) {
+        display: block;
+        align-items: left;
+        text-align: left;
+      }
     }
 
     &__section-heading {
-      font-size: 3rem;
       font-weight: 800;
       margin-bottom: -6px;
+      font-size: 3.8rem;
+
+      @include mixins.respond(small) {
+        font-size: 3rem;
+      }
     }
 
     &__link {
@@ -252,14 +339,29 @@
       font-weight: 600;
       letter-spacing: 1.5px;
       transition: all 0.5s ease;
+      margin: auto;
+      font-size: 1.5rem;
 
       &:hover {
         color: var(--color-deep);
       }
 
       &:hover .highlights__icon {
-        transform: translate(3px, 2px);
+        transform: translate(3px, 0);
         fill: var(--color-deep);
+
+        @include mixins.respond(small) {
+          transform: translate(3px, 2px);
+        }
+      }
+
+      @include mixins.respond(small) {
+        font-size: 1.2rem;
+      }
+
+      @include mixins.respond(medium) {
+        margin: 0;
+        //font-size: 0.9rem;
       }
     }
 
@@ -267,8 +369,12 @@
       fill: var(--color-dark-orange);
       width: 1rem;
       height: 1rem;
-      transform: translateY(2px);
+      transform: translateY(0);
       transition: transform 0.3s ease;
+
+      @include mixins.respond(small) {
+        transform: translateY(2px);
+      }
     }
   }
 
@@ -554,11 +660,25 @@
 
     &__top {
       display: grid;
-      grid-template-columns: 3fr 1fr;
+      grid-template-columns: auto;
       gap: 2.5rem;
+
+      @include mixins.respond(small) {
+        grid-template-columns: 3fr 1fr;
+      }
     }
 
     &__header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+
+      @include mixins.respond(small) {
+        display: block;
+        align-items: left;
+        text-align: left;
+      }
     }
 
     &__spotlight {
@@ -571,12 +691,17 @@
       // Secondary uppercase treatment creates a small eyebrow above the main
       // heading.
       font-family: typography.$font-secondary;
-      font-size: 1rem;
+      font-size: 1.5rem;
       letter-spacing: 2.6px;
       text-transform: uppercase;
       color: var(--color-dark-midnight-teal);
-      margin-bottom: 2rem;
       font-weight: 600;
+      margin-bottom: 2.5rem;
+
+      @include mixins.respond(small) {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+      }
 
       &::before {
         // Short leading rule that visually introduces the eyebrow text.
@@ -609,17 +734,31 @@
       // Muted paragraph color keeps the body copy subordinate to the headline
       // while still readable on the dark overlay.
       @include mixins.description;
-      margin-bottom: 2.5rem;
-      width: 70%;
+      //margin-bottom: 2.5rem;
+      width: 100%;
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+
+      @include mixins.respond(small) {
+        @include mixins.description;
+        margin-bottom: 0;
+        width: 70%;
+      }
     }
 
     &__cta {
-      position: relative;
+      display: flex;
+      place-self: center;
+      margin-bottom: 8.5rem;
+
+      @include mixins.respond(small) {
+        place-self: end;
+        margin-bottom: 0;
+      }
     }
 
     &__btn {
-      position: absolute;
-      bottom: 2.5rem;
+      align-self: flex-end;
     }
 
     &__posts {
@@ -636,6 +775,12 @@
       background-color: var(--color-white);
       border-radius: 4px;
       overflow: hidden;
+
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        box-shadow: 0 16px 40px rgba(var(--color-dark-midnight-teal-a), 0.1);
+      }
 
       &__top {
         aspect-ratio: 16 / 9;
