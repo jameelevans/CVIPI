@@ -23,8 +23,8 @@
 
     .footer__heading {
       color: var(--color-white);
-      font-size: 4.5rem;
-      margin-bottom: 1.5rem;
+      font-size: 5rem;
+      margin-bottom: 2.5rem;
       font-family: typography.$font-primary;
       font-weight: 700;
       line-height: 0.9;
@@ -54,11 +54,11 @@
     // Secondary uppercase treatment creates a small eyebrow above the main
     // heading.
     font-family: typography.$font-secondary;
-    font-size: 1rem;
+    font-size: 1.5rem;
     letter-spacing: 2.6px;
     text-transform: uppercase;
     color: var(--color-carmine);
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
     font-weight: 600;
 
     &::before {
@@ -69,17 +69,32 @@
       height: 1px;
       background-color: var(--color-carmine);
     }
+
+    @include mixins.respond(small) {
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
   }
 
   &__description {
     // Muted paragraph color keeps the body copy subordinate to the headline
     // while still readable on the dark overlay.
-    @include mixins.description(--color-white-a, 0.4);
+    font-family: typography.$font-secondary;
+    font-size: 2rem;
+    line-height: 1.6;
+    font-weight: 300;
+    color: rgba(var(--color-white-a), 0.4);
     margin-bottom: 2.5rem;
+
+    @include mixins.respond(small) {
+      @include mixins.description(--color-white-a, 0.4);
+    }
   }
 
   &__form {
     display: flex;
+    flex-wrap: wrap;
+    place-content: center;
     gap: 10px;
     max-width: 52rem;
     margin: 0 auto 1.5rem;
@@ -89,7 +104,8 @@
     padding: 1.5rem 1.8rem;
     font-family: typography.$font-secondary;
     flex: 1;
-    font-size: 1.4rem;
+    font-size: 1.8rem;
+    text-align: center;
     font-weight: 300;
     color: var(--color-white);
     background: rgba(var(--color-white-a), 0.06);
@@ -106,6 +122,11 @@
       box-shadow: 0 0 0 3px rgba(184, 114, 42, 0.15);
       background: rgba(var(--color-white-a), 0.08);
     }
+
+    @include mixins.respond(small) {
+      font-size: 1.4rem;
+      text-align: left;
+    }
   }
 
   &__button {
@@ -114,9 +135,13 @@
 
   &__privacy {
     font-family: typography.$font-secondary;
-    font-size: 1.3rem;
+    font-size: 1.6rem;
     font-weight: 300;
     color: rgba(var(--color-white-a), 0.3);
+
+    @include mixins.respond(small) {
+      font-size: 1.3rem;
+    }
   }
 
   &__main {
@@ -212,6 +237,10 @@
     list-style: none;
     place-content: center;
 
+    @include mixins.respond(medium) {
+      place-content: unset;
+    }
+
     .social__item {
       aspect-ratio: 1;
     }
@@ -247,11 +276,15 @@
   &__menu {
     .footer__cat-heading {
       text-transform: uppercase;
-      font-size: 1.1rem;
       letter-spacing: 1.2px;
       margin-bottom: 2.5rem;
       opacity: 0.3;
       font-weight: 600;
+      font-size: 2rem;
+
+      @include mixins.respond(medium) {
+        font-size: 1.1rem;
+      }
     }
   }
 
@@ -270,9 +303,13 @@
     text-decoration: none;
     color: rgba(var(--color-white-a), 0.5);
     font-family: typography.$font-secondary;
-    font-size: 1.4rem;
     font-weight: 300;
     line-height: 1.6;
+    font-size: 2rem;
+
+    @include mixins.respond(medium) {
+      font-size: 1.4rem;
+    }
   }
 
   &__bottom {
@@ -285,8 +322,14 @@
   }
 
   &__copyright {
-    font-size: 1.3rem;
+    font-size: 1.8rem;
     color: rgba(var(--color-white-a), 0.25);
     font-weight: 300;
+    text-align: center;
+
+    @include mixins.respond(small) {
+      font-size: 1.3rem;
+      text-align: left;
+    }
   }
 }

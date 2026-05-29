@@ -51,7 +51,7 @@
                                 </li>
                                 <li class="social__item">
                                     <a href="" class="social__link">
-                                        <?php echo svg_icon('social__icon', 'arrow-right');?>
+                                        <?php echo svg_icon('social__icon', 'youtube');?>
                                     </a>
                                 </li>
                             </ul>

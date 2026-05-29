@@ -98,13 +98,17 @@
     width: 100%;
 
     @include mixins.respond(medium) {
-      width: 70%;
+      width: 48rem;
     }
 
     @include mixins.respond(large) {
+      width: 50rem;
+    }
+
+    @include mixins.respond(largest) {
       // Keeps the text block narrow enough to sit inside the darker gradient
       // portion of the background image.
-      width: 44%;
+      width: 51%;
       // Small left offset keeps the content from sitting directly against the
       // viewport while the inner container handles the larger responsive inset.
       margin-left: 1.8rem;
@@ -250,10 +254,14 @@
   &__number {
     // Large numeric value acts as the main visual anchor for each stat.
     display: block;
-    font-size: 5.3rem;
+    font-size: 5rem;
     font-weight: 800;
     letter-spacing: -1.8px;
     margin-bottom: 0.5rem;
+
+    @include mixins.respond(medium) {
+      font-size: 5.3rem;
+    }
   }
 
   &__description {
@@ -261,5 +269,10 @@
     font-family: typography.$font-secondary;
     color: rgba(var(--color-white-a), 0.55);
     margin-bottom: 1.5rem;
+    font-size: 2rem;
+
+    @include mixins.respond(medium) {
+      font-size: 1.6rem;
+    }
   }
 }

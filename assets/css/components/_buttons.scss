@@ -60,12 +60,12 @@
 // Footer form submit button. Kept separate because its sizing is tied to the
 // newsletter form rather than the general CTA pattern.
 .footer__btn {
-  display: inline-flex;
+  display: inline-block;
   align-items: center;
   width: max-content;
   overflow: hidden;
   font-family: typography.$font-secondary;
-  font-size: 1.4rem;
+  font-size: 1.8rem;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
@@ -77,6 +77,13 @@
   background-color: var(--color-copper);
   color: var(--color-white);
   line-height: 1;
+  width: 100%;
+
+  @include mixins.respond(small) {
+    font-size: 1.4rem;
+    display: inline-flex;
+    width: max-content;
+  }
 
   &:hover {
     transform: translateY(-1px);
@@ -87,9 +94,8 @@
 .btn__outline-white {
   &,
   &:link {
-    display: inline-flex;
+    display: inline-block;
     align-items: center;
-    width: max-content;
     overflow: hidden;
     font-family: typography.$font-secondary;
     cursor: pointer;
@@ -108,6 +114,12 @@
     border: 1.5px solid rgba(var(--color-white-a), 0.7);
     font-size: 1.8rem;
     padding: 1.9rem 3.5rem;
+    width: 100%;
+
+    @include mixins.respond(small) {
+      display: inline-flex;
+      width: max-content;
+    }
 
     &:hover {
       filter: brightness(1.2);
@@ -134,9 +146,8 @@
 .btn__outline-deep {
   &,
   &:link {
-    display: inline-flex;
+    display: inline-block;
     align-items: center;
-    width: max-content;
     overflow: hidden;
     font-family: typography.$font-secondary;
     cursor: pointer;
@@ -147,7 +158,6 @@
     text-decoration: none;
     text-transform: capitalize;
     position: relative;
-    font-size: 1.4rem;
     height: auto;
     font-weight: 400;
     margin-top: 1rem;
@@ -155,6 +165,14 @@
     background-color: transparent;
     color: var(--color-deep);
     border: 1.5px solid rgba(var(--color-deep-a), 0.7);
+    width: 100%;
+    font-size: 1.8rem;
+
+    @include mixins.respond(small) {
+      display: inline-flex;
+      width: max-content;
+      font-size: 1.4rem;
+    }
 
     &:hover {
       background-color: var(--color-deep);
