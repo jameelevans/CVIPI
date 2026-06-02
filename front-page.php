@@ -54,181 +54,139 @@ get_header();
 				<div class="highlights__container">
 
 					<div class="highlights__resources">
-						<div class="highlights__top">
-							<h2 class="highlights__section-heading">Resources</h2>
-							<a href="" class="highlights__link">Browse Library <?php echo svg_icon('highlights__icon', 'arrow-right');?></a>
+							<div class="highlights__top">
+								<h2 class="highlights__section-heading">Resources</h2>
+								<a href="<?php echo esc_url( cvipi_get_filtered_resources_url() ); ?>" class="highlights__link">Browse Library <?php echo svg_icon('highlights__icon', 'arrow-right');?></a>
+							</div>
+							<div class="resources">
+								<?php
+								$resource_category_cards = cvipi_resource_category_cards();
+								$resource_category_terms = get_terms(
+									array(
+										'taxonomy'   => 'category',
+										'slug'       => array_keys( $resource_category_cards ),
+										'hide_empty' => false,
+									)
+								);
+
+								if ( ! is_wp_error( $resource_category_terms ) && ! empty( $resource_category_terms ) ) :
+									$resource_category_terms_by_slug = array();
+
+									foreach ( $resource_category_terms as $resource_category_term ) {
+										$resource_category_terms_by_slug[ $resource_category_term->slug ] = $resource_category_term;
+									}
+
+									foreach ( $resource_category_cards as $resource_category_slug => $resource_category_card ) :
+										if ( empty( $resource_category_terms_by_slug[ $resource_category_slug ] ) ) {
+											continue;
+										}
+
+										$resource_category_term        = $resource_category_terms_by_slug[ $resource_category_slug ];
+										$resource_category_count       = cvipi_get_resource_count_by_category( $resource_category_term->term_id );
+										$resource_category_count_label = sprintf(
+											_n( '%s resource', '%s resources', $resource_category_count, 'cvipi' ),
+											number_format_i18n( $resource_category_count )
+										);
+										?>
+										<a href="<?php echo esc_url( cvipi_get_filtered_resources_url( $resource_category_term->slug ) ); ?>" class="resource">
+											<article class="resource__container">
+												<div class="resource__content">
+													<header class="resource__header">
+														<div class="resource__type">
+															<?php echo svg_icon( 'resource__icon', $resource_category_card['icon'] );?>
+														</div>
+														<p class="resource__category"><?php echo esc_html( $resource_category_count_label ); ?></p>
+														<h3 class="resource__title"><?php echo esc_html( wp_specialchars_decode( $resource_category_term->name, ENT_QUOTES ) ); ?></h3>
+													</header>
+
+													<?php if ( $resource_category_term->description ) : ?>
+														<p class="resource__details"><?php echo esc_html( $resource_category_term->description ); ?></p>
+													<?php endif; ?>
+
+													<p class="resource__cta">
+														<?php echo esc_html( $resource_category_card['cta_label'] ); ?>
+														<?php echo svg_icon( 'resource__cta-icon', 'arrow-right' );?>
+													</p>
+												</div>
+											</article>
+										</a>
+										<?php
+									endforeach;
+								endif;
+								?>
+							</div>
 						</div>
-						<div class="resources">
-							<a href="" class="resource">
-								<article class="resource__container">
-									
-									<div class="resource__content">
-										<header class="resource__header">
-											<div class="resource__type">
-												<?php echo svg_icon('resource__icon', 'report1');?>
-											</div>
-											<p class="resource__category">24 resources</p>
-											<h3 class="resource__title">Archived Events &amp; Webinars</h3>
-										</header>
-
-										<p class="resource__details">
-											Recordings from past CVIPI webinars, peer learning circles, conferences, and panel discussions.</p>
-										<p class="resource__cta">Browse recordings <?php echo svg_icon('resource__cta-icon', 'arrow-right');?></p>
-									</div>
-									
-								</article>
-							</a>
-
-							<a href="" class="resource">
-								<article class="resource__container">
-									
-									<div class="resource__content">
-										<header class="resource__header">
-											<div class="resource__type">
-										<?php echo svg_icon('resource__icon', 'file1');?>
-									</div>
-											<p class="resource__category">Toolkit</p>
-											<h3 class="resource__title">Title Here</h3>
-										</header>
-
-										<p class="resource__details">
-											Recordings from past CVIPI webinars, peer learning circles, conferences, and panel discussions.</p>
-										<p class="resource__cta">Browse recordings <?php echo svg_icon('resource__cta-icon', 'arrow-right');?></p>
-									</div>
-									
-								</article>
-							</a>
-
-							<a href="" class="resource">
-								<article class="resource__container">
-									
-									<div class="resource__content">
-										<header class="resource__header">
-											<div class="resource__type">
-										<?php echo svg_icon('resource__icon', 'play1');?>
-									</div>
-											<p class="resource__category">Toolkit</p>
-											<h3 class="resource__title">Title Here</h3>
-										</header>
-
-										<p class="resource__details">
-											Recordings from past CVIPI webinars, peer learning circles, conferences, and panel discussions.</p>
-										<p class="resource__cta">Browse recordings <?php echo svg_icon('resource__cta-icon', 'arrow-right');?></p>
-									</div>
-									
-								</article>
-							</a>
-
-							<a href="" class="resource">
-								<article class="resource__container">
-									
-									<div class="resource__content">
-										<header class="resource__header">
-											<div class="resource__type">
-										<?php echo svg_icon('resource__icon', 'gear');?>
-									</div>
-											<p class="resource__category">Toolkit</p>
-											<h3 class="resource__title">Title Here</h3>
-										</header>
-
-										<p class="resource__details">
-											Recordings from past CVIPI webinars, peer learning circles, conferences, and panel discussions.</p>
-										<p class="resource__cta">Browse recordings <?php echo svg_icon('resource__cta-icon', 'arrow-right');?></p>
-									</div>
-									
-								</article>
-							</a>
-						</div>
-					</div>
 
 					<div class="highlights__events">
-						<div class="highlights__top">
-							
-							<h2 class="highlights__section-heading">Upcoming Events</h2>
-							
-							<a href="" class="highlights__link">View All <?php echo svg_icon('highlights__icon', 'arrow-right');?></a>
-						</div>
-						<div class="events">
-							<a href="" class="event">
-								<article class="event__container">
-									<time
-										class="event__date"
-										datetime="2026-05-07T14:00:00-04:00"
-										>
-										DATE May 07, 2026 · 2:00 PM ET
-									</time>
-									<header class="event__header">
-										<h3 class="event__heading">
-											Editorial Titles
-										</h3>
-									</header>
+							<div class="highlights__top">
+								
+								<h2 class="highlights__section-heading">Upcoming Events</h2>
+								
+								<a href="<?php echo esc_url( cvipi_get_filtered_events_url() ); ?>" class="highlights__link">View All <?php echo svg_icon('highlights__icon', 'arrow-right');?></a>
+							</div>
+							<div class="events">
+								<?php
+								$upcoming_event_query = new WP_Query(
+									array(
+										'post_type'           => 'event',
+										'posts_per_page'      => 3,
+										'post_status'         => 'publish',
+										'ignore_sticky_posts' => true,
+										'meta_key'            => 'event_date',
+										'orderby'             => 'meta_value_num',
+										'order'               => 'ASC',
+										'meta_query'          => array(
+											array(
+												'key'     => 'event_date',
+												'value'   => current_time( 'Ymd' ),
+												'compare' => '>=',
+												'type'    => 'NUMERIC',
+											),
+										),
+									)
+								);
 
-									<p class="event__excerpt">
-										Forem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit
-										interdum, ac aliquet odio mattis.
-									</p>
+								if ( $upcoming_event_query->have_posts() ) :
+									while ( $upcoming_event_query->have_posts() ) :
+										$upcoming_event_query->the_post();
+										$event_cta_url = cvipi_get_event_field( 'event_cta_url' );
+										$event_url     = $event_cta_url ? $event_cta_url : get_permalink();
+										$event_terms   = cvipi_get_event_card_terms();
+										?>
+										<a href="<?php echo esc_url( $event_url ); ?>" class="event">
+											<article class="event__container">
+												<?php if ( cvipi_get_event_date_label() ) : ?>
+													<time
+														class="event__date"
+														datetime="<?php echo esc_attr( cvipi_get_event_datetime_attr() ); ?>"
+													>
+														<?php echo esc_html( cvipi_get_event_date_label() ); ?>
+													</time>
+												<?php endif; ?>
 
-									<ul class="event__tags" aria-label="Event tags">
-										<li class="event__tag">Webinar</li>
-										<li class="event__tag">Free</li>
-									</ul>
-								</article>
-							</a>
+												<header class="event__header">
+													<h3 class="event__heading"><?php echo esc_html( get_the_title() ); ?></h3>
+												</header>
 
-							<a href="" class="event">
-								<article class="event__container">
-									<time
-										class="event__date"
-										datetime="2026-05-07T14:00:00-04:00"
-										>
-										DATE May 07, 2026 · 2:00 PM ET
-									</time>
-									<header class="event__header">
-										<h3 class="event__heading">
-											Editorial Titles
-										</h3>
-									</header>
+												<p class="event__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 18 ) ); ?></p>
 
-									<p class="event__excerpt">
-										Forem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit
-										interdum, ac aliquet odio mattis.
-									</p>
+												<?php if ( ! empty( $event_terms ) ) : ?>
+													<ul class="event__tags" aria-label="Event tags">
+														<?php foreach ( $event_terms as $event_term ) : ?>
+															<li class="event__tag"><?php echo esc_html( $event_term['name'] ); ?></li>
+														<?php endforeach; ?>
+													</ul>
+												<?php endif; ?>
+											</article>
+										</a>
+										<?php
+									endwhile;
+									wp_reset_postdata();
+								endif;
+								?>
 
-									<ul class="event__tags" aria-label="Event tags">
-										<li class="event__tag">Webinar</li>
-										<li class="event__tag">Free</li>
-									</ul>
-								</article>
-							</a>
-
-							<a href="" class="event">
-								<article class="event__container">
-									<time
-										class="event__date"
-										datetime="2026-05-07T14:00:00-04:00"
-										>
-										DATE May 07, 2026 · 2:00 PM ET
-									</time>
-									<header class="event__header">
-										<h3 class="event__heading">
-											Editorial Titles
-										</h3>
-									</header>
-
-									<p class="event__excerpt">
-										Forem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit
-										interdum, ac aliquet odio mattis.
-									</p>
-
-									<ul class="event__tags" aria-label="Event tags">
-										<li class="event__tag">Webinar</li>
-										<li class="event__tag">Free</li>
-									</ul>
-								</article>
-							</a>
-
-					
-						</div>
+						
+							</div>
 					</div>
 
 					
@@ -249,7 +207,7 @@ get_header();
 						<p class="stories__subheading">These are some of our partner organizations and the programs they created to transform their communities.</p>
 					</header>
 					<div class="stories__cta">
-						<a href="" class="stories__btn btn__outline-deep">View Our Stories</a>
+						<a href="<?php echo esc_url( site_url( '/success-stories' ) ); ?>" class="stories__btn btn__outline-deep">View Our Stories</a>
 					</div>
 				</div>
 
@@ -257,7 +215,7 @@ get_header();
 					<?php
 					$story_query = new WP_Query(
 						array(
-							'post_type'           => 'post',
+							'post_type'           => 'success_story',
 							'posts_per_page'      => 3,
 							'post_status'         => 'publish',
 							'ignore_sticky_posts' => true,

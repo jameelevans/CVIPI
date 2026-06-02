@@ -6,6 +6,7 @@ import $ from 'jquery';
 import BackTop from './modules/BackTop';
 import FrontPage from './modules/FrontPage';
 import MobileNav from './modules/MobileNav';
+import ResourceFilters from './modules/ResourceFilters';
 
 
 
@@ -13,3 +14,4 @@ import MobileNav from './modules/MobileNav';
 let backTop = new BackTop();
 const frontPage = new FrontPage();
 const mobilenav = new MobileNav();
+const resourceFilters = new ResourceFilters();

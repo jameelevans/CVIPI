@@ -49,22 +49,20 @@
 										</li>
 
 										<li class="navigation__item">
-											<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="navigation__link" title="Go to the Contact page">What is CVIPI?</a>
+											<a href="<?php echo esc_url( site_url( '/what-is-cvipi' ) ); ?>" class="navigation__link" title="Go to the What is CVIPI page">What is CVIPI?</a>
+										</li>
+								
+										<li class="navigation__item">
+											<a href="<?php echo esc_url( site_url( '/success-stories' ) ); ?>" class="navigation__link" title="Go to the Success Stories page">Success Stories</a>
 										</li>
 										<li class="navigation__item">
-											<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="navigation__link" title="Go to the Contact page">Who We Serve</a>
+											<a href="<?php echo esc_url( site_url( '/resources' ) ); ?>" class="navigation__link" title="Go to the Resources page">Resources</a>
 										</li>
 										<li class="navigation__item">
-											<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="navigation__link" title="Go to the Contact page">Our Stories</a>
+											<a href="<?php echo esc_url( site_url( '/events' ) ); ?>" class="navigation__link" title="Go to the Events page">Events</a>
 										</li>
 										<li class="navigation__item">
-											<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="navigation__link" title="Go to the Contact page">Resources</a>
-										</li>
-										<li class="navigation__item">
-											<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="navigation__link" title="Go to the Contact page">Events</a>
-										</li>
-										<li class="navigation__item">
-											<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="navigation__link" title="Go to the Contact page">Contacts</a>
+											<a href="<?php echo esc_url( site_url( '/contact' ) ); ?>" class="navigation__link" title="Go to the Contact page">Contact</a>
 										</li>
 									</ul>
 							</nav>
@@ -86,22 +84,20 @@
 										<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="mobile-navigation__link">Home</a>
 									</li>
 									<li class="mobile-navigation__item">
-										<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="mobile-navigation__link">What is CVIPI?</a>
+										<a href="<?php echo esc_url( site_url( '/what-is-cvipi' ) ); ?>" class="mobile-navigation__link">What is CVIPI?</a>
+									</li>
+				
+									<li class="mobile-navigation__item">
+										<a href="<?php echo esc_url( site_url( '/success-stories' ) ); ?>" class="mobile-navigation__link">Success Stories</a>
 									</li>
 									<li class="mobile-navigation__item">
-										<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="mobile-navigation__link">Who We Serve</a>
+										<a href="<?php echo esc_url( site_url( '/resources' ) ); ?>" class="mobile-navigation__link">Resources</a>
 									</li>
 									<li class="mobile-navigation__item">
-										<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="mobile-navigation__link">Our Stories</a>
+										<a href="<?php echo esc_url( site_url( '/events' ) ); ?>" class="mobile-navigation__link">Events</a>
 									</li>
 									<li class="mobile-navigation__item">
-										<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="mobile-navigation__link">Resources</a>
-									</li>
-									<li class="mobile-navigation__item">
-										<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="mobile-navigation__link">Events</a>
-									</li>
-									<li class="mobile-navigation__item">
-										<a href="<?php echo esc_url( site_url( '#' ) ); ?>" class="mobile-navigation__link">Contacts</a>
+										<a href="<?php echo esc_url( site_url( '/contact' ) ); ?>" class="mobile-navigation__link">Contact</a>
 									</li>
 								</ul>
 							</nav>

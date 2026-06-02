@@ -677,6 +677,14 @@
     background-color: var(--color-sand);
     padding: 12rem 5rem;
 
+    &--landing {
+      padding-top: 8rem;
+
+      .stories__container {
+        max-width: 120rem;
+      }
+    }
+
     &__container {
       display: grid;
       grid-template-columns: auto;
