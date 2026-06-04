@@ -62,12 +62,13 @@ Text Domain: cvipi
 @use 'layout/header' as header;
 @use 'layout/navigation' as navigation;
 @use 'layout/banner' as banner;
-@use 'layout/posts-header' as postsheader;
+//@use 'layout/posts-header' as postsheader;
 @use 'layout/footer' as footer;
 
 //*--------| Pages |--------*//
 @use 'pages/login' as login;
 @use 'pages/front-page' as frontpage;
+@use 'pages/cvipi-page' as cvipipage;
 @use 'pages/resources-page' as resourcespage;
 @use 'pages/events-page' as eventspage;
 

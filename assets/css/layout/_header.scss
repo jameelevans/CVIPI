@@ -55,3 +55,146 @@
     display: flex;
   }
 }
+
+.posts-hero {
+  min-height: 42rem;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background-color: var(--color-deep);
+  color: var(--color-white);
+  padding: 14rem 3rem 8rem;
+  text-align: center;
+
+  &__media {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(var(--color-deep-a), 0.82),
+        rgba(var(--color-deep-a), 0.62)
+      ),
+      url('assets/img/banner-img-1.webp') center / cover;
+    opacity: 0.8;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    max-width: 82rem;
+  }
+
+  &__eyebrow {
+    color: var(--color-carmine);
+    font-family: typography.$font-secondary;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    margin-bottom: 1.6rem;
+    text-transform: uppercase;
+  }
+
+  &__heading {
+    font-size: clamp(5rem, 8vw, 9rem);
+    line-height: 0.9;
+    margin-bottom: 2rem;
+
+    em {
+      color: var(--color-carmine);
+      font-weight: 350;
+    }
+  }
+
+  &__description {
+    color: rgba(var(--color-white-a), 0.75);
+    font-size: 1.8rem;
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 58rem;
+  }
+}
+
+.cvipi-hero {
+  min-height: 42rem;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background-color: var(--color-deep);
+  color: var(--color-white);
+  padding: 43rem 8rem 5rem;
+  text-align: center;
+
+  &__media {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(var(--color-deep-a), 0.62) 0%,
+        rgba(var(--color-deep-a), 0.16) 48%,
+        rgba(var(--color-deep-a), 0) 72%
+      ),
+      linear-gradient(
+        to top,
+        var(--color-deep) 0%,
+        rgba(var(--color-deep-a), 0.98) 8%,
+        rgba(var(--color-deep-a), 0.78) 22%,
+        rgba(var(--color-deep-a), 0.38) 45%,
+        rgba(var(--color-deep-a), 0) 72%
+      ),
+      var(--cvipi-hero-image, url('assets/img/banner-img-1.webp')) center
+        center / cover no-repeat;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    max-width: 82rem;
+  }
+
+  &__eyebrow {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 1.2rem;
+    font-family: typography.$font-secondary;
+    font-size: 1.4rem;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--color-white);
+    margin-bottom: 2rem;
+    text-shadow: 0 0 5px var(--color-black);
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 2.4rem;
+      height: 2px;
+      background-color: var(--color-white);
+    }
+  }
+
+  &__heading {
+    font-size: clamp(5rem, 8vw, 9rem);
+    line-height: 0.9;
+    margin-bottom: 2rem;
+    text-shadow: 0 2px 20px var(--color-black);
+
+    em {
+      color: var(--color-carmine);
+      font-weight: 350;
+    }
+  }
+
+  &__description {
+    color: rgba(var(--color-white-a), 0.75);
+    font-size: 1.8rem;
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 58rem;
+    text-shadow: 0 2px 20px var(--color-black);
+  }
+}

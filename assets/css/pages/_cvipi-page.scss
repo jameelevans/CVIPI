@@ -1,0 +1,249 @@
+@use '../abstracts/variables' as variables;
+@use '../base/typography' as typography;
+@use '../abstracts/mixins' as mixins;
+
+.cvipi {
+  &__container {
+    background-color: var(--color-deep);
+  }
+
+  &__doj {
+  }
+}
+
+.our-story {
+  &__container {
+    display: grid;
+    grid-template-columns: auto;
+    max-width: 90rem;
+    margin: auto;
+    padding: 5rem;
+    gap: 8rem;
+
+    @include mixins.respond(medium) {
+      grid-template-columns: repeat(2, 1fr);
+      padding: 5rem 0;
+    }
+  }
+
+  &__content {
+  }
+
+  &__header {
+  }
+
+  &__eyebrow {
+    // Inline-flex lets the decorative rule and label align as one compact unit.
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 1.2rem;
+
+    // Secondary uppercase treatment creates a small eyebrow above the main
+    // heading.
+    font-family: typography.$font-secondary;
+    font-size: 1.5rem;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--color-carmine);
+    margin-bottom: 2rem;
+    font-weight: 600;
+
+    &::before {
+      // Short leading rule that visually introduces the eyebrow text.
+      content: '';
+      display: inline-block;
+      width: 2.4rem;
+      height: 1px;
+      background-color: var(--color-carmine);
+    }
+
+    @include mixins.respond(medium) {
+      font-size: 1rem;
+    }
+  }
+
+  &__heading {
+    // Oversized hero headline with tight line-height for a strong editorial
+    // presence.
+    font-size: 5rem;
+    line-height: 0.9;
+    color: var(--color-white);
+    margin-bottom: 2.5rem;
+
+    em {
+      // Emphasized word uses the carmine accent and lighter weight to create a
+      // typographic contrast within the headline.
+      color: var(--color-carmine);
+      font-weight: 300;
+      letter-spacing: -1.8px;
+      display: inline;
+      margin-top: 0.5rem;
+    }
+
+    @include mixins.respond(medium) {
+      font-size: 3.5rem;
+    }
+  }
+
+  &__p {
+    font-size: 2rem;
+    margin-bottom: 2.5rem;
+    color: rgba(var(--color-white-a), 0.95);
+    line-height: 1.4;
+    font-family: typography.$font-secondary;
+    font-weight: 600;
+
+    @include mixins.respond(medium) {
+      font-size: 1.4rem;
+      line-height: 1.8;
+    }
+
+    a {
+      color: var(--color-light-copper);
+      text-decoration: none;
+    }
+  }
+
+  &__img {
+    width: 100%; //change this to be responsive
+    margin: auto;
+    border-radius: 4px;
+  }
+}
+
+.mission {
+  margin: auto;
+  max-width: 90rem;
+  padding: 15rem 5rem;
+  text-align: center;
+  position: relative;
+
+  &__header {
+    font-size: 21vw;
+    text-align: center;
+    position: absolute;
+    left: 50%;
+    top: 5rem;
+    width: max-content;
+    z-index: 1;
+    line-height: 0.8;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: rgba(var(--color-white-a), 0.02);
+    user-select: none;
+    transform: translateX(-50%);
+
+    @include mixins.respond(small) {
+      top: 0;
+      transform: translateX(-50%);
+    }
+  }
+
+  &__statement {
+    font-family: typography.$font-primary;
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 3.8rem;
+    line-height: 47.5px;
+    letter-spacing: -0.76px;
+    vertical-align: middle;
+    color: var(--color-white);
+
+    em {
+      color: var(--color-carmine);
+      font-weight: 300;
+      letter-spacing: -1.8px;
+      display: inline;
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+.we-serve {
+  &__header {
+    text-align: center;
+  }
+  &__eyebrow {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 1.2rem;
+    font-family: typography.$font-secondary;
+    font-size: 1.4rem;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--color-carmine);
+    margin-bottom: 2rem;
+    text-shadow: 0 0 5px var(--color-black);
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 2.4rem;
+      height: 2px;
+      background-color: var(--color-carmine);
+    }
+  }
+
+  &__heading {
+    font-size: clamp(5rem, 8vw, 9rem);
+    line-height: 0.9;
+    margin-bottom: 2rem;
+    text-shadow: 0 2px 20px var(--color-black);
+    color: var(--color-white);
+
+    em {
+      color: var(--color-carmine);
+      font-weight: 350;
+    }
+  }
+
+  &__description {
+    color: rgba(var(--color-white-a), 0.75);
+    font-family: typography.$font-secondary;
+    font-size: 1.7rem;
+    font-weight: 600;
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 58rem;
+    text-shadow: 0 2px 20px var(--color-black);
+  }
+
+  &__details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0 auto;
+    max-width: 58rem;
+
+    > *:not(:last-child) {
+      // Fine divider between stat groups; skipped on the final item to avoid a
+      // dangling bottom border.
+      border-right: 2px solid rgba(var(--color-dark-grey-a), 0.5);
+    }
+  }
+
+  &__stats {
+    text-align: center;
+    color: rgba(var(--color-white-a), 0.95);
+    margin: 3.5rem 0;
+  }
+
+  &__number {
+    font-size: 4rem;
+    font-weight: 800;
+
+    em {
+      color: var(--color-carmine);
+      font-weight: 350;
+    }
+  }
+
+  &__number-details {
+    font-size: 1.2rem;
+    font-weight: 350;
+    letter-spacing: 1.2px;
+    font-family: typography.$font-secondary;
+    color: rgba(var(--color-white-a), 0.5);
+  }
+}
