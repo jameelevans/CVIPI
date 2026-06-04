@@ -464,6 +464,343 @@ function cvipi_ajax_filter_resources() {
 add_action( 'wp_ajax_cvipi_filter_resources', 'cvipi_ajax_filter_resources' );
 add_action( 'wp_ajax_nopriv_cvipi_filter_resources', 'cvipi_ajax_filter_resources' );
 
+//* CVIPI map marker post type, fields, rendering, and AJAX helpers.
+function cvipi_get_map_fiscal_years() {
+  return array(
+    '2022' => array(
+      'label' => 'FY 2022',
+      'color' => '#bb722a',
+    ),
+    '2023' => array(
+      'label' => 'FY 2023',
+      'color' => '#277ca8',
+    ),
+    '2024' => array(
+      'label' => 'FY 2024',
+      'color' => '#174f6b',
+    ),
+  );
+}
+
+function cvipi_register_map_marker_post_type() {
+  register_post_type(
+    'map_marker',
+    array(
+      'labels'       => array(
+        'name'               => 'Map Markers',
+        'singular_name'      => 'Map Marker',
+        'add_new_item'       => 'Add New Map Marker',
+        'edit_item'          => 'Edit Map Marker',
+        'new_item'           => 'New Map Marker',
+        'view_item'          => 'View Map Marker',
+        'search_items'       => 'Search Map Markers',
+        'not_found'          => 'No map markers found',
+        'not_found_in_trash' => 'No map markers found in Trash',
+        'all_items'          => 'All Map Markers',
+        'menu_name'          => 'Map Markers',
+      ),
+      'public'       => true,
+      'has_archive'  => false,
+      'menu_icon'    => 'dashicons-location-alt',
+      'show_in_rest' => true,
+      'supports'     => array( 'title', 'editor', 'thumbnail' ),
+      'rewrite'      => array( 'slug' => 'map-marker' ),
+    )
+  );
+}
+add_action( 'init', 'cvipi_register_map_marker_post_type' );
+
+function cvipi_add_map_marker_meta_box() {
+  add_meta_box(
+    'cvipi_map_marker_details',
+    'Map Marker Details',
+    'cvipi_render_map_marker_meta_box',
+    'map_marker',
+    'normal',
+    'high'
+  );
+}
+add_action( 'add_meta_boxes', 'cvipi_add_map_marker_meta_box' );
+
+function cvipi_render_map_marker_meta_box( $post ) {
+  $fiscal_years = cvipi_get_map_fiscal_years();
+  $fiscal_year  = get_post_meta( $post->ID, 'map_marker_fiscal_year', true );
+  $award        = get_post_meta( $post->ID, 'map_marker_award', true );
+  $location     = get_post_meta( $post->ID, 'map_marker_location_name', true );
+  $x            = get_post_meta( $post->ID, 'map_marker_x', true );
+  $y            = get_post_meta( $post->ID, 'map_marker_y', true );
+
+  wp_nonce_field( 'cvipi_save_map_marker_details', 'cvipi_map_marker_details_nonce' );
+  ?>
+  <p>
+    <label for="map_marker_fiscal_year"><strong>Fiscal Year</strong></label><br>
+    <select id="map_marker_fiscal_year" name="map_marker_fiscal_year">
+      <?php foreach ( $fiscal_years as $year => $year_data ) : ?>
+        <option value="<?php echo esc_attr( $year ); ?>" <?php selected( $fiscal_year, $year ); ?>><?php echo esc_html( $year_data['label'] ); ?></option>
+      <?php endforeach; ?>
+    </select>
+  </p>
+  <p>
+    <label for="map_marker_award"><strong>Award</strong></label><br>
+    <input type="text" id="map_marker_award" name="map_marker_award" value="<?php echo esc_attr( $award ); ?>" class="widefat" placeholder="$2.0M">
+  </p>
+  <p>
+    <label for="map_marker_location_name"><strong>Location Name</strong></label><br>
+    <input type="text" id="map_marker_location_name" name="map_marker_location_name" value="<?php echo esc_attr( $location ); ?>" class="widefat" placeholder="Toledo, OH">
+  </p>
+  <p>
+    <label for="map_marker_x"><strong>Map X Position</strong></label><br>
+    <input type="number" id="map_marker_x" name="map_marker_x" value="<?php echo esc_attr( $x ); ?>" min="0" max="100" step="0.01">%
+  </p>
+  <p>
+    <label for="map_marker_y"><strong>Map Y Position</strong></label><br>
+    <input type="number" id="map_marker_y" name="map_marker_y" value="<?php echo esc_attr( $y ); ?>" min="0" max="100" step="0.01">%
+  </p>
+  <p class="description">Editors can also drag markers directly on the What is CVIPI page while logged in. Positions are stored as SVG percentage coordinates.</p>
+  <?php
+}
+
+function cvipi_save_map_marker_meta( $post_id ) {
+  if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) || 'map_marker' !== get_post_type( $post_id ) ) {
+    return;
+  }
+
+  if ( ! isset( $_POST['cvipi_map_marker_details_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['cvipi_map_marker_details_nonce'] ) ), 'cvipi_save_map_marker_details' ) ) {
+    return;
+  }
+
+  if ( ! current_user_can( 'edit_post', $post_id ) ) {
+    return;
+  }
+
+  $fiscal_years = cvipi_get_map_fiscal_years();
+  $fiscal_year  = isset( $_POST['map_marker_fiscal_year'] ) ? sanitize_text_field( wp_unslash( $_POST['map_marker_fiscal_year'] ) ) : '';
+  $award        = isset( $_POST['map_marker_award'] ) ? sanitize_text_field( wp_unslash( $_POST['map_marker_award'] ) ) : '';
+  $location     = isset( $_POST['map_marker_location_name'] ) ? sanitize_text_field( wp_unslash( $_POST['map_marker_location_name'] ) ) : '';
+  $x            = isset( $_POST['map_marker_x'] ) ? min( 100, max( 0, (float) $_POST['map_marker_x'] ) ) : 50;
+  $y            = isset( $_POST['map_marker_y'] ) ? min( 100, max( 0, (float) $_POST['map_marker_y'] ) ) : 50;
+
+  update_post_meta( $post_id, 'map_marker_fiscal_year', isset( $fiscal_years[ $fiscal_year ] ) ? $fiscal_year : '2024' );
+  update_post_meta( $post_id, 'map_marker_award', $award );
+  update_post_meta( $post_id, 'map_marker_location_name', $location );
+  update_post_meta( $post_id, 'map_marker_x', $x );
+  update_post_meta( $post_id, 'map_marker_y', $y );
+}
+add_action( 'save_post_map_marker', 'cvipi_save_map_marker_meta' );
+
+function cvipi_get_map_marker_query_args( $fiscal_year = '' ) {
+  $query_args = array(
+    'post_type'           => 'map_marker',
+    'post_status'         => 'publish',
+    'posts_per_page'      => -1,
+    'orderby'             => 'title',
+    'order'               => 'ASC',
+    'ignore_sticky_posts' => true,
+  );
+
+  if ( $fiscal_year && 'all' !== $fiscal_year ) {
+    $query_args['meta_query'] = array(
+      array(
+        'key'   => 'map_marker_fiscal_year',
+        'value' => sanitize_text_field( $fiscal_year ),
+      ),
+    );
+  }
+
+  return $query_args;
+}
+
+function cvipi_get_map_marker_data( $fiscal_year = '' ) {
+  $markers = array();
+  $query   = new WP_Query( cvipi_get_map_marker_query_args( $fiscal_year ) );
+
+  if ( $query->have_posts() ) {
+    while ( $query->have_posts() ) {
+      $query->the_post();
+      $post_id     = get_the_ID();
+      $marker_year = get_post_meta( $post_id, 'map_marker_fiscal_year', true );
+      $years       = cvipi_get_map_fiscal_years();
+      $year_data   = isset( $years[ $marker_year ] ) ? $years[ $marker_year ] : $years['2024'];
+
+      $markers[] = array(
+        'id'           => $post_id,
+        'title'        => get_the_title(),
+        'content'      => wp_trim_words( wp_strip_all_tags( get_the_content() ), 18 ),
+        'fiscal_year'  => $marker_year ? $marker_year : '2024',
+        'year_label'   => $year_data['label'],
+        'color'        => $year_data['color'],
+        'award'        => get_post_meta( $post_id, 'map_marker_award', true ),
+        'location'     => get_post_meta( $post_id, 'map_marker_location_name', true ),
+        'x'            => (float) get_post_meta( $post_id, 'map_marker_x', true ),
+        'y'            => (float) get_post_meta( $post_id, 'map_marker_y', true ),
+        'edit_link'    => get_edit_post_link( $post_id, '' ),
+        'can_edit'     => current_user_can( 'edit_post', $post_id ),
+      );
+    }
+
+    wp_reset_postdata();
+  }
+
+  return $markers;
+}
+
+function cvipi_get_map_marker_counts() {
+  $counts = array();
+
+  foreach ( cvipi_get_map_fiscal_years() as $year => $year_data ) {
+    $query = new WP_Query( cvipi_get_map_marker_query_args( $year ) );
+    $counts[ $year ] = (int) $query->found_posts;
+    wp_reset_postdata();
+  }
+
+  return $counts;
+}
+
+function cvipi_render_map_marker_filters() {
+  $fiscal_years = cvipi_get_map_fiscal_years();
+  $counts       = cvipi_get_map_marker_counts();
+  ob_start();
+  ?>
+  <div class="map-filters" data-map-filters>
+    <button class="map-filters__button is-active" type="button" data-map-filter="all">
+      <span class="map-filters__dot"></span>
+      <span>All</span>
+      <strong><?php echo esc_html( array_sum( $counts ) ); ?></strong>
+    </button>
+    <?php foreach ( $fiscal_years as $year => $year_data ) : ?>
+      <button class="map-filters__button" type="button" data-map-filter="<?php echo esc_attr( $year ); ?>" style="--marker-color: <?php echo esc_attr( $year_data['color'] ); ?>;">
+        <span class="map-filters__dot"></span>
+        <span><?php echo esc_html( $year_data['label'] ); ?></span>
+        <strong><?php echo esc_html( isset( $counts[ $year ] ) ? $counts[ $year ] : 0 ); ?></strong>
+      </button>
+    <?php endforeach; ?>
+  </div>
+  <?php
+  return ob_get_clean();
+}
+
+function cvipi_render_marker_button( $marker ) {
+  $x = $marker['x'] ? $marker['x'] : 50;
+  $y = $marker['y'] ? $marker['y'] : 50;
+  ob_start();
+  ?>
+  <button
+    class="cvipi-map__marker"
+    type="button"
+    style="--marker-color: <?php echo esc_attr( $marker['color'] ); ?>; left: <?php echo esc_attr( $x ); ?>%; top: <?php echo esc_attr( $y ); ?>%;"
+    data-marker-id="<?php echo esc_attr( $marker['id'] ); ?>"
+    data-marker-title="<?php echo esc_attr( $marker['title'] ); ?>"
+    data-marker-content="<?php echo esc_attr( $marker['content'] ); ?>"
+    data-marker-year="<?php echo esc_attr( $marker['year_label'] ); ?>"
+    data-marker-award="<?php echo esc_attr( $marker['award'] ); ?>"
+    data-marker-location="<?php echo esc_attr( $marker['location'] ); ?>"
+    data-can-edit="<?php echo $marker['can_edit'] ? 'true' : 'false'; ?>"
+    aria-label="<?php echo esc_attr( sprintf( 'View %s map marker', $marker['title'] ) ); ?>"
+  >
+    <span class="cvipi-map__marker-core"></span>
+  </button>
+  <?php
+  return ob_get_clean();
+}
+
+function cvipi_render_map_markers( $fiscal_year = '' ) {
+  $html = '';
+
+  foreach ( cvipi_get_map_marker_data( $fiscal_year ) as $marker ) {
+    $html .= cvipi_render_marker_button( $marker );
+  }
+
+  if ( ! $html ) {
+    $html = '<p class="cvipi-map__empty">No map markers found for this fiscal year.</p>';
+  }
+
+  return $html;
+}
+
+function cvipi_render_marker_map() {
+  $map_path = get_template_directory() . '/assets/img/map.svg';
+  $map_svg  = file_exists( $map_path ) ? file_get_contents( $map_path ) : '';
+  ob_start();
+  ?>
+  <div class="we-serve__map cvipi-map" data-cvipi-map data-can-edit="<?php echo current_user_can( 'edit_posts' ) ? 'true' : 'false'; ?>">
+    <?php if ( current_user_can( 'edit_posts' ) ) : ?>
+      <p class="cvipi-map__editor-note">Drag a marker to update its saved map position.</p>
+    <?php endif; ?>
+    <div class="cvipi-map__viewport" data-map-viewport>
+      <div class="cvipi-map__stage" data-map-stage>
+        <div class="cvipi-map__base" aria-hidden="true">
+          <?php echo $map_svg; ?>
+        </div>
+        <div class="cvipi-map__markers" data-map-markers>
+          <?php echo cvipi_render_map_markers(); ?>
+        </div>
+      </div>
+      <article class="cvipi-map__popup" data-map-popup hidden>
+        <button class="cvipi-map__popup-close" type="button" data-map-popup-close aria-label="Close marker details">&times;</button>
+        <h3 data-map-popup-title></h3>
+        <p data-map-popup-content></p>
+        <dl>
+          <div>
+            <dt>Fiscal Year</dt>
+            <dd data-map-popup-year></dd>
+          </div>
+          <div>
+            <dt>Award</dt>
+            <dd data-map-popup-award></dd>
+          </div>
+        </dl>
+        <p class="cvipi-map__popup-location" data-map-popup-location></p>
+      </article>
+    </div>
+    <div class="cvipi-map__controls" aria-label="Map zoom controls">
+      <button type="button" data-map-zoom-in aria-label="Zoom in">+</button>
+      <button type="button" data-map-zoom-out aria-label="Zoom out">-</button>
+      <button type="button" data-map-reset aria-label="Reset map">Reset</button>
+    </div>
+  </div>
+  <?php
+  return ob_get_clean();
+}
+
+function cvipi_ajax_filter_map_markers() {
+  check_ajax_referer( 'cvipi_ajax_nonce', 'nonce' );
+
+  $fiscal_year = isset( $_POST['fiscal_year'] ) ? sanitize_text_field( wp_unslash( $_POST['fiscal_year'] ) ) : '';
+
+  wp_send_json_success(
+    array(
+      'html' => cvipi_render_map_markers( $fiscal_year ),
+    )
+  );
+}
+add_action( 'wp_ajax_cvipi_filter_map_markers', 'cvipi_ajax_filter_map_markers' );
+add_action( 'wp_ajax_nopriv_cvipi_filter_map_markers', 'cvipi_ajax_filter_map_markers' );
+
+function cvipi_ajax_update_map_marker_position() {
+  check_ajax_referer( 'cvipi_ajax_nonce', 'nonce' );
+
+  $post_id = isset( $_POST['marker_id'] ) ? absint( $_POST['marker_id'] ) : 0;
+
+  if ( ! $post_id || 'map_marker' !== get_post_type( $post_id ) || ! current_user_can( 'edit_post', $post_id ) ) {
+    wp_send_json_error( array( 'message' => 'You cannot edit this marker.' ), 403 );
+  }
+
+  $x = isset( $_POST['x'] ) ? min( 100, max( 0, (float) $_POST['x'] ) ) : 50;
+  $y = isset( $_POST['y'] ) ? min( 100, max( 0, (float) $_POST['y'] ) ) : 50;
+
+  update_post_meta( $post_id, 'map_marker_x', $x );
+  update_post_meta( $post_id, 'map_marker_y', $y );
+
+  wp_send_json_success(
+    array(
+      'x' => $x,
+      'y' => $y,
+    )
+  );
+}
+add_action( 'wp_ajax_cvipi_update_map_marker_position', 'cvipi_ajax_update_map_marker_position' );
+// .CVIPI map marker helpers.
+
 //* Event field and taxonomy helpers.
 function cvipi_get_event_field( $field_name, $post_id = null ) {
   $post_id = $post_id ? $post_id : get_the_ID();

@@ -10,6 +10,7 @@
 // * --------| Font variables |-------- *
 $font-primary: 'Fraunces', serif;
 $font-secondary: 'Syne', sans-serif;
+$font-tertiary: 'Open Sans', sans-serif;
 $font-h1: 4rem;
 $font-h2: 2.4rem;
 $font-h3: clamp(1.7rem, 1.8vw, 2rem);
@@ -27,14 +28,22 @@ $font-icon-body: 0.8rem;
   font-family: $font-primary;
   font-optical-sizing: auto;
   font-style: normal;
-  font-display: swap;
 }
 
 @mixin font-primary-i {
   font-family: $font-primary;
   font-optical-sizing: auto;
-  font-display: swap;
   font-style: italic;
+}
+
+@mixin font-secondary {
+  font-family: $font-secondary;
+  font-style: normal;
+}
+
+@mixin font-tertiary {
+  font-family: $font-tertiary;
+  font-style: normal;
 }
 
 // Included fonts from assets
@@ -62,6 +71,24 @@ $font-icon-body: 0.8rem;
   src: url('assets/fonts/Syne-VariableFont_wght.ttf') format('truetype');
   font-weight: 100 800;
   font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('assets/fonts/OpenSans-VariableFont_wdth,wght.ttf')
+    format('truetype');
+  font-weight: 300 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('assets/fonts/OpenSans-Italic-VariableFont_wdth,wght.ttf')
+    format('truetype');
+  font-weight: 300 800;
+  font-style: italic;
   font-display: swap;
 }
 html {

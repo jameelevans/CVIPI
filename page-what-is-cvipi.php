@@ -51,12 +51,10 @@ get_header( 'cvipi' ); ?>
 				</div>
 			</div>
 			<div class="we-serve__filters">
-				<p>FY 2022 16 FY 2023 10 FY 2024<-- filters go here</p>
+				<?php echo cvipi_render_map_marker_filters(); ?>
 			</div>
 
-			<div class="we-serve__map">
-				<p>SVG Map goes here <---</p>
-			</div>
+			<?php echo cvipi_render_marker_map(); ?>
 
 		
 		</section>
