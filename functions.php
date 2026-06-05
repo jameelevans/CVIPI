@@ -610,9 +610,14 @@ function cvipi_get_map_marker_query_args( $fiscal_year = '' ) {
   return $query_args;
 }
 
+function cvipi_can_edit_map_markers() {
+  return is_user_logged_in() && current_user_can( 'edit_posts' );
+}
+
 function cvipi_get_map_marker_data( $fiscal_year = '' ) {
   $markers = array();
   $query   = new WP_Query( cvipi_get_map_marker_query_args( $fiscal_year ) );
+  $can_edit_map = cvipi_can_edit_map_markers();
 
   if ( $query->have_posts() ) {
     while ( $query->have_posts() ) {
@@ -634,7 +639,7 @@ function cvipi_get_map_marker_data( $fiscal_year = '' ) {
         'x'            => (float) get_post_meta( $post_id, 'map_marker_x', true ),
         'y'            => (float) get_post_meta( $post_id, 'map_marker_y', true ),
         'edit_link'    => get_edit_post_link( $post_id, '' ),
-        'can_edit'     => current_user_can( 'edit_post', $post_id ),
+        'can_edit'     => $can_edit_map && current_user_can( 'edit_post', $post_id ),
       );
     }
 
@@ -720,10 +725,11 @@ function cvipi_render_map_markers( $fiscal_year = '' ) {
 function cvipi_render_marker_map() {
   $map_path = get_template_directory() . '/assets/img/map.svg';
   $map_svg  = file_exists( $map_path ) ? file_get_contents( $map_path ) : '';
+  $can_edit_map = cvipi_can_edit_map_markers();
   ob_start();
   ?>
-  <div class="we-serve__map cvipi-map" data-cvipi-map data-can-edit="<?php echo current_user_can( 'edit_posts' ) ? 'true' : 'false'; ?>">
-    <?php if ( current_user_can( 'edit_posts' ) ) : ?>
+  <div class="we-serve__map cvipi-map" data-cvipi-map data-can-edit="<?php echo $can_edit_map ? 'true' : 'false'; ?>">
+    <?php if ( $can_edit_map ) : ?>
       <p class="cvipi-map__editor-note">Drag a marker to update its saved map position.</p>
     <?php endif; ?>
     <div class="cvipi-map__viewport" data-map-viewport>
@@ -735,28 +741,33 @@ function cvipi_render_marker_map() {
           <?php echo cvipi_render_map_markers(); ?>
         </div>
       </div>
-      <article class="cvipi-map__popup" data-map-popup hidden>
-        <button class="cvipi-map__popup-close" type="button" data-map-popup-close aria-label="Close marker details">&times;</button>
-        <h3 data-map-popup-title></h3>
-        <p data-map-popup-content></p>
-        <dl>
-          <div>
-            <dt>Fiscal Year</dt>
-            <dd data-map-popup-year></dd>
-          </div>
-          <div>
-            <dt>Award</dt>
-            <dd data-map-popup-award></dd>
-          </div>
-        </dl>
-        <p class="cvipi-map__popup-location" data-map-popup-location></p>
-      </article>
     </div>
+    <article class="cvipi-map__popup" data-map-popup hidden>
+      <button class="cvipi-map__popup-close" type="button" data-map-popup-close aria-label="Close marker details">&times;</button>
+      <h3 class="cvipi-map__popup-title" data-map-popup-title></h3>
+      <p class="cvipi-map__popup-content" data-map-popup-content></p>
+      <dl class="cvipi-map__popup-details">
+        <div class="cvipi-map__popup-detail">
+          <dt class="cvipi-map__popup-term">Fiscal Year</dt>
+          <dd class="cvipi-map__popup-value" data-map-popup-year></dd>
+        </div>
+        <div class="cvipi-map__popup-detail">
+          <dt class="cvipi-map__popup-term">Award</dt>
+          <dd class="cvipi-map__popup-value cvipi-map__popup-value--award" data-map-popup-award></dd>
+        </div>
+      </dl>
+      <p class="cvipi-map__popup-location">
+        <?php echo svg_icon( 'cvipi-map__popup-location-icon', 'location-2' ); ?>
+        <span class="cvipi-map__popup-location-text" data-map-popup-location></span>
+      </p>
+    </article>
     <div class="cvipi-map__controls" aria-label="Map zoom controls">
       <button type="button" data-map-zoom-in aria-label="Zoom in">+</button>
       <button type="button" data-map-zoom-out aria-label="Zoom out">-</button>
       <button type="button" data-map-reset aria-label="Reset map">Reset</button>
     </div>
+    <p class="cvipi-map__preview">Hover to Preview</p>
+
   </div>
   <?php
   return ob_get_clean();

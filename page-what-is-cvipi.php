@@ -20,7 +20,9 @@ get_header( 'cvipi' ); ?>
 					<p class="our-story__p">Several DOJ components collaborate on the initiative—BJA, NIJ, OJJDP, and OVC—to ensure jurisdictions have access to expertise and resources for addressing community violence.</p>
 					<p class="our-story__p">This initiative builds partnerships among community residents, local government, law enforcement, hospitals, victim service providers, community-based organizations,researchers, and other stakeholders to <a href="#">help prevent and reduce violent crime in our communities</a>.</p>
 				</div>
-				<img src="<?php echo get_template_directory_uri(); ?>/assets/img/post-3.webp" alt="" class="our-story__img">
+				<div class="our-story__media">
+					<img src="<?php echo get_template_directory_uri(); ?>/assets/img/post-3.webp" alt="" class="our-story__img">
+				</div>
 			</div>
 		</section>
 		<section class="mission">

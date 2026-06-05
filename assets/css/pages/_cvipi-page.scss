@@ -2,15 +2,22 @@
 @use '../base/typography' as typography;
 @use '../abstracts/mixins' as mixins;
 
+// CVIPI page shell. This file owns the What is CVIPI page sections, the
+// national map UI, and the map marker popup component.
 .cvipi {
   &__container {
+    // Deep background lets the editorial sections, filters, and SVG map share
+    // one uninterrupted visual field.
     background-color: var(--color-deep);
   }
 
   &__doj {
+    // Reserved for future DOJ content block styles.
   }
 }
 
+// Intro story section. The copy and image sit in one grid on desktop, then
+// stack naturally on smaller screens.
 .our-story {
   &__container {
     display: grid;
@@ -27,9 +34,17 @@
   }
 
   &__content {
+    // Centered mobile copy prevents the narrow stacked layout from feeling
+    // left-heavy; desktop returns to editorial left alignment.
+    text-align: center;
+
+    @include mixins.respond(medium) {
+      text-align: left;
+    }
   }
 
   &__header {
+    // Reserved for future header-specific spacing if the intro layout changes.
   }
 
   &__eyebrow {
@@ -58,8 +73,8 @@
       background-color: var(--color-carmine);
     }
 
-    @include mixins.respond(medium) {
-      font-size: 1rem;
+    @include mixins.respond(small) {
+      font-size: 1.4rem;
     }
   }
 
@@ -105,13 +120,33 @@
     }
   }
 
-  &__img {
-    width: 100%; //change this to be responsive
+  &__media {
+    // Square crop frame for the hover zoom effect.
+    aspect-ratio: 1 / 1;
     margin: auto;
+    overflow: hidden;
     border-radius: 4px;
+    width: 100%;
+  }
+
+  &__img {
+    // Object-fit keeps the crop centered as the image scales inside the frame.
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 1.4s ease;
+    width: 100%;
+  }
+
+  &__media:hover &__img {
+    // Slow zoom gives the image a subtle interactive polish without moving the
+    // surrounding grid.
+    transform: scale(1.08);
   }
 }
 
+// Mission statement section with a large ghost heading behind the statement.
 .mission {
   margin: auto;
   max-width: 90rem;
@@ -160,9 +195,12 @@
   }
 }
 
+// National reach section. Contains the intro copy, quick stats, fiscal-year
+// filters, and the interactive marker map.
 .we-serve {
   &__header {
     text-align: center;
+    padding: 0 5rem;
   }
   &__eyebrow {
     position: relative;
@@ -170,7 +208,7 @@
     align-items: center;
     gap: 1.2rem;
     font-family: typography.$font-secondary;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     letter-spacing: 1.2px;
     text-transform: uppercase;
     color: var(--color-carmine);
@@ -184,10 +222,14 @@
       height: 2px;
       background-color: var(--color-carmine);
     }
+
+    @include mixins.respond(small) {
+      font-size: 1.4rem;
+    }
   }
 
   &__heading {
-    font-size: clamp(5rem, 8vw, 9rem);
+    font-size: 5rem;
     line-height: 0.9;
     margin-bottom: 2rem;
     text-shadow: 0 2px 20px var(--color-black);
@@ -197,41 +239,70 @@
       color: var(--color-carmine);
       font-weight: 350;
     }
+
+    @include mixins.respond(small) {
+      font-size: clamp(5rem, 8vw, 6rem);
+    }
   }
 
   &__description {
     color: rgba(var(--color-white-a), 0.75);
     font-family: typography.$font-secondary;
-    font-size: 1.7rem;
+    font-size: 2rem;
     font-weight: 600;
     line-height: 1.6;
     margin: 0 auto;
     max-width: 58rem;
     text-shadow: 0 2px 20px var(--color-black);
+
+    @include mixins.respond(small) {
+      font-size: 1.7rem;
+    }
   }
 
   &__details {
+    // Stats stack on mobile, then become a three-column row with dividers.
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: auto;
     margin: 0 auto;
     max-width: 58rem;
+
+    @include mixins.respond(small) {
+      grid-template-columns: repeat(3, 1fr);
+    }
 
     > *:not(:last-child) {
       // Fine divider between stat groups; skipped on the final item to avoid a
       // dangling bottom border.
-      border-right: 2px solid rgba(var(--color-dark-grey-a), 0.5);
+      border-right: none;
+      border-bottom: 2px solid rgba(var(--color-dark-grey-a), 0.5);
+
+      @include mixins.respond(small) {
+        border-right: 2px solid rgba(var(--color-dark-grey-a), 0.5);
+        border-bottom: none;
+      }
     }
   }
 
   &__stats {
     text-align: center;
     color: rgba(var(--color-white-a), 0.95);
-    margin: 3.5rem 0;
+    padding: 3.5rem 0;
+    //margin: 3.5rem 0;
+
+    @include mixins.respond(small) {
+      margin: 3.5rem 0;
+      padding: 0;
+    }
   }
 
   &__number {
-    font-size: 4rem;
+    font-size: 5rem;
     font-weight: 800;
+
+    @include mixins.respond(small) {
+      font-size: 4rem;
+    }
 
     em {
       color: var(--color-carmine);
@@ -240,11 +311,15 @@
   }
 
   &__number-details {
-    font-size: 1.2rem;
+    font-size: 2rem;
     font-weight: 350;
     letter-spacing: 1.2px;
     font-family: typography.$font-secondary;
     color: rgba(var(--color-white-a), 0.5);
+
+    @include mixins.respond(small) {
+      font-size: 1.2rem;
+    }
   }
 
   &__filters {
@@ -258,12 +333,18 @@
   }
 }
 
+// Fiscal-year filter buttons for the map. The marker color is supplied inline
+// from PHP through the --marker-color custom property.
 .map-filters {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 5rem; // May adjust later
+  gap: 2.5rem;
+
+  @include mixins.respond(small) {
+    gap: 5rem;
+  }
 
   &__button {
     --marker-color: var(--color-light-blue);
@@ -278,17 +359,19 @@
     color: rgba(var(--color-white-a), 0.68);
     cursor: pointer;
     font-family: typography.$font-tertiary;
-    font-size: 2.4rem;
+    font-size: 2rem;
     font-weight: 400;
     padding: 0.9rem 0.2rem 1.1rem;
     transition:
+      background-size 180ms ease,
       border-color 180ms ease,
       color 180ms ease,
       opacity 180ms ease;
 
     strong {
       color: rgba(var(--color-white-a), 0.42);
-      font-weight: 400;
+      font-weight: 450;
+      font-size: 1.8rem;
     }
 
     &.is-active,
@@ -297,6 +380,16 @@
       border-color: var(--marker-color);
       color: var(--color-white);
       outline: 0;
+    }
+
+    &[data-map-filter='all'].is-active,
+    &[data-map-filter='all']:hover,
+    &[data-map-filter='all']:focus-visible {
+      // The all-years filter borrows the main navigation gradient treatment
+      // because it represents every marker color at once.
+      background: linear-gradient(90deg, #1a6a92 0%, #b8722a 100%) left bottom /
+        100% 2px no-repeat;
+      border-color: transparent;
     }
   }
 
@@ -309,23 +402,35 @@
   }
 }
 
+// Interactive SVG map with absolute-positioned marker buttons and a floating
+// detail popup. The viewport clips pan/zoom movement, while the popup lives
+// outside the viewport in the template so it can float above the map.
 .cvipi-map {
   --map-height: clamp(42rem, 55vw, 68rem);
 
   position: relative;
   width: min(118rem, calc(100% - 3rem));
   color: var(--color-white);
+  padding: 5rem 0;
+
+  @include mixins.respond-max(mobile) {
+    --map-height: 56rem;
+
+    width: min(100%, calc(100% - 2rem));
+  }
 
   &__editor-note {
+    // Only shown to logged-in editors who can drag-save marker positions.
     color: rgba(var(--color-white-a), 0.5);
-    font-family: typography.$font-secondary;
-    font-size: 1.2rem;
+    font-family: typography.$font-tertiary;
+    font-size: 1.5rem;
     font-weight: 700;
-    margin: 0 auto 1rem;
+    margin: 0 auto 5rem;
     text-align: center;
   }
 
   &__viewport {
+    // This box clips the pannable/zoomable map, not the popup.
     min-height: var(--map-height);
     overflow: hidden;
     position: relative;
@@ -333,6 +438,7 @@
   }
 
   &__stage {
+    // JavaScript transforms this stage for zoom and pan.
     aspect-ratio: 993 / 616;
     left: 50%;
     max-height: 100%;
@@ -351,6 +457,7 @@
   }
 
   &__base {
+    // SVG paths remain pointer-active so state hover styles can respond.
     display: flex;
     align-items: center;
     justify-content: center;
@@ -379,6 +486,8 @@
   }
 
   &__markers {
+    // The layer itself ignores pointer events so only the marker buttons are
+    // interactive.
     margin: auto;
     max-height: 100%;
     max-width: 100%;
@@ -388,6 +497,7 @@
   &__marker {
     --marker-color: var(--color-light-blue);
 
+    // Markers are positioned by percentage coordinates saved in post meta.
     appearance: none;
     background: transparent;
     border: 0;
@@ -403,11 +513,12 @@
 
     &::before,
     &::after {
+      // Expanding rings make dense marker clusters easier to notice.
       animation: cvipi-map-pulse 2.4s ease-out infinite;
       background: color-mix(in srgb, var(--marker-color) 45%, transparent);
       border-radius: inherit;
       content: '';
-      inset: 0.4rem;
+      inset: 0.5rem;
       opacity: 0;
       position: absolute;
     }
@@ -427,36 +538,51 @@
   }
 
   &__marker-core {
+    // Inner dot stays small while the larger button preserves a forgiving hit
+    // target.
     background: var(--marker-color);
-    border: 0.3rem solid rgba(var(--color-deep-a), 0.9);
+    border: 2px solid rgba(var(--color-deep-a), 0.9);
     border-radius: 999px;
-    box-shadow:
-      0 0 0 0.2rem color-mix(in srgb, var(--marker-color) 70%, transparent),
-      0 0.8rem 2.2rem rgba(var(--color-black-a), 0.42);
-    height: 1.3rem;
+    // box-shadow:
+    //  0 0 0 0.2rem color-mix(in srgb, var(--marker-color) 70%, transparent),
+    // 0 0.8rem 2.2rem rgba(var(--color-black-a), 0.42);
+    height: 1.6rem;
     left: 50%;
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
     transition: transform 180ms ease;
-    width: 1.3rem;
+    width: 1.6rem;
     z-index: 2;
   }
 
   &__popup {
+    // Floating marker detail card. It is positioned by JavaScript from the
+    // clicked/hovered marker's current screen coordinates.
     background: var(--color-white);
     border-top: 3px solid var(--color-light-blue);
     box-shadow: 0 2.2rem 5rem rgba(var(--color-black-a), 0.28);
     color: var(--color-deep);
-    font-family: typography.$font-secondary;
+    font-family: typography.$font-tertiary;
     left: 50%;
     max-width: min(32rem, calc(100vw - 4rem));
     padding: 1.8rem 2rem 1.6rem;
     position: absolute;
     top: 50%;
+    border-radius: 5px;
     transform: translate(-50%, calc(-100% - 2.2rem));
     width: 32rem;
     z-index: 4;
+
+    @include mixins.respond-max(mobile) {
+      bottom: 1rem;
+      left: 1rem !important;
+      max-width: calc(100% - 2rem);
+      position: absolute;
+      top: auto !important;
+      transform: none;
+      width: calc(100% - 2rem);
+    }
 
     &::after {
       border-left: 1rem solid transparent;
@@ -467,56 +593,68 @@
       left: 50%;
       position: absolute;
       transform: translateX(-50%);
+
+      @include mixins.respond-max(mobile) {
+        display: none;
+      }
     }
 
-    h3 {
+    &-title {
       font-size: 1.8rem;
       line-height: 1.15;
       margin: 0 2.4rem 0.8rem 0;
     }
 
-    p {
-      color: rgba(var(--color-deep-a), 0.75);
-      font-size: 1.2rem;
-      font-weight: 500;
-      line-height: 1.6;
+    &-content {
+      color: var(--color-deep);
       margin: 0 0 1.4rem;
+      font-size: 1.5rem;
+      font-weight: 300;
+      line-height: 1.3;
     }
 
-    dl {
-      border-bottom: 1px solid rgba(var(--color-deep-a), 0.16);
-      border-top: 1px solid rgba(var(--color-deep-a), 0.12);
+    &-details {
       display: grid;
       gap: 0.8rem;
       margin: 0 0 1rem;
       padding: 1rem 0;
     }
 
-    div {
+    &-detail {
       align-items: center;
       display: flex;
       justify-content: space-between;
       gap: 1rem;
+      border-bottom: 1px solid rgba(var(--color-deep-a), 0.16);
+      padding-bottom: 8px;
     }
 
-    dt {
-      color: rgba(var(--color-deep-a), 0.58);
-      font-size: 1rem;
-      font-weight: 900;
+    &-term {
+      color: rgba(var(--color-deep-a), 0.9);
+      font-size: 1.2rem;
+      font-weight: 400;
       letter-spacing: 1px;
       text-transform: uppercase;
     }
 
-    dd {
+    &-value {
       color: var(--color-deep);
-      font-size: 1.3rem;
-      font-weight: 900;
+      font-size: 1.6rem;
+      font-weight: 550;
       margin: 0;
       text-align: right;
+    }
+
+    &-value--award {
+      color: var(--color-copper);
+      font-size: 1.9rem;
+      font-weight: 900;
     }
   }
 
   &__popup-close {
+    // Hidden on desktop because desktop popups are hover/focus driven; mobile
+    // click-open popups need an explicit close target.
     align-items: center;
     appearance: none;
     background: transparent;
@@ -533,37 +671,66 @@
     right: 0.8rem;
     top: 0.6rem;
     width: 3rem;
+
+    @include mixins.respond-max(mobile) {
+      display: flex;
+    }
   }
 
   &__popup-location {
-    color: rgba(var(--color-deep-a), 0.62) !important;
+    // Location is split into an icon and text span so JavaScript can update
+    // the text without replacing the SVG icon.
+    align-items: center;
+    display: flex;
+    gap: 0.7rem;
+    color: rgba(var(--color-deep-a), 0.9) !important;
     margin: 0 !important;
   }
 
+  &__popup-location-icon {
+    // Sprite icons need explicit dimensions because the SVG helper only
+    // provides the symbol reference.
+    fill: currentColor;
+    flex: 0 0 auto;
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+
   &__controls {
-    bottom: 1.6rem;
+    // Zoom controls sit beneath the map center and remain above the SVG stage.
+    bottom: 7.6rem;
     display: flex;
     gap: 0.6rem;
     position: absolute;
-    right: 1.6rem;
     z-index: 5;
+    left: 50%;
+    transform: translateX(-50%);
 
     button {
+      // Buttons are intentionally large enough for touch and mouse use.
       appearance: none;
-      background: rgba(var(--color-white-a), 0.1);
+      background: rgba(var(--color-white-a), 0.06);
       border: 1px solid rgba(var(--color-white-a), 0.18);
-      color: var(--color-white);
+      color: rgba(var(--color-white-a), 0.4);
       cursor: pointer;
-      font-family: typography.$font-secondary;
-      font-size: 1.2rem;
-      font-weight: 900;
-      min-height: 3.4rem;
-      min-width: 3.4rem;
-      padding: 0 1rem;
+      font-family: typography.$font-tertiary;
+      font-size: 2rem;
+      font-weight: 600;
+      min-height: 5rem;
+      min-width: 5rem;
+      padding: 0 1.5rem;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        background: rgba(var(--color-white-a), 0.09);
+        color: rgba(var(--color-white-a), 0.8);
+      }
     }
   }
 
   &__empty {
+    // Empty state is centered within the marker layer when filtering returns
+    // no results.
     color: rgba(var(--color-white-a), 0.65);
     font-family: typography.$font-secondary;
     font-size: 1.4rem;
@@ -576,45 +743,31 @@
   }
 
   &--is-loading {
+    // Filtering dims the current marker set while AJAX refreshes the layer.
     .cvipi-map__markers {
       opacity: 0.35;
     }
   }
 
   &--is-editing {
+    // Applied while an editor is dragging a marker to save a new position.
     cursor: grabbing;
   }
 
-  @media only screen and (max-width: 47.9375em) {
-    --map-height: 56rem;
-
-    width: min(100%, calc(100% - 2rem));
-
-    &__popup {
-      bottom: 1rem;
-      left: 1rem !important;
-      max-width: calc(100% - 2rem);
-      position: absolute;
-      top: auto !important;
-      transform: none;
-      width: calc(100% - 2rem);
-
-      &::after {
-        display: none;
-      }
-    }
-
-    &__popup-close {
-      display: flex;
-    }
-
-    &__controls {
-      left: 1rem;
-      right: auto;
-    }
+  &__preview {
+    // Small helper copy below the map area.
+    text-align: center;
+    margin: 10rem 0;
+    width: 100%;
+    font-size: 1.5rem;
+    font-family: typography.$font-tertiary;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: rgba(var(--color-white-a), 0.5);
   }
 }
 
+// Marker pulse animation used by each map marker's pseudo-elements.
 @keyframes cvipi-map-pulse {
   0% {
     opacity: 0.7;

@@ -11,6 +11,7 @@ class CvipiMap {
     this.stage = this.map.querySelector('[data-map-stage]');
     this.markersLayer = this.map.querySelector('[data-map-markers]');
     this.popup = this.map.querySelector('[data-map-popup]');
+    this.canEdit = this.map.dataset.canEdit === 'true';
     this.scale = 1;
     this.translate = { x: 0, y: 0 };
     this.isPanning = false;
@@ -43,12 +44,19 @@ class CvipiMap {
       });
     }
 
-    this.markersLayer.addEventListener('pointerdown', event => this.startMarkerDrag(event));
+    if (this.canEdit) {
+      this.markersLayer.addEventListener('pointerdown', event => this.startMarkerDrag(event));
+    }
+
     this.markersLayer.addEventListener('pointerover', event => this.previewMarker(event));
+    this.markersLayer.addEventListener('pointerout', event => this.closeMarkerPreview(event));
+    this.markersLayer.addEventListener('focusin', event => this.previewMarker(event));
+    this.markersLayer.addEventListener('focusout', event => this.closeMarkerPreview(event));
     this.markersLayer.addEventListener('click', event => this.openMarkerFromClick(event));
 
     this.viewport.addEventListener('pointerdown', event => this.startPan(event));
     this.viewport.addEventListener('wheel', event => this.handleWheel(event), { passive: false });
+    window.addEventListener('scroll', () => this.hidePopup(), { passive: true });
 
     document.addEventListener('pointermove', event => {
       this.moveMarker(event);
@@ -125,28 +133,46 @@ class CvipiMap {
   previewMarker(event) {
     const marker = event.target.closest('.cvipi-map__marker');
 
-    if (!marker || window.matchMedia('(max-width: 767px)').matches) {
+    if (!marker || !this.usesHoverPopup()) {
       return;
     }
 
     this.showPopup(marker);
+  }
+
+  closeMarkerPreview(event) {
+    const marker = event.target.closest('.cvipi-map__marker');
+
+    if (!marker || !this.usesHoverPopup()) {
+      return;
+    }
+
+    if (event.relatedTarget && marker.contains(event.relatedTarget)) {
+      return;
+    }
+
+    this.hidePopup();
   }
 
   openMarkerFromClick(event) {
     const marker = event.target.closest('.cvipi-map__marker');
 
-    if (!marker || this.dragMoved) {
+    if (!marker || this.dragMoved || this.usesHoverPopup()) {
       return;
     }
 
     this.showPopup(marker);
   }
 
+  usesHoverPopup() {
+    return window.matchMedia('(min-width: 768px)').matches;
+  }
+
   showPopup(marker) {
     const markerRect = marker.getBoundingClientRect();
-    const viewportRect = this.viewport.getBoundingClientRect();
-    const markerLeft = markerRect.left + (markerRect.width / 2) - viewportRect.left;
-    const markerTop = markerRect.top + (markerRect.height / 2) - viewportRect.top;
+    const mapRect = this.map.getBoundingClientRect();
+    const markerLeft = markerRect.left + (markerRect.width / 2) - mapRect.left;
+    const markerTop = markerRect.top + (markerRect.height / 2) - mapRect.top;
 
     this.popupFields.title.textContent = marker.dataset.markerTitle || '';
     this.popupFields.content.textContent = marker.dataset.markerContent || '';
@@ -156,7 +182,7 @@ class CvipiMap {
     this.popup.hidden = false;
     this.popup.style.left = `${markerLeft}px`;
     this.popup.style.top = `${markerTop}px`;
-    this.popup.classList.toggle('cvipi-map__popup--right', markerLeft < viewportRect.width / 2);
+    this.popup.classList.toggle('cvipi-map__popup--right', markerLeft < mapRect.width / 2);
   }
 
   hidePopup() {
@@ -168,7 +194,7 @@ class CvipiMap {
   startMarkerDrag(event) {
     const marker = event.target.closest('.cvipi-map__marker');
 
-    if (!marker || marker.dataset.canEdit !== 'true' || this.map.dataset.canEdit !== 'true') {
+    if (!this.canEdit || !marker || marker.dataset.canEdit !== 'true') {
       return;
     }
 
