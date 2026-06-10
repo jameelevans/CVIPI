@@ -10,7 +10,7 @@
 
 $posts_header_data = cvipi_get_posts_header_data();
 $posts_header_style = ! empty( $posts_header_data['image'] )
-	? ' style="background-image: linear-gradient(90deg, rgba(var(--color-deep-a), 0.82), rgba(var(--color-deep-a), 0.62)), url(' . esc_url( $posts_header_data['image'] ) . ');"'
+	? ' style="--posts-hero-image: url(\'' . esc_url( $posts_header_data['image'] ) . '\');"'
 	: '';
 ?>
 <!doctype html>
@@ -24,7 +24,7 @@ $posts_header_style = ! empty( $posts_header_data['image'] )
 	<?php wp_head(); ?>
 </head>
 
-<body <?php body_class( 'post-landing-page' ); ?>>
+<body <?php body_class( array_filter( array( 'post-landing-page', is_page( 'success-stories' ) ? 'success-stories-page' : '' ) ) ); ?>>
 	<a class="screen-reader-shortcut" href="#main-content" tabindex="1">Skip to main content</a>
 
 	<header id="top" class="header home-header" role="banner">
@@ -39,24 +39,7 @@ $posts_header_style = ! empty( $posts_header_data['image'] )
 				<div class="navigation">
 					<nav class="navigation__nav" aria-controls="primary-navigation">
 						<ul class="navigation__list">
-							<li class="navigation__item">
-								<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="navigation__link">Home</a>
-							</li>
-							<li class="navigation__item">
-								<a href="<?php echo esc_url( site_url( '/what-is-cvipi' ) ); ?>" class="navigation__link">What is CVIPI?</a>
-							</li>
-							<li class="navigation__item">
-								<a href="<?php echo esc_url( site_url( '/success-stories' ) ); ?>" class="navigation__link">Success Stories</a>
-							</li>
-							<li class="navigation__item">
-								<a href="<?php echo esc_url( site_url( '/resources' ) ); ?>" class="navigation__link">Resources</a>
-							</li>
-							<li class="navigation__item">
-								<a href="<?php echo esc_url( site_url( '/events' ) ); ?>" class="navigation__link">Events</a>
-							</li>
-							<li class="navigation__item">
-								<a href="<?php echo esc_url( site_url( '/contact' ) ); ?>" class="navigation__link">Contact</a>
-							</li>
+							<?php cvipi_render_primary_navigation(); ?>
 						</ul>
 					</nav>
 				</div>
@@ -70,24 +53,7 @@ $posts_header_style = ! empty( $posts_header_data['image'] )
 
 					<nav id="mobile-navigation" class="mobile-navigation__nav" aria-label="Mobile menu" aria-hidden="true">
 						<ul class="mobile-navigation__list">
-							<li class="mobile-navigation__item">
-								<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="mobile-navigation__link">Home</a>
-							</li>
-							<li class="mobile-navigation__item">
-								<a href="<?php echo esc_url( site_url( '/what-is-cvipi' ) ); ?>" class="mobile-navigation__link">What is CVIPI?</a>
-							</li>
-							<li class="mobile-navigation__item">
-								<a href="<?php echo esc_url( site_url( '/success-stories' ) ); ?>" class="mobile-navigation__link">Success Stories</a>
-							</li>
-							<li class="mobile-navigation__item">
-								<a href="<?php echo esc_url( site_url( '/resources' ) ); ?>" class="mobile-navigation__link">Resources</a>
-							</li>
-							<li class="mobile-navigation__item">
-								<a href="<?php echo esc_url( site_url( '/events' ) ); ?>" class="mobile-navigation__link">Events</a>
-							</li>
-							<li class="mobile-navigation__item">
-								<a href="<?php echo esc_url( site_url( '/contact' ) ); ?>" class="mobile-navigation__link">Contact</a>
-							</li>
+							<?php cvipi_render_primary_navigation( true ); ?>
 						</ul>
 					</nav>
 				</div>
@@ -96,7 +62,20 @@ $posts_header_style = ! empty( $posts_header_data['image'] )
 	</header>
 
 	<section class="posts-hero">
-		<div class="posts-hero__media"<?php echo $posts_header_style; ?> aria-hidden="true"></div>
+		<div class="posts-hero__media"<?php echo $posts_header_style; ?> aria-hidden="true">
+			<?php if ( ! empty( $posts_header_data['video'] ) ) : ?>
+				<video
+					class="posts-hero__video"
+					src="<?php echo esc_url( $posts_header_data['video'] ); ?>"
+					<?php echo ! empty( $posts_header_data['image'] ) ? 'poster="' . esc_url( $posts_header_data['image'] ) . '"' : ''; ?>
+					autoplay
+					muted
+					loop
+					playsinline
+					preload="metadata"
+				></video>
+			<?php endif; ?>
+		</div>
 		<div class="posts-hero__content">
 			<?php if ( ! empty( $posts_header_data['eyebrow'] ) ) : ?>
 				<p class="posts-hero__eyebrow"><?php echo esc_html( $posts_header_data['eyebrow'] ); ?></p>

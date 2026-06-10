@@ -61,7 +61,8 @@
     }
 
     &:hover .navigation__link,
-    &:focus-within .navigation__link {
+    &:focus-within .navigation__link,
+    &--current .navigation__link {
       // Hover and focus-within both brighten the link, which keeps mouse and
       // keyboard navigation visually consistent.
       color: rgba(var(--color-white-a), 1);
@@ -69,7 +70,8 @@
     }
 
     &:hover::after,
-    &:focus-within::after {
+    &:focus-within::after,
+    &--current::after {
       // Reveal the gradient underline for both mouse and keyboard users.
       transform: scaleX(1);
     }
@@ -270,7 +272,8 @@
   }
 
   &__link:hover,
-  &__link:focus-visible {
+  &__link:focus-visible,
+  &__item--current &__link {
     color: var(--color-carmine);
     transform: translateX(0.4rem);
   }

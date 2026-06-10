@@ -39,24 +39,7 @@ $posts_header_style = ! empty( $posts_header_data['image'] )
 				<div class="navigation">
 					<nav class="navigation__nav" aria-controls="primary-navigation">
 						<ul class="navigation__list">
-							<li class="navigation__item">
-								<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="navigation__link">Home</a>
-							</li>
-							<li class="navigation__item">
-								<a href="<?php echo esc_url( site_url( '/what-is-cvipi' ) ); ?>" class="navigation__link">What is CVIPI?</a>
-							</li>
-							<li class="navigation__item">
-								<a href="<?php echo esc_url( site_url( '/success-stories' ) ); ?>" class="navigation__link">Success Stories</a>
-							</li>
-							<li class="navigation__item">
-								<a href="<?php echo esc_url( site_url( '/resources' ) ); ?>" class="navigation__link">Resources</a>
-							</li>
-							<li class="navigation__item">
-								<a href="<?php echo esc_url( site_url( '/events' ) ); ?>" class="navigation__link">Events</a>
-							</li>
-							<li class="navigation__item">
-								<a href="<?php echo esc_url( site_url( '/contact' ) ); ?>" class="navigation__link">Contact</a>
-							</li>
+							<?php cvipi_render_primary_navigation(); ?>
 						</ul>
 					</nav>
 				</div>
@@ -70,24 +53,7 @@ $posts_header_style = ! empty( $posts_header_data['image'] )
 
 					<nav id="mobile-navigation" class="mobile-navigation__nav" aria-label="Mobile menu" aria-hidden="true">
 						<ul class="mobile-navigation__list">
-							<li class="mobile-navigation__item">
-								<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="mobile-navigation__link">Home</a>
-							</li>
-							<li class="mobile-navigation__item">
-								<a href="<?php echo esc_url( site_url( '/what-is-cvipi' ) ); ?>" class="mobile-navigation__link">What is CVIPI?</a>
-							</li>
-							<li class="mobile-navigation__item">
-								<a href="<?php echo esc_url( site_url( '/success-stories' ) ); ?>" class="mobile-navigation__link">Success Stories</a>
-							</li>
-							<li class="mobile-navigation__item">
-								<a href="<?php echo esc_url( site_url( '/resources' ) ); ?>" class="mobile-navigation__link">Resources</a>
-							</li>
-							<li class="mobile-navigation__item">
-								<a href="<?php echo esc_url( site_url( '/events' ) ); ?>" class="mobile-navigation__link">Events</a>
-							</li>
-							<li class="mobile-navigation__item">
-								<a href="<?php echo esc_url( site_url( '/contact' ) ); ?>" class="mobile-navigation__link">Contact</a>
-							</li>
+							<?php cvipi_render_primary_navigation( true ); ?>
 						</ul>
 					</nav>
 				</div>
@@ -96,7 +62,20 @@ $posts_header_style = ! empty( $posts_header_data['image'] )
 	</header>
 
 	<section class="cvipi-hero">
-		<div class="cvipi-hero__media"<?php echo $posts_header_style; ?> aria-hidden="true"></div>
+		<div class="cvipi-hero__media"<?php echo $posts_header_style; ?> aria-hidden="true">
+			<?php if ( ! empty( $posts_header_data['video'] ) ) : ?>
+				<video
+					class="cvipi-hero__video"
+					src="<?php echo esc_url( $posts_header_data['video'] ); ?>"
+					<?php echo ! empty( $posts_header_data['image'] ) ? 'poster="' . esc_url( $posts_header_data['image'] ) . '"' : ''; ?>
+					autoplay
+					muted
+					loop
+					playsinline
+					preload="metadata"
+				></video>
+			<?php endif; ?>
+		</div>
 		<div class="cvipi-hero__content">
 			<?php if ( ! empty( $posts_header_data['eyebrow'] ) ) : ?>
 				<p class="cvipi-hero__eyebrow"><?php echo esc_html( $posts_header_data['eyebrow'] ); ?></p>

@@ -7,64 +7,75 @@
 
 get_header( 'posts' );
 
+$active_story_tag   = isset( $_GET['story_tag'] ) ? sanitize_title( wp_unslash( $_GET['story_tag'] ) ) : '';
+$success_story_tags = cvipi_get_success_story_tags();
 $success_story_query = new WP_Query(
-	array(
-		'post_type'           => 'success_story',
-		'posts_per_page'      => -1,
-		'post_status'         => 'publish',
-		'ignore_sticky_posts' => true,
-		'orderby'             => 'date',
-		'order'               => 'DESC',
-	)
+	cvipi_get_success_story_query_args( $active_story_tag )
 );
+$success_story_posts = $success_story_query->posts;
+$featured_stories    = array_slice( $success_story_posts, 0, 4 );
+$past_stories        = array_slice( $success_story_posts, 4 );
+$past_story_count    = count( $past_stories );
 ?>
 
 <main id="main-content">
-	<section class="stories stories--landing">
+	<section class="stories stories--landing" data-success-stories-archive>
 		<div class="stories__container">
-			<div class="stories__posts">
-				<?php if ( $success_story_query->have_posts() ) : ?>
-					<?php
-					while ( $success_story_query->have_posts() ) :
-						$success_story_query->the_post();
-						$story_categories = get_the_category();
-						$story_category   = ! empty( $story_categories ) ? $story_categories[0]->name : '';
-						?>
-						<article class="story">
-							<?php if ( has_post_thumbnail() ) : ?>
-								<div class="story__top">
-									<?php
-									echo wp_get_attachment_image(
-										get_post_thumbnail_id(),
-										'regular',
-										false,
-										array(
-											'class' => 'story__img',
-											'sizes' => '(min-width: 900px) 360px, (min-width: 600px) 33vw, 100vw',
-										)
-									);
-									?>
-								</div>
-							<?php endif; ?>
-
-							<div class="story__bottom">
-								<header class="story__header">
-									<?php if ( $story_category ) : ?>
-										<p class="story__category"><?php echo esc_html( wp_specialchars_decode( $story_category, ENT_QUOTES ) ); ?></p>
-									<?php endif; ?>
-									<h2 class="story__heading"><?php echo esc_html( get_the_title() ); ?></h2>
-								</header>
-
-								<p class="story__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 24 ) ); ?></p>
-								<a href="<?php echo esc_url( get_permalink() ); ?>" class="story__button">Read More</a>
-							</div>
-						</article>
-					<?php endwhile; ?>
-					<?php wp_reset_postdata(); ?>
-				<?php else : ?>
-					<p class="stories__subheading">No success stories are published yet.</p>
+			<div class="stories__filters" aria-label="Filter success stories by tag">
+				<button
+					type="button"
+					class="stories__filter <?php echo '' === $active_story_tag ? 'is-active' : ''; ?>"
+					data-story-filter=""
+					aria-pressed="<?php echo '' === $active_story_tag ? 'true' : 'false'; ?>"
+				>
+					All Stories
+				</button>
+				<?php if ( ! empty( $success_story_tags ) ) : ?>
+					<?php foreach ( $success_story_tags as $success_story_tag ) : ?>
+						<button
+							type="button"
+							class="stories__filter <?php echo $active_story_tag === $success_story_tag->slug ? 'is-active' : ''; ?>"
+							data-story-filter="<?php echo esc_attr( $success_story_tag->slug ); ?>"
+							aria-pressed="<?php echo $active_story_tag === $success_story_tag->slug ? 'true' : 'false'; ?>"
+						>
+							<?php echo esc_html( $success_story_tag->name ); ?>
+						</button>
+					<?php endforeach; ?>
 				<?php endif; ?>
 			</div>
+
+			<p class="stories__count" data-success-stories-count>
+				<?php echo esc_html( cvipi_get_success_story_count_label( $success_story_query->found_posts ) ); ?>
+			</p>
+
+			<div class="stories__posts" data-success-stories-grid aria-live="polite">
+				<?php echo cvipi_render_success_story_cards( $featured_stories ); ?>
+			</div>
+
+			<section class="stories__past" aria-labelledby="past-stories-heading">
+				<div class="stories__past-header">
+					<h2 class="stories__past-heading" id="past-stories-heading">Past Stories</h2>
+					<p class="stories__past-count" data-success-stories-past-count>
+						<?php echo esc_html( cvipi_get_success_story_count_label( $past_story_count ) ); ?>
+					</p>
+				</div>
+
+				<div class="stories__past-list" data-success-stories-past-grid aria-live="polite">
+					<?php echo cvipi_render_success_story_past_items( $past_stories ); ?>
+				</div>
+			</section>
+		</div>
+	</section>
+
+	<section class="stories-impact">
+		<div class="stories-impact__media" aria-hidden="true"></div>
+		<div class="stories-impact__content">
+			<p class="stories-impact__eyebrow">CVIPI Across The Nation</p>
+			<h2 class="stories-impact__heading">Real people, real neighborhoods, <em>real impact.</em></h2>
+			<p class="stories-impact__description">CVIPI works hand-in-hand with our grantee communities on the ground and in our neighborhoods. We help violence interventionists, outreach workers, and community leaders gain the resources they need to make lasting change.</p>
+			<a href="<?php echo esc_url( home_url( '/what-is-cvipi/' ) ); ?>" class="stories-impact__button">
+				The Communities We Support <?php echo svg_icon( 'stories-impact__button-icon', 'arrow-right' ); ?>
+			</a>
 		</div>
 	</section>
 </main>

@@ -43,27 +43,7 @@
 						<div class="navigation">
 								<nav class="navigation__nav" aria-controls="primary-navigation">
 									<ul class="navigation__list">
-												
-										<li class="navigation__item">
-											<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="navigation__link" title="Go to the Home page">Home</a>
-										</li>
-
-										<li class="navigation__item">
-											<a href="<?php echo esc_url( site_url( '/what-is-cvipi' ) ); ?>" class="navigation__link" title="Go to the What is CVIPI page">What is CVIPI?</a>
-										</li>
-								
-										<li class="navigation__item">
-											<a href="<?php echo esc_url( site_url( '/success-stories' ) ); ?>" class="navigation__link" title="Go to the Success Stories page">Success Stories</a>
-										</li>
-										<li class="navigation__item">
-											<a href="<?php echo esc_url( site_url( '/resources' ) ); ?>" class="navigation__link" title="Go to the Resources page">Resources</a>
-										</li>
-										<li class="navigation__item">
-											<a href="<?php echo esc_url( site_url( '/events' ) ); ?>" class="navigation__link" title="Go to the Events page">Events</a>
-										</li>
-										<li class="navigation__item">
-											<a href="<?php echo esc_url( site_url( '/contact' ) ); ?>" class="navigation__link" title="Go to the Contact page">Contact</a>
-										</li>
+										<?php cvipi_render_primary_navigation(); ?>
 									</ul>
 							</nav>
 						</div><!-- .navigation -->
@@ -80,25 +60,7 @@
 								
 
 								<ul class="mobile-navigation__list">
-									<li class="mobile-navigation__item">
-										<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="mobile-navigation__link">Home</a>
-									</li>
-									<li class="mobile-navigation__item">
-										<a href="<?php echo esc_url( site_url( '/what-is-cvipi' ) ); ?>" class="mobile-navigation__link">What is CVIPI?</a>
-									</li>
-				
-									<li class="mobile-navigation__item">
-										<a href="<?php echo esc_url( site_url( '/success-stories' ) ); ?>" class="mobile-navigation__link">Success Stories</a>
-									</li>
-									<li class="mobile-navigation__item">
-										<a href="<?php echo esc_url( site_url( '/resources' ) ); ?>" class="mobile-navigation__link">Resources</a>
-									</li>
-									<li class="mobile-navigation__item">
-										<a href="<?php echo esc_url( site_url( '/events' ) ); ?>" class="mobile-navigation__link">Events</a>
-									</li>
-									<li class="mobile-navigation__item">
-										<a href="<?php echo esc_url( site_url( '/contact' ) ); ?>" class="mobile-navigation__link">Contact</a>
-									</li>
+									<?php cvipi_render_primary_navigation( true ); ?>
 								</ul>
 							</nav>
 						</div><!-- .mobile-navigation -->
@@ -110,6 +72,9 @@
 		 * Homepage banner video data.
 		 *
 		 * ACF field group expected on the front page:
+		 * - posts_header_eyebrow: banner eyebrow text
+		 * - posts_header_title: banner title, allowing simple emphasis markup
+		 * - posts_header_description: banner body copy
 		 * - banner_videos: repeater
 		 * - video: file field, returned as an array or URL
 		 * - poster_image: optional image field, returned as an array or URL
@@ -144,7 +109,7 @@
 		$banner_has_videos = ! empty( $banner_videos );
 		$banner_first_video = $banner_has_videos ? $banner_videos[0] : null;
 		$banner_first_poster = $banner_first_video && ! empty( $banner_first_video['poster'] ) ? $banner_first_video['poster'] : '';
-		$banner_heading = wp_specialchars_decode( get_option( 'blogdescription' ), ENT_QUOTES );
+		$banner_data = cvipi_get_home_banner_data( $banner_page_id );
 		$banner_cta = null;
 
 		if ( is_front_page() && function_exists( 'get_field' ) ) {
@@ -168,15 +133,18 @@
 			<div class="banner__inner">
 				<div class="banner__left">
 					<div class="banner__container">
-						<p class="banner__subheader">Community Violence Intervention</p>
-
-						<?php if ( $banner_heading ) : ?>
-							<h2 class="banner__heading"><?php echo wp_kses_post( $banner_heading ); ?></h2>
+						<?php if ( ! empty( $banner_data['eyebrow'] ) ) : ?>
+							<p class="banner__subheader"><?php echo esc_html( $banner_data['eyebrow'] ); ?></p>
 						<?php endif; ?>
-						<div class="banner__details">
-							<p>The National Community Violence Intervention & Prevention Initiative (CVIPI) was created to be a source of information and practical resources on community violence intervention. </p>
-							<p>This nationwide initiative brings together community residents, local government, law enforcement, hospitals, victim service providers, community-based organizations (CBOs), researchers, and other partners to help prevent and reduce violent crime to make our communities safer for generations to come.</p>
-						</div>
+
+						<?php if ( ! empty( $banner_data['title'] ) ) : ?>
+							<h2 class="banner__heading"><?php echo wp_kses_post( $banner_data['title'] ); ?></h2>
+						<?php endif; ?>
+						<?php if ( ! empty( $banner_data['description'] ) ) : ?>
+							<div class="banner__details">
+								<?php echo wp_kses_post( wpautop( $banner_data['description'] ) ); ?>
+							</div>
+						<?php endif; ?>
 						<?php if ( is_array( $banner_cta ) && ! empty( $banner_cta['url'] ) && ! empty( $banner_cta['title'] ) ) : ?>
 							<a
 								href="<?php echo esc_url( $banner_cta['url'] ); ?>"

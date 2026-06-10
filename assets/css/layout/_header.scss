@@ -71,14 +71,33 @@
   &__media {
     position: absolute;
     inset: 0;
-    background:
+    background: var(--posts-hero-image, url('assets/img/banner-img-1.webp')) center /
+      cover no-repeat;
+    opacity: 0.8;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
       linear-gradient(
         90deg,
         rgba(var(--color-deep-a), 0.82),
         rgba(var(--color-deep-a), 0.62)
-      ),
-      url('assets/img/banner-img-1.webp') center / cover;
-    opacity: 0.8;
+      );
+    }
+  }
+
+  &__video {
+    display: block;
+    height: 100%;
+    inset: 0;
+    object-fit: cover;
+    position: absolute;
+    width: 100%;
+    z-index: 0;
   }
 
   &__content {
@@ -117,6 +136,12 @@
   }
 }
 
+.success-stories-page {
+  .posts-hero {
+    padding: 35rem 3rem 20rem;
+  }
+}
+
 .cvipi-hero {
   min-height: 42rem;
   position: relative;
@@ -131,7 +156,16 @@
   &__media {
     position: absolute;
     inset: 0;
-    background:
+    background: var(--cvipi-hero-image, url('assets/img/banner-img-1.webp')) center
+      center / cover no-repeat;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
       linear-gradient(
         90deg,
         rgba(var(--color-deep-a), 0.62) 0%,
@@ -145,9 +179,18 @@
         rgba(var(--color-deep-a), 0.78) 22%,
         rgba(var(--color-deep-a), 0.38) 45%,
         rgba(var(--color-deep-a), 0) 72%
-      ),
-      var(--cvipi-hero-image, url('assets/img/banner-img-1.webp')) center
-        center / cover no-repeat;
+      );
+    }
+  }
+
+  &__video {
+    display: block;
+    height: 100%;
+    inset: 0;
+    object-fit: cover;
+    position: absolute;
+    width: 100%;
+    z-index: 0;
   }
 
   &__content {

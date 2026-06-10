@@ -8,12 +8,16 @@ import CvipiMap from './modules/CvipiMap';
 import FrontPage from './modules/FrontPage';
 import MobileNav from './modules/MobileNav';
 import ResourceFilters from './modules/ResourceFilters';
+import SiteAnimations from './modules/SiteAnimations';
+import SuccessStoryFilters from './modules/SuccessStoryFilters';
 
 
 
 // Instantiate a new object using our modules/classes
+const siteAnimations = new SiteAnimations();
 let backTop = new BackTop();
 const cvipiMap = new CvipiMap();
 const frontPage = new FrontPage();
 const mobilenav = new MobileNav();
 const resourceFilters = new ResourceFilters();
+const successStoryFilters = new SuccessStoryFilters();

@@ -17,7 +17,12 @@ class CvipiMap {
     this.isPanning = false;
     this.panStart = null;
     this.activeDragMarker = null;
+    this.activeMarker = null;
     this.dragMoved = false;
+    this.popupCloseTimer = null;
+    this.popupDragStart = null;
+    this.popupDragPointerId = null;
+    this.lastFocusedElement = null;
 
     this.popupFields = {
       title: this.map.querySelector('[data-map-popup-title]'),
@@ -54,17 +59,28 @@ class CvipiMap {
     this.markersLayer.addEventListener('focusout', event => this.closeMarkerPreview(event));
     this.markersLayer.addEventListener('click', event => this.openMarkerFromClick(event));
 
+    this.popup.addEventListener('pointerdown', event => this.startPopupDismissDrag(event));
     this.viewport.addEventListener('pointerdown', event => this.startPan(event));
+    this.viewport.addEventListener('keydown', event => this.handleViewportKeydown(event));
     this.viewport.addEventListener('wheel', event => this.handleWheel(event), { passive: false });
-    window.addEventListener('scroll', () => this.hidePopup(), { passive: true });
+    window.addEventListener('scroll', () => this.hidePopup({ immediate: true }), { passive: true });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && this.popup && !this.popup.hidden) {
+        event.preventDefault();
+        this.hidePopup();
+      }
+    });
+    document.addEventListener('pointerdown', event => this.closePopupFromOutsideClick(event));
 
     document.addEventListener('pointermove', event => {
       this.moveMarker(event);
       this.movePan(event);
+      this.movePopupDismissDrag(event);
     });
     document.addEventListener('pointerup', event => {
       this.endMarkerDrag(event);
       this.endPan();
+      this.endPopupDismissDrag(event);
     });
 
     const close = this.map.querySelector('[data-map-popup-close]');
@@ -179,16 +195,262 @@ class CvipiMap {
     this.popupFields.year.textContent = marker.dataset.markerYear || '';
     this.popupFields.award.textContent = marker.dataset.markerAward || '';
     this.popupFields.location.textContent = marker.dataset.markerLocation || '';
+    this.popup.style.setProperty('--popup-marker-color', this.getMarkerColor(marker));
+    this.setActiveMarker(marker);
+    this.lastFocusedElement = document.activeElement;
+    window.clearTimeout(this.popupCloseTimer);
+    this.popup.classList.remove('cvipi-map__popup--is-dismissing');
     this.popup.hidden = false;
-    this.popup.style.left = `${markerLeft}px`;
-    this.popup.style.top = `${markerTop}px`;
-    this.popup.classList.toggle('cvipi-map__popup--right', markerLeft < mapRect.width / 2);
+    this.popup.style.setProperty('--popup-drag-x', '0px');
+    this.popup.style.setProperty('--popup-drag-y', '0px');
+    this.positionPopup(markerLeft, markerTop, mapRect);
+
+    window.requestAnimationFrame(() => {
+      if (!this.popup || this.popup.hidden) {
+        return;
+      }
+
+      this.map.classList.add('cvipi-map--popup-active');
+      this.popup.classList.add('cvipi-map__popup--is-visible');
+    });
+
+    if (!this.usesHoverPopup()) {
+      this.popup.setAttribute('aria-modal', 'true');
+      this.popup.focus({ preventScroll: true });
+    } else {
+      this.popup.setAttribute('aria-modal', 'false');
+    }
   }
 
-  hidePopup() {
-    if (this.popup) {
-      this.popup.hidden = true;
+  positionPopup(markerLeft, markerTop, mapRect) {
+    if (!this.popup) {
+      return;
     }
+
+    if (!this.usesHoverPopup()) {
+      this.popup.classList.remove(
+        'cvipi-map__popup--placement-top',
+        'cvipi-map__popup--placement-bottom',
+        'cvipi-map__popup--placement-left',
+        'cvipi-map__popup--placement-right'
+      );
+      this.popup.removeAttribute('style');
+      this.popup.style.setProperty('--popup-drag-x', '0px');
+      this.popup.style.setProperty('--popup-drag-y', '0px');
+      return;
+    }
+
+    const gap = 18;
+    const viewportPadding = 16;
+
+    this.popup.classList.remove(
+      'cvipi-map__popup--placement-top',
+      'cvipi-map__popup--placement-bottom',
+      'cvipi-map__popup--placement-left',
+      'cvipi-map__popup--placement-right'
+    );
+    this.popup.classList.add('cvipi-map__popup--placement-top');
+    this.popup.style.left = '0px';
+    this.popup.style.top = '0px';
+
+    const popupRect = this.popup.getBoundingClientRect();
+    const popupWidth = popupRect.width;
+    const popupHeight = popupRect.height;
+    const viewportTopOffset = this.getFixedHeaderBottom() + viewportPadding;
+    const viewportMinLeft = Math.max(0, viewportPadding - mapRect.left);
+    const viewportMaxLeft = Math.min(mapRect.width - popupWidth, window.innerWidth - mapRect.left - popupWidth - viewportPadding);
+    const viewportMinTop = Math.max(0, viewportTopOffset - mapRect.top);
+    const viewportMaxTop = Math.min(mapRect.height - popupHeight, window.innerHeight - mapRect.top - popupHeight - viewportPadding);
+    const canFitLeft = markerLeft - gap - popupWidth >= viewportMinLeft;
+    const canFitRight = markerLeft + gap + popupWidth <= viewportMaxLeft + popupWidth;
+    const wouldOverflowRight = markerLeft + (popupWidth / 2) > viewportMaxLeft;
+    const wouldOverflowLeft = markerLeft - (popupWidth / 2) < viewportMinLeft;
+    let placement = 'top';
+    let left = markerLeft - (popupWidth / 2);
+    let top = markerTop - popupHeight - gap;
+
+    if (top < viewportMinTop) {
+      placement = 'bottom';
+      top = markerTop + gap;
+    } else if (wouldOverflowRight && canFitLeft) {
+      placement = 'left';
+      left = markerLeft - popupWidth - gap;
+      top = markerTop - (popupHeight / 2);
+    } else if (wouldOverflowLeft && canFitRight) {
+      placement = 'right';
+      left = markerLeft + gap;
+      top = markerTop - (popupHeight / 2);
+    }
+
+    left = this.clamp(left, viewportMinLeft, viewportMaxLeft);
+    top = this.clamp(top, viewportMinTop, viewportMaxTop);
+
+    this.popup.classList.remove('cvipi-map__popup--placement-top');
+    this.popup.classList.add(`cvipi-map__popup--placement-${placement}`);
+    this.popup.style.left = `${left}px`;
+    this.popup.style.top = `${top}px`;
+    this.popup.style.setProperty('--popup-arrow-left', `${this.clamp(markerLeft - left, 18, popupWidth - 18)}px`);
+    this.popup.style.setProperty('--popup-arrow-top', `${this.clamp(markerTop - top, 18, popupHeight - 18)}px`);
+  }
+
+  clamp(value, min, max) {
+    if (max < min) {
+      return min;
+    }
+
+    return Math.min(Math.max(value, min), max);
+  }
+
+  getFixedHeaderBottom() {
+    const header = document.querySelector('.header');
+
+    if (!header) {
+      return 0;
+    }
+
+    const headerStyles = window.getComputedStyle(header);
+
+    if (headerStyles.position !== 'fixed' && headerStyles.position !== 'sticky') {
+      return 0;
+    }
+
+    return Math.max(0, header.getBoundingClientRect().bottom);
+  }
+
+  getMarkerColor(marker) {
+    const markerColor = marker.style.getPropertyValue('--marker-color').trim();
+
+    if (markerColor) {
+      return markerColor;
+    }
+
+    return window.getComputedStyle(marker).getPropertyValue('--marker-color').trim() || 'var(--color-light-blue)';
+  }
+
+  hidePopup(options = {}) {
+    const shouldAnimate = !options.immediate && !this.usesHoverPopup();
+
+    this.clearActiveMarker();
+    this.map.classList.remove('cvipi-map--popup-active');
+
+    if (this.popup) {
+      this.popup.classList.remove('cvipi-map__popup--is-visible');
+      this.popup.classList.remove('cvipi-map__popup--is-dragging');
+      this.popup.setAttribute('aria-modal', 'false');
+
+      window.clearTimeout(this.popupCloseTimer);
+
+      if (shouldAnimate) {
+        this.popup.classList.add('cvipi-map__popup--is-dismissing');
+        this.popupCloseTimer = window.setTimeout(() => this.finishPopupClose(), 260);
+      } else {
+        this.finishPopupClose();
+      }
+    }
+
+    this.restoreMarkerFocus();
+  }
+
+  finishPopupClose() {
+    if (!this.popup) {
+      return;
+    }
+
+    this.popup.hidden = true;
+    this.popup.classList.remove('cvipi-map__popup--is-dismissing');
+    this.popup.style.setProperty('--popup-drag-x', '0px');
+    this.popup.style.setProperty('--popup-drag-y', '0px');
+  }
+
+  restoreMarkerFocus() {
+    if (this.lastFocusedElement instanceof HTMLElement && document.contains(this.lastFocusedElement) && !this.usesHoverPopup()) {
+      this.lastFocusedElement.focus({ preventScroll: true });
+    }
+
+    this.lastFocusedElement = null;
+  }
+
+  setActiveMarker(marker) {
+    this.clearActiveMarker();
+    this.activeMarker = marker;
+    this.activeMarker.setAttribute('aria-expanded', 'true');
+  }
+
+  clearActiveMarker() {
+    if (!this.activeMarker) {
+      return;
+    }
+
+    this.activeMarker.setAttribute('aria-expanded', 'false');
+    this.activeMarker = null;
+  }
+
+  closePopupFromOutsideClick(event) {
+    if (!this.popup || this.popup.hidden || this.usesHoverPopup()) {
+      return;
+    }
+
+    if (this.popup.contains(event.target) || event.target.closest('.cvipi-map__marker')) {
+      return;
+    }
+
+    this.hidePopup();
+  }
+
+  startPopupDismissDrag(event) {
+    if (this.usesHoverPopup() || (event.button !== undefined && event.button !== 0)) {
+      return;
+    }
+
+    const interactiveElement = event.target.closest('button, a, input, select, textarea');
+
+    if (interactiveElement && interactiveElement !== this.popup) {
+      return;
+    }
+
+    this.popupDragStart = {
+      x: event.clientX,
+      y: event.clientY
+    };
+    this.popupDragPointerId = event.pointerId;
+    this.popup.classList.add('cvipi-map__popup--is-dragging');
+    this.popup.setPointerCapture(event.pointerId);
+  }
+
+  movePopupDismissDrag(event) {
+    if (!this.popupDragStart || event.pointerId !== this.popupDragPointerId) {
+      return;
+    }
+
+    const deltaX = event.clientX - this.popupDragStart.x;
+    const deltaY = event.clientY - this.popupDragStart.y;
+
+    this.popup.style.setProperty('--popup-drag-x', `${deltaX}px`);
+    this.popup.style.setProperty('--popup-drag-y', `${deltaY}px`);
+  }
+
+  endPopupDismissDrag(event) {
+    if (!this.popupDragStart || event.pointerId !== this.popupDragPointerId) {
+      return;
+    }
+
+    const deltaX = event.clientX - this.popupDragStart.x;
+    const deltaY = event.clientY - this.popupDragStart.y;
+    const dismissDistance = Math.max(Math.abs(deltaX), Math.abs(deltaY));
+    this.popup.releasePointerCapture(event.pointerId);
+    this.popupDragStart = null;
+    this.popupDragPointerId = null;
+    this.popup.classList.remove('cvipi-map__popup--is-dragging');
+
+    if (dismissDistance > 90) {
+      this.popup.style.setProperty('--popup-drag-x', `${deltaX * 3}px`);
+      this.popup.style.setProperty('--popup-drag-y', `${deltaY * 3}px`);
+      this.hidePopup();
+      return;
+    }
+
+    this.popup.style.setProperty('--popup-drag-x', '0px');
+    this.popup.style.setProperty('--popup-drag-y', '0px');
   }
 
   startMarkerDrag(event) {
@@ -257,15 +519,21 @@ class CvipiMap {
   }
 
   startPan(event) {
+    if (event.button !== undefined && event.button !== 0) {
+      return;
+    }
+
     if (event.target.closest('.cvipi-map__marker')) {
       return;
     }
 
+    event.preventDefault();
     this.isPanning = true;
     this.panStart = {
       x: event.clientX - this.translate.x,
       y: event.clientY - this.translate.y
     };
+    this.map.classList.add('cvipi-map--is-panning');
   }
 
   movePan(event) {
@@ -281,6 +549,46 @@ class CvipiMap {
   endPan() {
     this.isPanning = false;
     this.panStart = null;
+    this.map.classList.remove('cvipi-map--is-panning');
+  }
+
+  handleViewportKeydown(event) {
+    if (event.target !== this.viewport) {
+      return;
+    }
+
+    const panStep = event.shiftKey ? 60 : 28;
+    const keyActions = {
+      ArrowUp: () => this.panBy(0, panStep),
+      ArrowDown: () => this.panBy(0, -panStep),
+      ArrowLeft: () => this.panBy(panStep, 0),
+      ArrowRight: () => this.panBy(-panStep, 0),
+      '+': () => this.zoomBy(0.2),
+      '=': () => this.zoomBy(0.2),
+      '-': () => this.zoomBy(-0.2),
+      '_': () => this.zoomBy(-0.2),
+      Home: () => this.resetTransform(),
+      '0': () => this.resetTransform()
+    };
+
+    const action = keyActions[event.key];
+
+    if (!action) {
+      return;
+    }
+
+    if (event.key.startsWith('Arrow') && this.scale <= 1) {
+      return;
+    }
+
+    event.preventDefault();
+    action();
+  }
+
+  panBy(x, y) {
+    this.translate.x += x;
+    this.translate.y += y;
+    this.applyTransform();
   }
 
   handleWheel(event) {
@@ -306,6 +614,7 @@ class CvipiMap {
 
   applyTransform() {
     this.stage.style.transform = `translate(-50%, -50%) translate(${this.translate.x}px, ${this.translate.y}px) scale(${this.scale})`;
+    this.map.classList.toggle('cvipi-map--is-zoomed', this.scale > 1);
   }
 }
 

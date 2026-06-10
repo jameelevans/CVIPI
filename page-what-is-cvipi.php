@@ -62,9 +62,34 @@ get_header( 'cvipi' ); ?>
 		</section>
 	</div>
 
-	<div class="cvipi_doj">
+	<section class="doj">
+		<div class="doj__container">
+				<header class="doj__header">
+					<p class="doj__eyebrow">Collaborative Leadership</p>
+					<h2 class="doj__heading">DOJ Components <em>Working Together</em></h2>
+					<p class="doj__subheading">Several DOJ components collaborate on the initiative to ensure jurisdictions have access to expertise and resources for addressing community violence.</p>
+				</header>
+				<div class="doj__content">
+					<a class="doj__components" href="https://bja.ojp.gov/" target="_blank">
+						<h2 class="doj__heading">BJA</h2>
+						<p class="doj__name">Bureau of Justice Assistance</p>
+					</a>
+					<a class="doj__components" href="https://nij.ojp.gov/" target="_blank">
+						<h2 class="doj__heading">NIJ</h2>
+						<p class="doj__name">National Institute of Justice</p>
+					</a>
+					<a class="doj__components" href="https://ojjdp.ojp.gov/" target="_blank">
+						<h2 class="doj__heading">OJJDP</h2>
+						<p class="doj__name">Office of Juvenile Justice &amp; Delinquency Prevention</p>
+					</a>
+					<a class="doj__components" href="https://ovc.ojp.gov/" target="_blank">
+						<h2 class="doj__heading">OVC</h2>
+						<p class="doj__name">Office for Victims of Crime</p>
+					</a>
+				</div>
+			</div>
 
-	</div>
+	</section>
 </main>
 
 <?php
