@@ -5,6 +5,7 @@ import $ from 'jquery';
 // Our modules/ classes
 import BackTop from './modules/BackTop';
 import CvipiMap from './modules/CvipiMap';
+import EventFilters from './modules/EventFilters';
 import FrontPage from './modules/FrontPage';
 import MobileNav from './modules/MobileNav';
 import ResourceFilters from './modules/ResourceFilters';
@@ -17,6 +18,7 @@ import SuccessStoryFilters from './modules/SuccessStoryFilters';
 const siteAnimations = new SiteAnimations();
 let backTop = new BackTop();
 const cvipiMap = new CvipiMap();
+const eventFilters = new EventFilters();
 const frontPage = new FrontPage();
 const mobilenav = new MobileNav();
 const resourceFilters = new ResourceFilters();

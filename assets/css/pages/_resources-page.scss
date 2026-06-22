@@ -14,7 +14,7 @@
 
     &__container {
       margin: 0 auto;
-      max-width: 118rem;
+      max-width: 120rem;
     }
 
     &__featured {
@@ -24,10 +24,11 @@
       box-shadow: 0 1.5rem 4rem rgba(var(--color-deep-a), 0.06);
       display: grid;
       margin: 0 auto 5rem;
-      max-width: 98rem;
       overflow: hidden;
+      width: 100%;
 
       @include mixins.respond(medium) {
+        align-items: stretch;
         grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
       }
     }
@@ -35,22 +36,35 @@
     &__featured-media {
       background-color: var(--color-deep);
       display: block;
-      min-height: 26rem;
       overflow: hidden;
+
+      @include mixins.respond(medium) {
+        height: 100%;
+        min-height: 0;
+        position: relative;
+      }
     }
 
     &__featured-img {
       display: block;
-      height: 100%;
+      aspect-ratio: 16 / 9;
+      height: auto;
       object-fit: cover;
       width: 100%;
+
+      @include mixins.respond(medium) {
+        aspect-ratio: auto;
+        inset: 0;
+        height: 100%;
+        position: absolute;
+      }
     }
 
     &__featured-content {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: clamp(3rem, 5vw, 5rem);
+      padding: 4rem;
     }
 
     &__featured-kicker,
@@ -70,14 +84,19 @@
 
     &__featured-kicker,
     &__category {
-      color: var(--resource-accent, var(--color-dark-orange));
-      font-size: 1.1rem;
+      color: var(--color-dark-orange);
+      font-size: 1.8rem;
+      font-weight: 300;
       margin-bottom: 1rem;
+
+      @include mixins.respond(medium) {
+        font-size: 1.1rem;
+      }
     }
 
     &__featured-title {
       color: var(--color-deep);
-      font-size: clamp(3rem, 4vw, 4.2rem);
+      font-size: 3.2rem;
       line-height: 1.05;
       margin-bottom: 1.8rem;
 
@@ -89,17 +108,43 @@
 
     &__featured-excerpt {
       color: var(--color-medium-blue);
-      font-size: 1.7rem;
+      font-size: 2.4rem;
       line-height: 1.6;
       margin-bottom: 2rem;
+
+      @include mixins.respond(medium) {
+        font-size: 1.7rem;
+      }
     }
 
     &__featured-meta,
     &__meta {
+      font-family: typography.$font-secondary;
+      align-items: center;
       color: var(--color-medium-blue);
-      font-size: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
       margin-bottom: 2rem;
       text-transform: none;
+      font-size: 1.9rem;
+      font-weight: 400;
+
+      @include mixins.respond(medium) {
+        font-size: 1.4rem;
+      }
+    }
+
+    &__meta {
+      //font-size: 1rem;
+    }
+
+    &__meta-separator {
+      background-color: var(--color-light-blue);
+      border-radius: 50%;
+      flex: 0 0 auto;
+      height: 3px;
+      width: 3px;
     }
 
     &__featured-button {
@@ -107,11 +152,20 @@
       border-radius: 2px;
       color: var(--color-white);
       display: inline-flex;
-      font-size: 1.1rem;
+      font-size: 2.5rem;
       justify-content: center;
       padding: 1.3rem 2rem;
+      letter-spacing: 1.6px;
       text-decoration: none;
+      text-transform: capitalize;
+      font-weight: 300;
       width: 100%;
+      padding: 2rem;
+
+      @include mixins.respond(medium) {
+        font-size: 1.4rem;
+        justify-content: start;
+      }
     }
 
     &__filters {
@@ -127,7 +181,7 @@
       padding: 2.4rem;
 
       @include mixins.respond(medium) {
-        grid-template-columns: minmax(28rem, 1fr) 15rem 14rem 15rem auto;
+        grid-template-columns: 1.5fr 1fr 0.5fr 1fr auto;
       }
 
       label {
@@ -138,34 +192,59 @@
       span {
         color: var(--color-deep);
         font-family: typography.$font-secondary;
-        font-size: 1.1rem;
-        font-weight: 700;
+        font-size: 2.5rem;
+        font-weight: 500;
+        margin: 1.2rem 0;
+
+        @include mixins.respond(medium) {
+          margin: 0;
+          font-size: 1.4rem;
+        }
       }
 
       input,
       select {
         border: 1px solid rgba(var(--color-medium-blue-a), 0.35);
         border-radius: 2px;
+        background-color: var(--color-morning);
         color: var(--color-deep);
         font-family: typography.$font-secondary;
-        font-size: 1.4rem;
+        font-size: 2.1rem;
         min-height: 4.8rem;
         padding: 0 1.5rem;
         width: 100%;
+
+        @include mixins.respond(large) {
+          font-size: 1.4rem;
+        }
+      }
+
+      select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2344546a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+        background-position: right 1.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.2rem 0.8rem;
+        padding-right: 4.2rem;
       }
 
       button {
-        background-color: var(--color-copper);
+        background-color: var(--color-dark-orange);
         border: 0;
         border-radius: 3px;
         color: var(--color-white);
         cursor: pointer;
         font-family: typography.$font-secondary;
-        font-size: 1.2rem;
-        font-weight: 700;
+        font-size: 2.5rem;
+        font-weight: 500;
         letter-spacing: 0.8px;
         min-height: 4.8rem;
-        padding: 0 3rem;
+        padding: 2rem 0;
+
+        @include mixins.respond(medium) {
+          font-size: 1.4rem;
+          padding: 0 3rem;
+        }
       }
     }
 
@@ -174,14 +253,27 @@
       flex-wrap: wrap;
       gap: 1rem;
       margin-bottom: 3rem;
+      place-content: center;
+
+      @include mixins.respond(medium) {
+        place-content: unset;
+      }
 
       a {
         border: 1px solid rgba(var(--color-light-blue-a), 0.55);
         border-radius: 10rem;
         color: var(--color-deep);
-        font-size: 1.1rem;
-        padding: 0.8rem 1.6rem;
+        font-size: 1.9rem;
+        font-weight: 500;
+        padding: 1rem 1.8rem;
+
+        text-transform: capitalize;
         text-decoration: none;
+
+        @include mixins.respond(medium) {
+          font-size: 1.2rem;
+          padding: 0.8rem 1.6rem;
+        }
 
         &.is-active {
           background-color: var(--color-deep);
@@ -193,8 +285,14 @@
 
     &__count {
       color: var(--color-medium-blue);
-      font-size: 1.2rem;
+      font-size: 1.5rem;
       margin-bottom: 2rem;
+      text-align: center;
+
+      @include mixins.respond(medium) {
+        text-align: left;
+        font-size: 1.2rem;
+      }
     }
 
     &__grid {
@@ -219,6 +317,45 @@
       flex-direction: column;
       min-height: 32rem;
       overflow: hidden;
+      transition:
+        box-shadow 0.2s ease-in-out,
+        transform 0.2s ease-in-out;
+
+      &:hover,
+      &:focus-within {
+        box-shadow: 0 16px 40px rgba(var(--color-dark-midnight-teal-a), 0.1);
+      }
+
+      &[hidden] {
+        display: none;
+      }
+    }
+
+    &__card--fade-ready {
+      opacity: 0;
+      transform: translateY(1.2rem);
+    }
+
+    &__card--fade-in {
+      opacity: 1;
+      transform: translateY(0);
+      transition:
+        opacity 0.32s ease,
+        transform 0.36s var(--ease-out),
+        box-shadow 0.2s ease-in-out;
+    }
+
+    &__card-link {
+      color: inherit;
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      text-decoration: none;
+
+      &:focus-visible {
+        outline: 2px dashed var(--color-copper);
+        outline-offset: -6px;
+      }
     }
 
     &__card-type {
@@ -227,9 +364,13 @@
       color: var(--color-white);
       display: flex;
       gap: 1rem;
-      font-size: 1rem;
+      font-size: 1.4rem;
       min-height: 6.4rem;
       padding: 0 2.6rem;
+
+      @include mixins.respond(large) {
+        font-size: 1.1rem;
+      }
     }
 
     &__type-icon {
@@ -247,41 +388,53 @@
 
     &__title {
       color: var(--color-deep);
-      font-size: clamp(2.3rem, 3vw, 3rem);
+      display: block;
+      font-size: 3.1rem;
+      font-weight: 700;
       line-height: 1.1;
       margin-bottom: 1.5rem;
-    }
 
-    &__title-link {
-      color: inherit;
-      text-decoration: none;
+      @include mixins.respond(medium) {
+        font-size: 2.5rem;
+      }
 
-      &:hover {
-        color: var(--color-copper);
+      @include mixins.respond(large) {
+        font-size: 2.1rem;
       }
     }
 
     &__excerpt {
       color: var(--color-medium-blue);
-      font-size: 1.6rem;
-      line-height: 1.5;
+      display: block;
+      font-size: 2.4rem;
+      line-height: 1.6;
       margin-bottom: 2rem;
+
+      @include mixins.respond(medium) {
+        font-size: 1.7rem;
+      }
     }
 
     &__cta {
       align-items: center;
-      color: var(--color-dark-orange);
+      border-bottom: 2px solid var(--color-deep);
+      color: var(--color-deep);
       display: inline-flex;
-      font-size: 1.1rem;
+      font-size: 1.8rem;
       gap: 0.8rem;
-      margin-top: auto;
+      margin: 2rem 0;
+      padding: 2px 0;
+      transition:
+        border-color 0.2s ease-in-out,
+        color 0.2s ease-in-out;
       text-decoration: none;
+      width: max-content;
     }
 
-    &__cta-icon {
-      fill: currentColor;
-      height: 1.2rem;
-      width: 1.2rem;
+    &__card-link:hover .resources-page__cta,
+    &__card-link:focus-visible .resources-page__cta {
+      border-bottom-color: var(--color-copper);
+      color: var(--color-copper);
     }
 
     &__load-more {
@@ -296,15 +449,124 @@
         color: var(--color-deep);
         cursor: pointer;
         font-family: typography.$font-secondary;
-        font-size: 1.2rem;
+        font-size: 1.8rem;
         font-weight: 700;
         padding: 1.4rem 3rem;
+
+        @include mixins.respond(medium) {
+          font-size: 1.2rem;
+        }
       }
     }
 
     &__empty {
       color: var(--color-medium-blue);
       font-size: 1.8rem;
+    }
+  }
+
+  .resources-page__about {
+    background-color: var(--color-deep);
+
+    &-container {
+      display: grid;
+      grid-template-columns: auto;
+      overflow: hidden;
+
+      @include mixins.respond(smed) {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    &-image-wrap {
+      height: 100%;
+      min-height: 40rem;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    &-image {
+      background-image: url('assets/img/women-smiling-in-group.webp');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      height: 100%;
+      width: 100%;
+    }
+
+    &-content {
+      align-content: center;
+      display: flex;
+      flex-direction: column;
+      margin: auto;
+      max-width: 60rem;
+      padding: 12rem 5rem;
+      place-items: center;
+      text-align: center;
+
+      @include mixins.respond(smed) {
+        display: block;
+        padding: 5rem;
+        place-items: unset;
+        text-align: left;
+      }
+    }
+
+    &-subheader {
+      align-items: center;
+      color: var(--color-carmine);
+      display: inline-flex;
+      font-family: typography.$font-secondary;
+      font-size: 1.5rem;
+      font-weight: 600;
+      gap: 1.2rem;
+      letter-spacing: 1.2px;
+      margin-bottom: 2rem;
+      position: relative;
+      text-transform: uppercase;
+
+      &::before {
+        background-color: var(--color-carmine);
+        content: '';
+        display: inline-block;
+        height: 1px;
+        width: 2.4rem;
+      }
+
+      @include mixins.respond(medium) {
+        font-size: 1rem;
+      }
+    }
+
+    &-heading {
+      color: var(--color-white);
+      font-size: 5rem;
+      line-height: 0.9;
+      margin-bottom: 2.5rem;
+
+      em {
+        color: var(--color-carmine);
+        display: block;
+        font-weight: 300;
+        letter-spacing: -1.8px;
+        margin-top: 0.5rem;
+      }
+
+      @include mixins.respond(medium) {
+        font-size: 3.5rem;
+      }
+    }
+
+    &-description {
+      color: rgba(var(--color-white-a), 0.75);
+      font-size: 2rem;
+      line-height: 1.4;
+      margin-bottom: 2.5rem;
+
+      @include mixins.respond(medium) {
+        font-size: clamp(1.5rem, 1.6vw, 1.6rem);
+        line-height: normal;
+      }
     }
   }
 }

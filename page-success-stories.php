@@ -44,9 +44,7 @@ $past_story_count    = count( $past_stories );
 				<?php endif; ?>
 			</div>
 
-			<p class="stories__count" data-success-stories-count>
-				<?php echo esc_html( cvipi_get_success_story_count_label( $success_story_query->found_posts ) ); ?>
-			</p>
+			
 
 			<div class="stories__posts" data-success-stories-grid aria-live="polite">
 				<?php echo cvipi_render_success_story_cards( $featured_stories ); ?>
@@ -68,15 +66,17 @@ $past_story_count    = count( $past_stories );
 	</section>
 
 	<section class="stories-impact">
-		<div class="stories-impact__media" aria-hidden="true"></div>
 		<div class="stories-impact__content">
-			<p class="stories-impact__eyebrow">CVIPI Across The Nation</p>
-			<h2 class="stories-impact__heading">Real people, real neighborhoods, <em>real impact.</em></h2>
-			<p class="stories-impact__description">CVIPI works hand-in-hand with our grantee communities on the ground and in our neighborhoods. We help violence interventionists, outreach workers, and community leaders gain the resources they need to make lasting change.</p>
+			<p class="stories-impact__eyebrow">What Is CVIPI?</p>
+			<h2 class="stories-impact__heading">You Resource for <em>safer communities</em></h2>
+			<p class="stories-impact__description">The Community Violence Intervention and Prevention Initiative (CVIPI) is a national
+					platform that equips organizations with the training, technical assistance, and evidencebased resources they need to reduce violence and build resilient neighborhoods.</p>
 			<a href="<?php echo esc_url( home_url( '/what-is-cvipi/' ) ); ?>" class="stories-impact__button">
-				The Communities We Support <?php echo svg_icon( 'stories-impact__button-icon', 'arrow-right' ); ?>
+				Who We Are 
 			</a>
 		</div>
+		<div class="stories-impact__media" aria-hidden="true"></div>
+		
 	</section>
 </main>
 

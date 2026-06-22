@@ -111,7 +111,7 @@ $resource_years = get_posts(
 $resource_year_options = array();
 
 foreach ( $resource_years as $resource_year_post_id ) {
-	$resource_year_options[] = get_the_date( 'Y', $resource_year_post_id );
+	$resource_year_options[] = cvipi_get_resource_display_year( $resource_year_post_id );
 }
 
 $resource_year_options = array_unique( $resource_year_options );
@@ -144,9 +144,13 @@ $resource_query = new WP_Query(
 				$featured_image_url     = has_post_thumbnail( $featured_resource_id )
 					? get_the_post_thumbnail_url( $featured_resource_id, 'large' )
 					: get_template_directory_uri() . '/assets/img/post-1.webp';
+				$featured_resource_link = cvipi_get_resource_link_data( $featured_resource_id );
+				$featured_resource_date = cvipi_get_resource_display_date( $featured_resource_id );
+				$featured_length        = cvipi_get_resource_meta_value( $featured_resource_id, 'resource_length' );
+				$featured_resource_type = cvipi_get_resource_meta_value( $featured_resource_id, 'resource_type' );
 				?>
 				<article class="resources-page__featured" style="--resource-accent: <?php echo esc_attr( $featured_category_card['color'] ); ?>;">
-					<a href="<?php echo esc_url( get_permalink( $featured_resource_id ) ); ?>" class="resources-page__featured-media">
+					<a href="<?php echo esc_url( $featured_resource_link['url'] ); ?>" class="resources-page__featured-media" <?php echo $featured_resource_link['target'] ? 'target="' . esc_attr( $featured_resource_link['target'] ) . '" rel="noopener noreferrer"' : ''; ?>>
 						<img src="<?php echo esc_url( $featured_image_url ); ?>" alt="" class="resources-page__featured-img">
 					</a>
 					<div class="resources-page__featured-content">
@@ -156,14 +160,24 @@ $resource_query = new WP_Query(
 							</p>
 						<?php endif; ?>
 						<h2 class="resources-page__featured-title">
-							<a href="<?php echo esc_url( get_permalink( $featured_resource_id ) ); ?>">
+							<a href="<?php echo esc_url( $featured_resource_link['url'] ); ?>" <?php echo $featured_resource_link['target'] ? 'target="' . esc_attr( $featured_resource_link['target'] ) . '" rel="noopener noreferrer"' : ''; ?>>
 								<?php echo esc_html( get_the_title( $featured_resource_id ) ); ?>
 							</a>
 						</h2>
 						<p class="resources-page__featured-excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt( $featured_resource_id ), 30 ) ); ?></p>
-						<p class="resources-page__featured-meta"><?php echo esc_html( get_the_date( 'F Y', $featured_resource_id ) ); ?></p>
-						<a href="<?php echo esc_url( get_permalink( $featured_resource_id ) ); ?>" class="resources-page__featured-button">
-							View Featured Resource
+						<p class="resources-page__featured-meta">
+							<span class="resources-page__meta-item"><?php echo esc_html( 'Updated ' . $featured_resource_date ); ?></span>
+							<?php if ( $featured_length ) : ?>
+								<span class="resources-page__meta-separator" aria-hidden="true"></span>
+								<span class="resources-page__meta-item"><?php echo esc_html( $featured_length ); ?></span>
+							<?php endif; ?>
+							<?php if ( $featured_resource_type ) : ?>
+								<span class="resources-page__meta-separator" aria-hidden="true"></span>
+								<span class="resources-page__meta-item"><?php echo esc_html( $featured_resource_type ); ?></span>
+							<?php endif; ?>
+						</p>
+						<a href="<?php echo esc_url( $featured_resource_link['url'] ); ?>" class="resources-page__featured-button" <?php echo $featured_resource_link['target'] ? 'target="' . esc_attr( $featured_resource_link['target'] ) . '" rel="noopener noreferrer"' : ''; ?>>
+							<?php echo esc_html( $featured_resource_link['label'] ); ?>
 						</a>
 					</div>
 				</article>
@@ -262,9 +276,12 @@ $resource_query = new WP_Query(
 			<div class="resources-page__grid" data-resources-grid aria-live="polite">
 				<?php if ( $resource_query->have_posts() ) : ?>
 					<?php
+					$resource_card_index = 0;
+
 					while ( $resource_query->have_posts() ) :
 						$resource_query->the_post();
-						echo cvipi_render_resource_card();
+						echo cvipi_render_resource_card( get_the_ID(), $resource_card_index >= 6 );
+						$resource_card_index++;
 					endwhile;
 					?>
 					<?php wp_reset_postdata(); ?>
@@ -275,6 +292,20 @@ $resource_query = new WP_Query(
 
 			<div class="resources-page__load-more">
 				<button type="button" data-resources-load-more <?php echo $resource_query->found_posts > 6 ? '' : 'hidden'; ?>>Load More Resources</button>
+			</div>
+		</div>
+	</section>
+
+	<section class="resources-page__about">
+		<div class="resources-page__about-container">
+			<div class="resources-page__about-image-wrap">
+				<div class="resources-page__about-image" aria-hidden="true">&nbsp;</div>
+			</div>
+			<div class="resources-page__about-content">
+				<p class="resources-page__about-subheader">CVIPI Across the Nation</p>
+				<h2 class="resources-page__about-heading">Real people, real <em>neighborhoods, real impact.</em></h2>
+				<p class="resources-page__about-description">CVIPI works hand-in-hand with our grantee organizations throughout our country and our communities. We help our violence interrupters, outreach workers, and community leaders gain the resources they need to make lasting change.</p>
+				<a href="<?php echo esc_url( site_url( '/success-stories' ) ); ?>" class="btn__outline-white">The Communities We Impact</a>
 			</div>
 		</div>
 	</section>

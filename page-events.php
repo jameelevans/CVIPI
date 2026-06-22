@@ -25,10 +25,10 @@ $today_ymd = current_time( 'Ymd' );
 
 $upcoming_events_query = new WP_Query(
 	array(
-		'post_type'           => 'event',
-		'posts_per_page'      => 3,
-		'post_status'         => 'publish',
-		'ignore_sticky_posts' => true,
+			'post_type'           => 'event',
+			'posts_per_page'      => 3,
+			'post_status'         => array( 'publish', 'future' ),
+			'ignore_sticky_posts' => true,
 		'meta_key'            => 'event_date',
 		'orderby'             => 'meta_value_num',
 		'order'               => 'ASC',
@@ -43,58 +43,20 @@ $upcoming_events_query = new WP_Query(
 	)
 );
 
-$events_query_args = array(
-	'post_type'           => 'event',
-	'posts_per_page'      => 9,
-	'post_status'         => 'publish',
-	'ignore_sticky_posts' => true,
-	'meta_key'            => 'event_date',
-	'orderby'             => 'meta_value_num',
-	'order'               => 'DESC',
-);
-
-if ( $event_search ) {
-	$events_query_args['s'] = $event_search;
-}
-
-$tax_query = array();
-
-if ( $event_type ) {
-	$tax_query[] = array(
-		'taxonomy' => 'event_type',
-		'field'    => 'slug',
-		'terms'    => $event_type,
-	);
-}
-
-if ( $event_topic ) {
-	$tax_query[] = array(
-		'taxonomy' => 'event_topic',
-		'field'    => 'slug',
-		'terms'    => $event_topic,
-	);
-}
-
-if ( ! empty( $tax_query ) ) {
-	$events_query_args['tax_query'] = $tax_query;
-}
-
-if ( $event_status ) {
-	$events_query_args['meta_query'] = array(
+$events_query = new WP_Query(
+	cvipi_get_event_query_args(
 		array(
-			'key'     => 'event_date',
-			'value'   => $today_ymd,
-			'compare' => 'upcoming' === $event_status ? '>=' : '<',
-			'type'    => 'NUMERIC',
-		),
-	);
-}
-
-$events_query = new WP_Query( $events_query_args );
+			'event_search' => $event_search,
+			'event_type'   => $event_type,
+			'event_topic'  => $event_topic,
+			'event_status' => $event_status,
+		)
+	)
+);
 ?>
 
 <main id="main-content">
-	<section class="events-page">
+	<section class="events-page" data-events-archive>
 		<div class="events-page__container">
 			<section class="events-page__upcoming" aria-labelledby="upcoming-events-heading">
 				<header class="events-page__section-header">
@@ -111,38 +73,56 @@ $events_query = new WP_Query( $events_query_args );
 							$event_date_parts = cvipi_get_event_short_date_parts();
 							$event_cta_url    = cvipi_get_event_field( 'event_cta_url' );
 							$event_cta_label  = cvipi_get_event_field( 'event_cta_label' );
-							$event_location   = cvipi_get_event_field( 'event_location' );
-							$event_terms      = cvipi_get_event_card_terms();
-							?>
-							<article class="events-page__upcoming-card">
-								<div class="events-page__date-badge">
-									<span><?php echo esc_html( $event_date_parts['month'] ); ?></span>
-									<strong><?php echo esc_html( $event_date_parts['day'] ); ?></strong>
-								</div>
-								<div class="events-page__upcoming-body">
-									<time class="events-page__date" datetime="<?php echo esc_attr( cvipi_get_event_datetime_attr() ); ?>">
-										<?php echo esc_html( cvipi_get_event_date_label( null, false ) ); ?>
-									</time>
-									<h3 class="events-page__card-title"><?php echo esc_html( get_the_title() ); ?></h3>
-									<p class="events-page__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 20 ) ); ?></p>
+								$event_location   = cvipi_get_event_field( 'event_location' );
+								$event_terms      = cvipi_get_event_card_terms();
+								$event_url        = $event_cta_url ? $event_cta_url : get_permalink();
+								$event_timestamp  = cvipi_get_event_timestamp();
+								?>
+								<article class="events-page__upcoming-card">
+									<a href="<?php echo esc_url( $event_url ); ?>" class="events-page__upcoming-link" aria-label="<?php echo esc_attr( ( $event_cta_label ? $event_cta_label : 'View event' ) . ': ' . get_the_title() ); ?>" <?php echo $event_cta_url ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>>
+										<span class="events-page__upcoming-date">
+											<span class="events-page__date-badge">
+												<span><?php echo esc_html( $event_date_parts['month'] ); ?></span>
+												<strong><?php echo esc_html( $event_date_parts['day'] ); ?></strong>
+											</span>
+											<span class="events-page__date-copy">
+												<time class="events-page__date" datetime="<?php echo esc_attr( cvipi_get_event_datetime_attr() ); ?>">
+													<?php echo esc_html( $event_timestamp ? date_i18n( 'F j, Y', $event_timestamp ) : cvipi_get_event_date_label( null, false ) ); ?>
+												</time>
+												<span class="events-page__date-meta">
+													<?php if ( $event_timestamp ) : ?>
+														<span><?php echo esc_html( date_i18n( 'l', $event_timestamp ) ); ?></span>
+													<?php endif; ?>
+													<?php if ( cvipi_get_event_field( 'event_time' ) ) : ?>
+														<span class="events-page__meta-separator" aria-hidden="true"></span>
+														<span><?php echo esc_html( date_i18n( 'g:i A', $event_timestamp ) . ' ' . cvipi_get_event_field( 'event_timezone' ) ); ?></span>
+													<?php endif; ?>
+												</span>
+											</span>
+										</span>
+										<span class="events-page__upcoming-body">
+											<span class="events-page__card-title"><?php echo esc_html( get_the_title() ); ?></span>
+											<span class="events-page__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 20 ) ); ?></span>
 
-									<?php if ( ! empty( $event_terms ) ) : ?>
-										<ul class="events-page__tags" aria-label="Event tags">
-											<?php foreach ( $event_terms as $event_term ) : ?>
-												<li><a href="<?php echo esc_url( $event_term['url'] ); ?>"><?php echo esc_html( $event_term['name'] ); ?></a></li>
-											<?php endforeach; ?>
-											<?php if ( $event_location ) : ?>
-												<li><?php echo esc_html( $event_location ); ?></li>
-											<?php endif; ?>
-										</ul>
-									<?php endif; ?>
+										<?php if ( ! empty( $event_terms ) || $event_location ) : ?>
+											<span class="events-page__tags" aria-label="Event tags">
+												<?php foreach ( $event_terms as $event_term ) : ?>
+													<span><?php echo esc_html( $event_term['name'] ); ?></span>
+												<?php endforeach; ?>
+												<?php if ( $event_location ) : ?>
+													<span><?php echo esc_html( $event_location ); ?></span>
+												<?php endif; ?>
+											</span>
+										<?php endif; ?>
 
-									<?php if ( $event_cta_url ) : ?>
-										<a href="<?php echo esc_url( $event_cta_url ); ?>" class="events-page__button">
-											<?php echo esc_html( $event_cta_label ? $event_cta_label : 'RSVP' ); ?>
-										</a>
-									<?php endif; ?>
-								</div>
+										<?php if ( $event_cta_url ) : ?>
+											<span class="events-page__button">
+												<?php echo svg_icon( 'events-page__button-icon', 'display' ); ?>
+												<?php echo esc_html( $event_cta_label ? $event_cta_label : 'RSVP' ); ?>
+											</span>
+										<?php endif; ?>
+									</span>
+								</a>
 							</article>
 						<?php endwhile; ?>
 						<?php wp_reset_postdata(); ?>
@@ -159,6 +139,8 @@ $events_query = new WP_Query( $events_query_args );
 				</header>
 
 				<form class="events-page__filters" action="<?php echo esc_url( cvipi_get_filtered_events_url() ); ?>" method="get">
+					<input type="hidden" name="event_status" value="<?php echo esc_attr( $event_status ); ?>" />
+
 					<label class="events-page__search">
 						<span>Search Events</span>
 						<input type="search" name="event_search" value="<?php echo esc_attr( $event_search ); ?>" placeholder="Search by title, speaker, or topic..." />
@@ -196,19 +178,20 @@ $events_query = new WP_Query( $events_query_args );
 				</form>
 
 				<nav class="events-page__pills" aria-label="Quick event filters">
-					<a href="<?php echo esc_url( cvipi_get_filtered_events_url() ); ?>" class="<?php echo '' === $event_status ? 'is-active' : ''; ?>">All Events</a>
-					<a href="<?php echo esc_url( cvipi_get_filtered_events_url( array( 'event_status' => 'upcoming' ) ) ); ?>" class="<?php echo 'upcoming' === $event_status ? 'is-active is-copper' : 'is-copper'; ?>">Upcoming</a>
-					<a href="<?php echo esc_url( cvipi_get_filtered_events_url( array( 'event_status' => 'past' ) ) ); ?>" class="<?php echo 'past' === $event_status ? 'is-active' : ''; ?>">Past / Archived</a>
+					<a href="<?php echo esc_url( cvipi_get_filtered_events_url() ); ?>" data-event-status-filter="" class="events-page__pill--deep events-page__pill--separator <?php echo '' === $event_status ? 'is-active' : ''; ?>">All Events</a>
+					<a href="<?php echo esc_url( cvipi_get_filtered_events_url( array( 'event_status' => 'upcoming' ) ) ); ?>" data-event-status-filter="upcoming" class="<?php echo 'upcoming' === $event_status ? 'is-active' : ''; ?>">Upcoming</a>
+					<a href="<?php echo esc_url( cvipi_get_filtered_events_url( array( 'event_status' => 'past' ) ) ); ?>" data-event-status-filter="past" class="events-page__pill--separator <?php echo 'past' === $event_status ? 'is-active' : ''; ?>">Past / Archived</a>
 					<?php if ( ! is_wp_error( $event_types ) ) : ?>
+						<a href="<?php echo esc_url( cvipi_get_filtered_events_url( array( 'event_search' => $event_search, 'event_topic' => $event_topic, 'event_status' => $event_status ) ) ); ?>" data-event-type-filter="" class="<?php echo '' === $event_type ? 'is-active' : ''; ?>">All Types</a>
 						<?php foreach ( $event_types as $event_type_term ) : ?>
-							<a href="<?php echo esc_url( cvipi_get_filtered_events_url( array( 'event_type' => $event_type_term->slug ) ) ); ?>" class="<?php echo $event_type === $event_type_term->slug ? 'is-active' : ''; ?>">
+							<a href="<?php echo esc_url( cvipi_get_filtered_events_url( array( 'event_type' => $event_type_term->slug ) ) ); ?>" data-event-type-filter="<?php echo esc_attr( $event_type_term->slug ); ?>" class="<?php echo $event_type === $event_type_term->slug ? 'is-active' : ''; ?>">
 								<?php echo esc_html( $event_type_term->name ); ?>
 							</a>
 						<?php endforeach; ?>
 					<?php endif; ?>
 				</nav>
 
-				<p class="events-page__count">
+				<p class="events-page__count" data-events-count>
 					<?php
 					printf(
 						esc_html( _n( '%s event found', '%s events found', $events_query->found_posts, 'cvipi' ) ),
@@ -217,63 +200,25 @@ $events_query = new WP_Query( $events_query_args );
 					?>
 				</p>
 
-				<div class="events-page__grid">
+				<div class="events-page__grid" data-events-grid aria-live="polite">
 					<?php if ( $events_query->have_posts() ) : ?>
 						<?php
+						$event_card_index = 0;
+
 						while ( $events_query->have_posts() ) :
 							$events_query->the_post();
-							$event_terms         = cvipi_get_event_card_terms();
-							$event_location      = cvipi_get_event_field( 'event_location' );
-							$event_recording_url = cvipi_get_event_field( 'event_recording_url' );
-							$event_cta_url       = cvipi_get_event_field( 'event_cta_url' );
-							$event_duration      = cvipi_get_event_field( 'event_duration' );
-							$event_action_url    = $event_recording_url ? $event_recording_url : ( $event_cta_url ? $event_cta_url : get_permalink() );
-							$event_action_label  = $event_recording_url ? 'Watch Recording' : 'RSVP';
-							?>
-							<article class="events-page__event-card <?php echo $event_recording_url ? 'events-page__event-card--recording' : ''; ?>">
-								<?php if ( $event_recording_url ) : ?>
-									<a href="<?php echo esc_url( $event_recording_url ); ?>" class="events-page__video" aria-label="<?php echo esc_attr( 'Watch ' . get_the_title() ); ?>">
-										<?php if ( has_post_thumbnail() ) : ?>
-											<?php echo get_the_post_thumbnail( get_the_ID(), 'regular', array( 'class' => 'events-page__video-img' ) ); ?>
-										<?php endif; ?>
-										<span class="events-page__play"><?php echo svg_icon( 'events-page__play-icon', 'play1' ); ?></span>
-										<?php if ( $event_duration ) : ?>
-											<span class="events-page__duration"><?php echo esc_html( $event_duration ); ?></span>
-										<?php endif; ?>
-									</a>
-								<?php endif; ?>
-
-								<div class="events-page__event-body">
-									<?php if ( ! empty( $event_terms ) ) : ?>
-										<ul class="events-page__meta-pills" aria-label="Event categories">
-											<?php foreach ( $event_terms as $event_term ) : ?>
-												<li><a href="<?php echo esc_url( $event_term['url'] ); ?>"><?php echo esc_html( $event_term['name'] ); ?></a></li>
-											<?php endforeach; ?>
-										</ul>
-									<?php endif; ?>
-
-									<h3 class="events-page__event-title"><?php echo esc_html( get_the_title() ); ?></h3>
-									<p class="events-page__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 20 ) ); ?></p>
-
-									<div class="events-page__details">
-										<?php if ( cvipi_get_event_date_label( null, false ) ) : ?>
-											<time datetime="<?php echo esc_attr( cvipi_get_event_datetime_attr() ); ?>"><?php echo esc_html( cvipi_get_event_date_label( null, false ) ); ?></time>
-										<?php endif; ?>
-										<?php if ( $event_location ) : ?>
-											<span><?php echo esc_html( $event_location ); ?></span>
-										<?php endif; ?>
-									</div>
-
-									<a href="<?php echo esc_url( $event_action_url ); ?>" class="events-page__text-link">
-										<?php echo esc_html( $event_action_label ); ?> <?php echo svg_icon( 'events-page__text-link-icon', 'arrow-right' ); ?>
-									</a>
-								</div>
-							</article>
-						<?php endwhile; ?>
+							echo cvipi_render_event_card( get_the_ID(), $event_card_index >= 6 );
+							$event_card_index++;
+						endwhile;
+						?>
 						<?php wp_reset_postdata(); ?>
 					<?php else : ?>
 						<p class="events-page__empty">No events matched your filters.</p>
 					<?php endif; ?>
+				</div>
+
+				<div class="events-page__load-more">
+					<button type="button" data-events-load-more <?php echo $events_query->found_posts > 6 ? '' : 'hidden'; ?>>Load More Events</button>
 				</div>
 			</section>
 		</div>

@@ -150,16 +150,41 @@ function cvipi_rename_posts_to_resources() {
 add_action( 'init', 'cvipi_rename_posts_to_resources' );
 // .Rename built-in Posts labels.
 
- //* Display an inline SVG icon from the theme sprite sheet.
- // The $class argument lets templates apply BEM-specific icon styling.
-function svg_icon($class, $icon) { ?>
-  <svg class="<?php echo $class ?>" aria-hidden="true">
-    <use
-      xlink:href="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/img/sprite.svg' ); ?>#icon-<?php echo $icon ?>">
-    </use>
+//* Display an inline SVG icon from the theme sprite sheet.
+// The $class argument lets templates apply BEM-specific icon styling.
+function svg_icon( $class, $icon ) {
+  static $symbols = null;
+
+  if ( null === $symbols ) {
+    $symbols     = array();
+    $sprite_path = get_stylesheet_directory() . '/assets/img/sprite.svg';
+
+    if ( file_exists( $sprite_path ) ) {
+      $sprite = file_get_contents( $sprite_path );
+
+      if ( preg_match_all( '/<symbol\\s+id="icon-([^"]+)"\\s+viewBox="([^"]+)"[^>]*>(.*?)<\\/symbol>/s', $sprite, $matches, PREG_SET_ORDER ) ) {
+        foreach ( $matches as $match ) {
+          $symbols[ $match[1] ] = array(
+            'viewBox' => $match[2],
+            'markup'  => $match[3],
+          );
+        }
+      }
+    }
+  }
+
+  $symbol = isset( $symbols[ $icon ] ) ? $symbols[ $icon ] : null;
+  ?>
+  <svg class="<?php echo esc_attr( $class ); ?>" aria-hidden="true" <?php echo $symbol ? 'viewBox="' . esc_attr( $symbol['viewBox'] ) . '"' : ''; ?>>
+    <?php if ( $symbol ) : ?>
+      <?php echo wp_kses( $symbol['markup'], array( 'path' => array( 'd' => true ) ) ); ?>
+    <?php else : ?>
+      <use href="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/img/sprite.svg' ); ?>#icon-<?php echo esc_attr( $icon ); ?>" xlink:href="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/img/sprite.svg' ); ?>#icon-<?php echo esc_attr( $icon ); ?>"></use>
+    <?php endif; ?>
   </svg>
-  <?php } 
-  // .Display inline svg icon from sprite sheet with custom class
+  <?php
+}
+// .Display inline svg icon from sprite sheet with custom class
 
 function cvipi_get_primary_nav_items() {
   return array(
@@ -239,24 +264,24 @@ function cvipi_render_primary_navigation( $mobile = false ) {
 function cvipi_resource_category_cards() {
   return array(
     'archived-events-webinars' => array(
-      'icon'      => 'report1',
+      'icon'      => 'play1',
       'cta_label' => 'Browse recordings',
       'color'     => 'var(--color-dark-blue)',
     ),
     'toolkits' => array(
-      'icon'      => 'file1',
+      'icon'      => 'gear',
       'cta_label' => 'Browse toolkits',
-      'color'     => 'var(--color-dark-midnight-teal)',
+      'color'     => 'var(--color-deep)',
     ),
     'research-reports' => array(
-      'icon'      => 'play1',
+      'icon'      => 'report1',
       'cta_label' => 'Browse research',
-      'color'     => 'var(--color-copper)',
+      'color'     => 'var(--color-dark-orange)',
     ),
     'other-resources' => array(
-      'icon'      => 'gear',
+      'icon'      => 'file1',
       'cta_label' => 'Browse resources',
-      'color'     => 'var(--color-medium-blue)',
+      'color'     => 'var(--color-black)',
     ),
   );
 }
@@ -313,11 +338,24 @@ function cvipi_get_resource_query_args( $filters = array() ) {
   }
 
   if ( $resource_year ) {
-    $query_args['date_query'] = array(
+    $resource_year_ids = get_posts(
       array(
-        'year' => $resource_year,
-      ),
+        'post_type'           => 'post',
+        'post_status'         => 'publish',
+        'posts_per_page'      => -1,
+        'ignore_sticky_posts' => true,
+        'fields'              => 'ids',
+      )
     );
+
+    $resource_year_ids = array_filter(
+      $resource_year_ids,
+      function ( $resource_year_post_id ) use ( $resource_year ) {
+        return (int) cvipi_get_resource_display_year( $resource_year_post_id ) === $resource_year;
+      }
+    );
+
+    $query_args['post__in'] = ! empty( $resource_year_ids ) ? array_map( 'absint', $resource_year_ids ) : array( 0 );
   }
 
   $tax_query = array();
@@ -353,41 +391,147 @@ function cvipi_get_resource_query_args( $filters = array() ) {
   return $query_args;
 }
 
-function cvipi_render_resource_card( $post_id = null ) {
+function cvipi_get_resource_meta_value( $post_id, $key ) {
+  if ( function_exists( 'get_field' ) ) {
+    $value = get_field( $key, $post_id );
+
+    if ( $value ) {
+      return $value;
+    }
+  }
+
+  return get_post_meta( $post_id, $key, true );
+}
+
+function cvipi_get_resource_display_date( $post_id, $format = 'F Y' ) {
+  $custom_date = cvipi_get_resource_meta_value( $post_id, 'resource_custom_date' );
+
+  if ( $custom_date ) {
+    $timestamp = is_numeric( $custom_date )
+      ? DateTime::createFromFormat( 'Ymd', (string) $custom_date )
+      : date_create( $custom_date );
+
+    if ( $timestamp ) {
+      return date_i18n( $format, $timestamp->getTimestamp() );
+    }
+  }
+
+  return get_the_date( $format, $post_id );
+}
+
+function cvipi_get_resource_display_year( $post_id ) {
+  return cvipi_get_resource_display_date( $post_id, 'Y' );
+}
+
+function cvipi_get_resource_link_data( $post_id ) {
+  $youtube_link     = cvipi_get_resource_meta_value( $post_id, 'resource_youtube_link' );
+  $resource_document = cvipi_get_resource_meta_value( $post_id, 'resource_document' );
+  $custom_link_text = cvipi_get_resource_meta_value( $post_id, 'resource_link_text' );
+  $document_url     = '';
+
+  if ( is_array( $resource_document ) && ! empty( $resource_document['url'] ) ) {
+    $document_url = $resource_document['url'];
+  } elseif ( is_numeric( $resource_document ) ) {
+    $document_url = wp_get_attachment_url( (int) $resource_document );
+  } elseif ( is_string( $resource_document ) ) {
+    $document_url = $resource_document;
+  }
+
+  if ( $youtube_link ) {
+    return array(
+      'url'    => esc_url_raw( $youtube_link ),
+      'label'  => $custom_link_text ? $custom_link_text : 'Watch Resource',
+      'target' => '_blank',
+    );
+  }
+
+  if ( $document_url ) {
+    return array(
+      'url'    => esc_url_raw( $document_url ),
+      'label'  => $custom_link_text ? $custom_link_text : 'Download Resource',
+      'target' => '_blank',
+    );
+  }
+
+  return array(
+    'url'    => get_permalink( $post_id ),
+    'label'  => $custom_link_text ? $custom_link_text : 'View Resource',
+    'target' => '',
+  );
+}
+
+function cvipi_get_resource_primary_topic_tag( $post_id ) {
+  $tags = get_the_terms( $post_id, 'post_tag' );
+
+  if ( is_wp_error( $tags ) || empty( $tags ) ) {
+    return null;
+  }
+
+  $primary_topic_slugs = array(
+    'violence-intervention',
+    'community-violence-intervention',
+    'data-evaluation',
+    'program-design',
+    'policy-advocacy',
+    'impact',
+    'youth-program',
+  );
+
+  foreach ( $primary_topic_slugs as $primary_topic_slug ) {
+    foreach ( $tags as $tag ) {
+      if ( $primary_topic_slug === $tag->slug ) {
+        return $tag;
+      }
+    }
+  }
+
+  return $tags[0];
+}
+
+function cvipi_render_resource_card( $post_id = null, $hidden = false ) {
   $post_id       = $post_id ? $post_id : get_the_ID();
   $category_card = cvipi_get_resource_category_card_by_post( $post_id );
   $category      = $category_card['term'];
   $category_name = $category ? wp_specialchars_decode( $category->name, ENT_QUOTES ) : 'Resource';
-  $published     = get_the_date( 'F Y', $post_id );
+  $topic_tag     = cvipi_get_resource_primary_topic_tag( $post_id );
+  $topic_name    = $topic_tag ? wp_specialchars_decode( $topic_tag->name, ENT_QUOTES ) : '';
+  $published     = cvipi_get_resource_display_date( $post_id );
+  $resource_link = cvipi_get_resource_link_data( $post_id );
+  $length        = cvipi_get_resource_meta_value( $post_id, 'resource_length' );
+  $resource_type = cvipi_get_resource_meta_value( $post_id, 'resource_type' );
   ob_start();
   ?>
-  <article class="resources-page__card" style="--resource-accent: <?php echo esc_attr( $category_card['color'] ); ?>;">
-    <div class="resources-page__card-type">
-      <?php echo svg_icon( 'resources-page__type-icon', $category_card['icon'] ); ?>
-      <span><?php echo esc_html( $category_name ); ?></span>
-    </div>
+  <article class="resources-page__card" style="--resource-accent: <?php echo esc_attr( $category_card['color'] ); ?>;" <?php echo $hidden ? 'hidden' : ''; ?>>
+    <a href="<?php echo esc_url( $resource_link['url'] ); ?>" class="resources-page__card-link" <?php echo $resource_link['target'] ? 'target="' . esc_attr( $resource_link['target'] ) . '" rel="noopener noreferrer"' : ''; ?>>
+      <span class="resources-page__card-type">
+        <?php echo svg_icon( 'resources-page__type-icon', $category_card['icon'] ); ?>
+        <span><?php echo esc_html( $category_name ); ?></span>
+      </span>
 
-    <div class="resources-page__card-body">
-      <?php if ( $category ) : ?>
-        <p class="resources-page__category"><?php echo esc_html( $category_name ); ?></p>
-      <?php endif; ?>
+      <span class="resources-page__card-body">
+        <?php if ( $topic_name ) : ?>
+          <span class="resources-page__category"><?php echo esc_html( $topic_name ); ?></span>
+        <?php endif; ?>
 
-      <h2 class="resources-page__title">
-        <a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" class="resources-page__title-link">
-          <?php echo esc_html( get_the_title( $post_id ) ); ?>
-        </a>
-      </h2>
+        <span class="resources-page__title"><?php echo esc_html( get_the_title( $post_id ) ); ?></span>
 
-      <p class="resources-page__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt( $post_id ), 22 ) ); ?></p>
+        <span class="resources-page__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt( $post_id ), 22 ) ); ?></span>
 
-      <div class="resources-page__meta">
-        <span><?php echo esc_html( $published ); ?></span>
-      </div>
+        <span class="resources-page__meta">
+          <span class="resources-page__meta-item"><?php echo esc_html( $published ); ?></span>
+          <?php if ( $length ) : ?>
+            <span class="resources-page__meta-separator" aria-hidden="true"></span>
+            <span class="resources-page__meta-item"><?php echo esc_html( $length ); ?></span>
+          <?php endif; ?>
+          <?php if ( $resource_type ) : ?>
+            <span class="resources-page__meta-separator" aria-hidden="true"></span>
+            <span class="resources-page__meta-item"><?php echo esc_html( $resource_type ); ?></span>
+          <?php endif; ?>
+        </span>
 
-      <a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" class="resources-page__cta">
-        View Resource <?php echo svg_icon( 'resources-page__cta-icon', 'arrow-right' ); ?>
-      </a>
-    </div>
+        <span class="resources-page__cta"><?php echo esc_html( $resource_link['label'] ); ?></span>
+      </span>
+    </a>
   </article>
   <?php
   return ob_get_clean();
@@ -478,7 +622,7 @@ function cvipi_render_success_story_card( $post_id = null ) {
           </p>
         <?php endif; ?>
         <h2 class="story__heading">
-          <a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>"><?php echo esc_html( get_the_title( $post_id ) ); ?></a>
+          <?php echo esc_html( get_the_title( $post_id ) ); ?>
         </h2>
       </header>
 
@@ -514,13 +658,17 @@ function cvipi_render_success_story_cards( $stories ) {
 function cvipi_render_success_story_past_item( $post_id ) {
   $story_categories = get_the_terms( $post_id, 'category' );
   $story_category   = ! is_wp_error( $story_categories ) && ! empty( $story_categories ) ? $story_categories[0]->name : '';
+  $story_month      = get_the_date( 'M', $post_id );
   $story_year       = get_the_date( 'Y', $post_id );
 
   ob_start();
   ?>
   <article class="stories__past-item">
     <a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" class="stories__past-link">
-      <span class="stories__past-year"><?php echo esc_html( $story_year ); ?></span>
+      <span class="stories__past-date">
+        <span class="stories__past-month"><?php echo esc_html( strtoupper( $story_month ) ); ?></span>
+        <span class="stories__past-year"><?php echo esc_html( $story_year ); ?></span>
+      </span>
       <span class="stories__past-content">
         <span class="stories__past-title"><?php echo esc_html( get_the_title( $post_id ) ); ?></span>
         <?php if ( $story_category ) : ?>
@@ -631,6 +779,53 @@ function cvipi_register_resource_acf_fields() {
           'instructions'  => 'Only one Resource can be featured at a time. Saving this as featured will unfeature the others.',
           'ui'            => 1,
           'default_value' => 0,
+        ),
+        array(
+          'key'           => 'field_cvipi_resource_youtube_link',
+          'label'         => 'YouTube Link',
+          'name'          => 'resource_youtube_link',
+          'type'          => 'url',
+          'instructions'  => 'Optional external YouTube URL for videos, webinars, or recordings.',
+        ),
+        array(
+          'key'           => 'field_cvipi_resource_document',
+          'label'         => 'Document',
+          'name'          => 'resource_document',
+          'type'          => 'file',
+          'instructions'  => 'Optional downloadable file for this resource.',
+          'return_format' => 'url',
+          'library'       => 'all',
+        ),
+        array(
+          'key'          => 'field_cvipi_resource_length',
+          'label'        => 'Length of Resource',
+          'name'         => 'resource_length',
+          'type'         => 'text',
+          'instructions' => 'Short text shown in resource metadata, for example: 45 min, 12 pages, Toolkit.',
+        ),
+        array(
+          'key'          => 'field_cvipi_resource_type',
+          'label'        => 'Resource Type',
+          'name'         => 'resource_type',
+          'type'         => 'text',
+          'instructions' => 'Short text shown in resource metadata, for example: PDF, Video, Report, or Toolkit.',
+        ),
+        array(
+          'key'          => 'field_cvipi_resource_link_text',
+          'label'        => 'Custom Link Text',
+          'name'         => 'resource_link_text',
+          'type'         => 'text',
+          'instructions' => 'Overrides the card button text, for example: Watch Webinar or Download Toolkit.',
+        ),
+        array(
+          'key'           => 'field_cvipi_resource_custom_date',
+          'label'         => 'Custom Resource Date',
+          'name'          => 'resource_custom_date',
+          'type'          => 'date_picker',
+          'instructions'  => 'Optional display date used in place of the regular post date.',
+          'display_format' => 'F j, Y',
+          'return_format' => 'Ymd',
+          'first_day'     => 0,
         ),
       ),
       'location' => array(
@@ -1224,6 +1419,173 @@ function cvipi_get_event_card_terms( $post_id = null ) {
 
   return $terms;
 }
+
+function cvipi_get_event_query_args( $filters = array() ) {
+  $event_search = ! empty( $filters['event_search'] ) ? sanitize_text_field( $filters['event_search'] ) : '';
+  $event_type   = ! empty( $filters['event_type'] ) ? sanitize_title( $filters['event_type'] ) : '';
+  $event_topic  = ! empty( $filters['event_topic'] ) ? sanitize_title( $filters['event_topic'] ) : '';
+  $event_status = ! empty( $filters['event_status'] ) ? sanitize_key( $filters['event_status'] ) : '';
+  $today_ymd    = current_time( 'Ymd' );
+
+  if ( ! in_array( $event_status, array( 'upcoming', 'past' ), true ) ) {
+    $event_status = '';
+  }
+
+  $query_args = array(
+    'post_type'           => 'event',
+    'posts_per_page'      => -1,
+    'post_status'         => array( 'publish', 'future' ),
+    'ignore_sticky_posts' => true,
+    'meta_key'            => 'event_date',
+    'orderby'             => 'meta_value_num',
+    'order'               => 'DESC',
+  );
+
+  if ( $event_search ) {
+    $query_args['s'] = $event_search;
+  }
+
+  $tax_query = array();
+
+  if ( $event_type ) {
+    $tax_query[] = array(
+      'taxonomy' => 'event_type',
+      'field'    => 'slug',
+      'terms'    => $event_type,
+    );
+  }
+
+  if ( $event_topic ) {
+    $tax_query[] = array(
+      'taxonomy' => 'event_topic',
+      'field'    => 'slug',
+      'terms'    => $event_topic,
+    );
+  }
+
+  if ( count( $tax_query ) > 1 ) {
+    $tax_query['relation'] = 'AND';
+  }
+
+  if ( ! empty( $tax_query ) ) {
+    $query_args['tax_query'] = $tax_query;
+  }
+
+  if ( $event_status ) {
+    $query_args['meta_query'] = array(
+      array(
+        'key'     => 'event_date',
+        'value'   => $today_ymd,
+        'compare' => 'upcoming' === $event_status ? '>=' : '<',
+        'type'    => 'NUMERIC',
+      ),
+    );
+
+    if ( 'upcoming' === $event_status ) {
+      $query_args['order'] = 'ASC';
+    }
+  }
+
+  return $query_args;
+}
+
+function cvipi_render_event_card( $post_id = null, $hidden = false ) {
+  $post_id             = $post_id ? $post_id : get_the_ID();
+  $event_terms         = cvipi_get_event_card_terms( $post_id );
+  $event_location      = cvipi_get_event_field( 'event_location', $post_id );
+  $event_recording_url = cvipi_get_event_field( 'event_recording_url', $post_id );
+  $event_cta_url       = cvipi_get_event_field( 'event_cta_url', $post_id );
+  $event_duration      = cvipi_get_event_field( 'event_duration', $post_id );
+  $event_action_url    = $event_recording_url ? $event_recording_url : ( $event_cta_url ? $event_cta_url : get_permalink( $post_id ) );
+  $event_action_label  = $event_recording_url ? 'Watch Recording' : 'RSVP';
+  $event_link_target   = $event_recording_url || $event_cta_url ? '_blank' : '';
+  $event_card_classes  = 'events-page__event-card' . ( $event_recording_url ? ' events-page__event-card--recording' : '' );
+
+  ob_start();
+  ?>
+  <article class="<?php echo esc_attr( $event_card_classes ); ?>" <?php echo $hidden ? 'hidden' : ''; ?>>
+    <a href="<?php echo esc_url( $event_action_url ); ?>" class="events-page__event-link" aria-label="<?php echo esc_attr( $event_action_label . ': ' . get_the_title( $post_id ) ); ?>" <?php echo $event_link_target ? 'target="' . esc_attr( $event_link_target ) . '" rel="noopener noreferrer"' : ''; ?>>
+      <?php if ( $event_recording_url ) : ?>
+        <span class="events-page__video" aria-hidden="true">
+          <?php if ( has_post_thumbnail( $post_id ) ) : ?>
+            <?php echo get_the_post_thumbnail( $post_id, 'regular', array( 'class' => 'events-page__video-img' ) ); ?>
+          <?php endif; ?>
+          <span class="events-page__play"><?php echo svg_icon( 'events-page__play-icon', 'play1' ); ?></span>
+          <?php if ( $event_duration ) : ?>
+            <span class="events-page__duration"><?php echo esc_html( $event_duration ); ?></span>
+          <?php endif; ?>
+        </span>
+      <?php endif; ?>
+
+      <span class="events-page__event-body">
+        <?php if ( ! empty( $event_terms ) ) : ?>
+          <span class="events-page__meta-pills" aria-label="Event categories">
+            <?php foreach ( $event_terms as $event_term ) : ?>
+              <span><?php echo esc_html( $event_term['name'] ); ?></span>
+            <?php endforeach; ?>
+          </span>
+        <?php endif; ?>
+
+        <span class="events-page__event-title"><?php echo esc_html( get_the_title( $post_id ) ); ?></span>
+        <span class="events-page__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt( $post_id ), 20 ) ); ?></span>
+
+        <span class="events-page__details">
+          <?php if ( cvipi_get_event_date_label( $post_id, false ) ) : ?>
+            <time datetime="<?php echo esc_attr( cvipi_get_event_datetime_attr( $post_id ) ); ?>"><?php echo esc_html( cvipi_get_event_date_label( $post_id, false ) ); ?></time>
+          <?php endif; ?>
+          <?php if ( $event_location ) : ?>
+            <span><?php echo esc_html( $event_location ); ?></span>
+          <?php endif; ?>
+        </span>
+
+        <span class="events-page__text-link">
+          <?php echo esc_html( $event_action_label ); ?> <?php echo svg_icon( 'events-page__text-link-icon', 'arrow-right' ); ?>
+        </span>
+      </span>
+    </a>
+  </article>
+  <?php
+
+  return ob_get_clean();
+}
+
+function cvipi_ajax_filter_events() {
+  check_ajax_referer( 'cvipi_ajax_nonce', 'nonce' );
+
+  $filters = array(
+    'event_search' => isset( $_POST['event_search'] ) ? sanitize_text_field( wp_unslash( $_POST['event_search'] ) ) : '',
+    'event_type'   => isset( $_POST['event_type'] ) ? sanitize_title( wp_unslash( $_POST['event_type'] ) ) : '',
+    'event_topic'  => isset( $_POST['event_topic'] ) ? sanitize_title( wp_unslash( $_POST['event_topic'] ) ) : '',
+    'event_status' => isset( $_POST['event_status'] ) ? sanitize_key( wp_unslash( $_POST['event_status'] ) ) : '',
+  );
+
+  $events_query = new WP_Query( cvipi_get_event_query_args( $filters ) );
+  $html         = '';
+
+  if ( $events_query->have_posts() ) {
+    while ( $events_query->have_posts() ) {
+      $events_query->the_post();
+      $html .= cvipi_render_event_card();
+    }
+
+    wp_reset_postdata();
+  } else {
+    $html = '<p class="events-page__empty">No events matched your filters.</p>';
+  }
+
+  wp_send_json_success(
+    array(
+      'html'  => $html,
+      'count' => (int) $events_query->found_posts,
+      'label' => sprintf(
+        _n( '%s event found', '%s events found', $events_query->found_posts, 'cvipi' ),
+        number_format_i18n( $events_query->found_posts )
+      ),
+    )
+  );
+}
+add_action( 'wp_ajax_cvipi_filter_events', 'cvipi_ajax_filter_events' );
+add_action( 'wp_ajax_nopriv_cvipi_filter_events', 'cvipi_ajax_filter_events' );
 // .Event field and taxonomy helpers.
 
 function cvipi_get_posts_header_defaults( $page_id = null ) {

@@ -26,7 +26,24 @@ get_header('general');
       }
       ?>
 
-      <p class="single-resource__date">Date Published: <?php echo esc_html( get_the_date( 'F j, Y' ) ); ?></p>
+      <p class="single-resource__date">Date Published: <?php echo esc_html( cvipi_get_resource_display_date( get_the_ID(), 'F j, Y' ) ); ?></p>
+
+      <?php
+      $resource_length = cvipi_get_resource_meta_value( get_the_ID(), 'resource_length' );
+      $resource_link   = cvipi_get_resource_link_data( get_the_ID() );
+      ?>
+
+      <?php if ( $resource_length ) : ?>
+        <p class="single-resource__length">Length: <?php echo esc_html( $resource_length ); ?></p>
+      <?php endif; ?>
+
+      <?php if ( ! empty( $resource_link['url'] ) ) : ?>
+        <p class="single-resource__action">
+          <a href="<?php echo esc_url( $resource_link['url'] ); ?>" <?php echo $resource_link['target'] ? 'target="' . esc_attr( $resource_link['target'] ) . '" rel="noopener noreferrer"' : ''; ?>>
+            <?php echo esc_html( $resource_link['label'] ); ?>
+          </a>
+        </p>
+      <?php endif; ?>
 
       <div class="single-resource__content">
         <?php

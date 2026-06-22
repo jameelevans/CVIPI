@@ -57,8 +57,10 @@ class ResourceFilters {
 
     if (this.loadMoreButton) {
       this.loadMoreButton.addEventListener('click', () => {
+        const previousVisibleCount = this.visibleCount;
         this.visibleCount += this.batchSize;
         this.syncVisibleCards();
+        this.animateVisibleCards(previousVisibleCount);
       });
     }
   }
@@ -99,6 +101,7 @@ class ResourceFilters {
         this.updatePills();
         this.updateUrl();
         this.syncVisibleCards();
+        this.animateVisibleCards();
       })
       .catch(() => {
         this.grid.innerHTML = '<p class="resources-page__empty">Something went wrong while filtering resources.</p>';
@@ -141,6 +144,21 @@ class ResourceFilters {
       this.loadMoreButton.hidden = cards.length <= this.visibleCount;
     }
   }
+
+  animateVisibleCards(startIndex = 0) {
+    const cards = Array.from(this.grid.querySelectorAll('.resources-page__card:not([hidden])')).slice(startIndex);
+
+    cards.forEach((card, index) => {
+      card.classList.add('resources-page__card--fade-ready');
+      card.classList.remove('resources-page__card--fade-in');
+
+      window.setTimeout(() => {
+        card.classList.add('resources-page__card--fade-in');
+        card.classList.remove('resources-page__card--fade-ready');
+      }, index * 45);
+    });
+  }
+
 }
 
 export default ResourceFilters;

@@ -58,7 +58,7 @@
 }
 
 .posts-hero {
-  min-height: 42rem;
+  min-height: 48rem;
   position: relative;
   display: grid;
   place-items: center;
@@ -71,8 +71,8 @@
   &__media {
     position: absolute;
     inset: 0;
-    background: var(--posts-hero-image, url('assets/img/banner-img-1.webp')) center /
-      cover no-repeat;
+    background: var(--posts-hero-image, url('assets/img/banner-img-1.webp'))
+      center / cover no-repeat;
     opacity: 0.8;
 
     &::before {
@@ -82,11 +82,18 @@
       z-index: 1;
       pointer-events: none;
       background:
-      linear-gradient(
-        90deg,
-        rgba(var(--color-deep-a), 0.82),
-        rgba(var(--color-deep-a), 0.62)
-      );
+        linear-gradient(
+          90deg,
+          rgba(var(--color-deep-a), 0.6) 0%,
+          rgba(var(--color-deep-a), 0) 60%
+        ),
+        linear-gradient(
+          0.04deg,
+          var(--color-deep) 3.6%,
+          rgba(var(--color-deep-a), 0.7) 48.36%,
+          rgba(var(--color-deep-a), 0.4) 71.05%,
+          rgba(var(--color-deep-a), 0.25) 99.96%
+        );
     }
   }
 
@@ -138,7 +145,7 @@
 
 .success-stories-page {
   .posts-hero {
-    padding: 35rem 3rem 20rem;
+    padding: 35rem 3rem 23rem;
   }
 }
 
@@ -156,8 +163,8 @@
   &__media {
     position: absolute;
     inset: 0;
-    background: var(--cvipi-hero-image, url('assets/img/banner-img-1.webp')) center
-      center / cover no-repeat;
+    background: var(--cvipi-hero-image, url('assets/img/banner-img-1.webp'))
+      center center / cover no-repeat;
 
     &::before {
       content: '';
@@ -166,20 +173,20 @@
       z-index: 1;
       pointer-events: none;
       background:
-      linear-gradient(
-        90deg,
-        rgba(var(--color-deep-a), 0.62) 0%,
-        rgba(var(--color-deep-a), 0.16) 48%,
-        rgba(var(--color-deep-a), 0) 72%
-      ),
-      linear-gradient(
-        to top,
-        var(--color-deep) 0%,
-        rgba(var(--color-deep-a), 0.98) 8%,
-        rgba(var(--color-deep-a), 0.78) 22%,
-        rgba(var(--color-deep-a), 0.38) 45%,
-        rgba(var(--color-deep-a), 0) 72%
-      );
+        linear-gradient(
+          90deg,
+          rgba(var(--color-deep-a), 0.62) 0%,
+          rgba(var(--color-deep-a), 0.16) 48%,
+          rgba(var(--color-deep-a), 0) 72%
+        ),
+        linear-gradient(
+          to top,
+          var(--color-deep) 0%,
+          rgba(var(--color-deep-a), 0.98) 8%,
+          rgba(var(--color-deep-a), 0.78) 22%,
+          rgba(var(--color-deep-a), 0.38) 45%,
+          rgba(var(--color-deep-a), 0) 72%
+        );
     }
   }
 
