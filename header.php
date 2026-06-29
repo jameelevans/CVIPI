@@ -103,6 +103,19 @@
 					}
 				}
 			}
+
+			if ( empty( $banner_videos ) ) {
+				$single_banner_video = get_field( 'posts_header_video', $banner_page_id );
+				$single_banner_poster = get_field( 'posts_header_image', $banner_page_id );
+				$single_banner_video_url = cvipi_get_acf_media_url( $single_banner_video );
+
+				if ( $single_banner_video_url ) {
+					$banner_videos[] = array(
+						'src'    => esc_url_raw( $single_banner_video_url ),
+						'poster' => esc_url_raw( cvipi_get_acf_media_url( $single_banner_poster ) ),
+					);
+				}
+			}
 		}
 
 		$banner_video_data = wp_json_encode( $banner_videos );
