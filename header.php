@@ -92,8 +92,8 @@
 				foreach ( $banner_video_rows as $banner_video_row ) {
 					$banner_video = isset( $banner_video_row['video'] ) ? $banner_video_row['video'] : null;
 					$banner_poster = isset( $banner_video_row['poster_image'] ) ? $banner_video_row['poster_image'] : null;
-					$banner_video_url = is_array( $banner_video ) && isset( $banner_video['url'] ) ? $banner_video['url'] : $banner_video;
-					$banner_poster_url = is_array( $banner_poster ) && isset( $banner_poster['url'] ) ? $banner_poster['url'] : '';
+					$banner_video_url = cvipi_get_acf_media_url( $banner_video );
+					$banner_poster_url = cvipi_get_acf_media_url( $banner_poster );
 
 					if ( $banner_video_url ) {
 						$banner_videos[] = array(

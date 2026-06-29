@@ -2168,11 +2168,11 @@ function cvipi_get_posts_header_data( $page_id = null ) {
     }
 
     if ( $image ) {
-      $data['image'] = is_array( $image ) && isset( $image['url'] ) ? $image['url'] : $image;
+      $data['image'] = cvipi_get_acf_media_url( $image );
     }
 
     if ( $video ) {
-      $data['video'] = is_array( $video ) && isset( $video['url'] ) ? $video['url'] : $video;
+      $data['video'] = cvipi_get_acf_media_url( $video );
     }
   }
 
@@ -2192,6 +2192,18 @@ function cvipi_get_posts_header_data( $page_id = null ) {
   }
 
   return $data;
+}
+
+function cvipi_get_acf_media_url( $media ) {
+  if ( is_array( $media ) && ! empty( $media['url'] ) ) {
+    return $media['url'];
+  }
+
+  if ( is_numeric( $media ) ) {
+    return wp_get_attachment_url( (int) $media );
+  }
+
+  return is_string( $media ) ? $media : '';
 }
 
 function cvipi_get_home_banner_page_id() {
