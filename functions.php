@@ -224,13 +224,13 @@ function cvipi_get_primary_nav_items() {
 function cvipi_is_primary_nav_item_current( $item_key ) {
   switch ( $item_key ) {
     case 'home':
-      return is_front_page();
+      return is_front_page() || is_home();
     case 'what-is-cvipi':
       return is_page( 'what-is-cvipi' );
     case 'success-stories':
       return is_page( 'success-stories' ) || is_singular( 'success_story' ) || is_post_type_archive( 'success_story' );
     case 'resources':
-      return is_page( 'resources' ) || is_singular( 'post' ) || is_home() || is_category() || is_tag() || is_search();
+      return is_page( 'resources' ) || is_singular( 'post' ) || is_category() || is_tag() || is_search();
     case 'events':
       return is_page( 'events' ) || is_singular( 'event' ) || is_post_type_archive( 'event' ) || is_tax( array( 'event_type', 'event_topic' ) );
     case 'contact':
@@ -2356,6 +2356,27 @@ function cvipi_register_home_banner_acf_fields() {
     return;
   }
 
+  $home_banner_locations = array(
+    array(
+      array(
+        'param'    => 'page_type',
+        'operator' => '==',
+        'value'    => 'front_page',
+      ),
+    ),
+  );
+  $home_page = get_page_by_path( 'home' );
+
+  if ( $home_page ) {
+    $home_banner_locations[] = array(
+      array(
+        'param'    => 'page',
+        'operator' => '==',
+        'value'    => (string) $home_page->ID,
+      ),
+    );
+  }
+
   acf_add_local_field_group(
     array(
       'key'      => 'group_cvipi_home_banner',
@@ -2413,15 +2434,7 @@ function cvipi_register_home_banner_acf_fields() {
           ),
         ),
       ),
-      'location' => array(
-        array(
-          array(
-            'param'    => 'page_type',
-            'operator' => '==',
-            'value'    => 'front_page',
-          ),
-        ),
-      ),
+      'location' => $home_banner_locations,
     )
   );
 }
