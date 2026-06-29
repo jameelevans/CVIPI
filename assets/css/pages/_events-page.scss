@@ -39,11 +39,11 @@
       text-transform: uppercase;
 
       &::before {
-        background-color: rgba(var(--color-medium-blue-a), 0.35);
+        background-color: currentColor;
         content: '';
         display: inline-block;
-        height: 1px;
-        width: 3rem;
+        height: 2px;
+        width: 2.4rem;
       }
     }
 

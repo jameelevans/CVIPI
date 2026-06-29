@@ -114,28 +114,40 @@
   }
 
   &__eyebrow {
-    color: var(--color-carmine);
+    align-items: center;
+    color: var(--color-white);
+    display: inline-flex;
     font-family: typography.$font-secondary;
     font-size: 1.1rem;
     font-weight: 700;
+    gap: 1.2rem;
     letter-spacing: 2.5px;
     margin-bottom: 1.6rem;
     text-transform: uppercase;
+
+    &::before {
+      background-color: currentColor;
+      content: '';
+      display: inline-block;
+      height: 2px;
+      width: 2.4rem;
+    }
   }
 
   &__heading {
+    color: var(--color-white);
     font-size: clamp(5rem, 8vw, 9rem);
     line-height: 0.9;
     margin-bottom: 2rem;
 
     em {
-      color: var(--color-carmine);
+      color: inherit;
       font-weight: 350;
     }
   }
 
   &__description {
-    color: rgba(var(--color-white-a), 0.75);
+    color: var(--color-white);
     font-size: 1.8rem;
     line-height: 1.6;
     margin: 0 auto;
