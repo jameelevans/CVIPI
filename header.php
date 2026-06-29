@@ -85,7 +85,7 @@
 		$banner_videos = array();
 		$banner_page_id = cvipi_get_home_banner_page_id();
 
-		if ( is_front_page() && function_exists( 'get_field' ) ) {
+		if ( ( is_front_page() || is_home() ) && function_exists( 'get_field' ) ) {
 			$banner_video_rows = get_field( 'banner_videos', $banner_page_id );
 
 			if ( $banner_video_rows ) {
@@ -125,7 +125,7 @@
 		$banner_data = cvipi_get_home_banner_data( $banner_page_id );
 		$banner_cta = null;
 
-		if ( is_front_page() && function_exists( 'get_field' ) ) {
+		if ( ( is_front_page() || is_home() ) && function_exists( 'get_field' ) ) {
 			$banner_cta = get_field( 'banner_cta', $banner_page_id );
 		}
 		?>
