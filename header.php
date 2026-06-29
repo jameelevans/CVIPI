@@ -83,7 +83,7 @@
 		 * If no videos are present, the SCSS fallback background image remains visible.
 		 */
 		$banner_videos = array();
-		$banner_page_id = get_queried_object_id();
+		$banner_page_id = cvipi_get_home_banner_page_id();
 
 		if ( is_front_page() && function_exists( 'get_field' ) ) {
 			$banner_video_rows = get_field( 'banner_videos', $banner_page_id );

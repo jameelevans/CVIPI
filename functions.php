@@ -2194,8 +2194,26 @@ function cvipi_get_posts_header_data( $page_id = null ) {
   return $data;
 }
 
+function cvipi_get_home_banner_page_id() {
+  $page_id = get_queried_object_id();
+
+  if ( $page_id ) {
+    return $page_id;
+  }
+
+  $front_page_id = (int) get_option( 'page_on_front' );
+
+  if ( $front_page_id ) {
+    return $front_page_id;
+  }
+
+  $home_page = get_page_by_path( 'home' );
+
+  return $home_page ? (int) $home_page->ID : 0;
+}
+
 function cvipi_get_home_banner_data( $page_id = null ) {
-  $page_id = $page_id ? $page_id : get_queried_object_id();
+  $page_id = $page_id ? $page_id : cvipi_get_home_banner_page_id();
   $data    = array(
     'eyebrow'     => 'Community Violence Intervention',
     'title'       => wp_specialchars_decode( get_option( 'blogdescription' ), ENT_QUOTES ),
