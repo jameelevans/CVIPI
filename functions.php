@@ -488,6 +488,474 @@ function cvipi_get_resource_primary_topic_tag( $post_id ) {
   return $tags[0];
 }
 
+function cvipi_get_single_context( $post_id ) {
+  $post_type = get_post_type( $post_id );
+  $context   = array(
+    'type'            => 'resource',
+    'archive_label'   => 'Resources',
+    'archive_url'     => cvipi_get_filtered_resources_url(),
+    'details_heading' => 'Resource Details',
+    'primary_term'    => null,
+    'tag_terms'       => array(),
+    'location'        => '',
+    'details'         => array(),
+    'aside_icon'      => '',
+    'action'          => null,
+  );
+
+  if ( 'success_story' === $post_type ) {
+    $story_categories = get_the_terms( $post_id, 'category' );
+    $story_location   = ! is_wp_error( $story_categories ) && ! empty( $story_categories ) ? wp_specialchars_decode( $story_categories[0]->name, ENT_QUOTES ) : '';
+
+    $context['type']            = 'story';
+    $context['archive_label']   = 'Success Stories';
+    $context['archive_url']     = home_url( '/success-stories/' );
+    $context['details_heading'] = 'Success Story';
+    $context['location']        = $story_location;
+    $context['tag_terms']       = cvipi_get_post_tags_for_single( $post_id );
+    $context['details']         = array_filter(
+      array(
+        array( 'label' => 'Location', 'value' => $story_location ),
+        array( 'label' => 'Published', 'value' => get_the_date( 'F j, Y', $post_id ) ),
+      ),
+      function( $item ) {
+        return ! empty( $item['value'] );
+      }
+    );
+
+    return $context;
+  }
+
+  if ( 'event' === $post_type ) {
+    $event_terms         = cvipi_get_event_card_terms( $post_id );
+    $event_type          = ! empty( $event_terms[0] ) ? $event_terms[0] : null;
+    $event_tags          = array_slice( $event_terms, 1 );
+    $event_cta_url       = cvipi_get_event_field( 'event_cta_url', $post_id );
+    $event_recording_url = cvipi_get_event_field( 'event_recording_url', $post_id );
+    $event_label         = cvipi_get_event_field( 'event_cta_label', $post_id );
+    $event_presented_by  = cvipi_get_event_field( 'event_presented_by', $post_id );
+
+    $context['type']            = 'event';
+    $context['archive_label']   = 'Events';
+    $context['archive_url']     = cvipi_get_filtered_events_url();
+    $context['details_heading'] = 'Event Details';
+    $context['primary_term']    = $event_type;
+    $context['tag_terms']       = $event_tags;
+    $context['aside_icon']      = $event_recording_url ? 'play1' : ( 'upcoming' === cvipi_get_event_status( $post_id ) ? 'calendar' : '' );
+    $context['details']         = array_filter(
+      array(
+        array( 'label' => 'Date', 'value' => cvipi_get_event_date_label( $post_id, false ) ),
+        array( 'label' => 'Presented By', 'value' => $event_presented_by ),
+        array( 'label' => 'Location', 'value' => cvipi_get_event_field( 'event_location', $post_id ) ),
+        array( 'label' => 'Duration', 'value' => cvipi_get_event_field( 'event_duration', $post_id ) ),
+      ),
+      function( $item ) {
+        return ! empty( $item['value'] );
+      }
+    );
+    if ( $event_recording_url ) {
+      $context['action'] = array(
+        'url'    => $event_recording_url,
+        'label'  => 'Play Recording',
+        'target' => '',
+        'video'  => true,
+        'icon'   => 'aside-play',
+      );
+    } elseif ( $event_cta_url ) {
+      $context['action'] = array(
+        'url'    => $event_cta_url,
+        'label'  => $event_label ? $event_label : 'RSVP',
+        'target' => '_blank',
+        'video'  => false,
+        'icon'   => 'display',
+      );
+    }
+
+    return $context;
+  }
+
+  $resource_category_card = cvipi_get_resource_category_card_by_post( $post_id );
+  $resource_link          = cvipi_get_resource_link_data( $post_id );
+  $resource_type          = cvipi_get_resource_meta_value( $post_id, 'resource_type' );
+  $resource_length        = cvipi_get_resource_meta_value( $post_id, 'resource_length' );
+  $resource_document      = cvipi_get_resource_meta_value( $post_id, 'resource_document' );
+
+  $context['primary_term'] = $resource_category_card['term'] ? array(
+    'name' => wp_specialchars_decode( $resource_category_card['term']->name, ENT_QUOTES ),
+    'url'  => cvipi_get_filtered_resources_url( $resource_category_card['term']->slug ),
+  ) : null;
+  $context['tag_terms']    = cvipi_get_post_tags_for_single( $post_id );
+  $context['details']      = array_filter(
+    array(
+      array( 'label' => 'Published', 'value' => cvipi_get_resource_display_date( $post_id, 'F j, Y' ) ),
+      array( 'label' => 'Type', 'value' => $resource_type ),
+      array( 'label' => 'Length', 'value' => $resource_length ),
+    ),
+    function( $item ) {
+      return ! empty( $item['value'] );
+    }
+  );
+  $context['aside_icon']   = $resource_document ? 'file1' : 'book';
+  $context['action']       = array_merge(
+    $resource_link,
+    array(
+      'icon' => 'file1',
+    )
+  );
+
+  return $context;
+}
+
+function cvipi_get_single_share_label( $post_id ) {
+  $post_type = get_post_type( $post_id );
+
+  if ( 'success_story' === $post_type ) {
+    return 'Share This Story';
+  }
+
+  if ( 'event' === $post_type ) {
+    return 'Share Recording';
+  }
+
+  if ( 'post' === $post_type ) {
+    $resource_document = cvipi_get_resource_meta_value( $post_id, 'resource_document' );
+
+    return $resource_document ? 'Share Resource' : 'Share Article';
+  }
+
+  return 'Share This Page';
+}
+
+function cvipi_get_post_tags_for_single( $post_id ) {
+  $tags = get_the_terms( $post_id, 'post_tag' );
+
+  if ( is_wp_error( $tags ) || empty( $tags ) ) {
+    return array();
+  }
+
+  return array_map(
+    function( $tag ) {
+      $tag_link = get_term_link( $tag );
+
+      return array(
+        'name' => wp_specialchars_decode( $tag->name, ENT_QUOTES ),
+        'url'  => is_wp_error( $tag_link ) ? '' : $tag_link,
+        'slug' => $tag->slug,
+      );
+    },
+    $tags
+  );
+}
+
+function cvipi_get_single_header_media( $post_id ) {
+  $image = has_post_thumbnail( $post_id ) ? get_the_post_thumbnail_url( $post_id, 'x-large' ) : '';
+  $video = '';
+
+  if ( function_exists( 'get_field' ) ) {
+    $custom_image = get_field( 'single_header_image', $post_id );
+    $custom_video = get_field( 'single_header_video', $post_id );
+
+    if ( is_array( $custom_image ) && ! empty( $custom_image['url'] ) ) {
+      $image = $custom_image['url'];
+    } elseif ( is_numeric( $custom_image ) ) {
+      $image = wp_get_attachment_url( (int) $custom_image );
+    } elseif ( is_string( $custom_image ) && $custom_image ) {
+      $image = $custom_image;
+    }
+
+    if ( is_array( $custom_video ) && ! empty( $custom_video['url'] ) ) {
+      $video = $custom_video['url'];
+    } elseif ( is_numeric( $custom_video ) ) {
+      $video = wp_get_attachment_url( (int) $custom_video );
+    } elseif ( is_string( $custom_video ) && $custom_video ) {
+      $video = $custom_video;
+    }
+  }
+
+  return array(
+    'image'     => $image,
+    'video'     => $video,
+    'has_media' => (bool) ( $image || $video ),
+  );
+}
+
+function cvipi_render_single_breadcrumbs( $context ) {
+  ?>
+  <nav class="single-breadcrumbs" aria-label="Breadcrumb">
+    <a href="<?php echo esc_url( home_url( '/' ) ); ?>">Home</a>
+    <span aria-hidden="true">&rsaquo;</span>
+    <a href="<?php echo esc_url( $context['archive_url'] ); ?>"><?php echo esc_html( $context['archive_label'] ); ?></a>
+  </nav>
+  <?php
+}
+
+function cvipi_render_single_aside_icon( $context ) {
+  if ( empty( $context['aside_icon'] ) ) {
+    return;
+  }
+  ?>
+  <div class="single-hero__aside-icon" aria-hidden="true">
+    <?php echo svg_icon( 'single-hero__aside-svg', $context['aside_icon'] ); ?>
+  </div>
+  <?php
+}
+
+function cvipi_render_single_pills( $post_id, $context ) {
+  if ( empty( $context['primary_term'] ) && empty( $context['tag_terms'] ) ) {
+    return;
+  }
+  ?>
+  <div class="single-hero__pills" aria-label="Post categories and tags">
+    <?php if ( ! empty( $context['primary_term'] ) ) : ?>
+      <a class="single-hero__pill single-hero__pill--primary" href="<?php echo esc_url( $context['primary_term']['url'] ); ?>"><?php echo esc_html( $context['primary_term']['name'] ); ?></a>
+    <?php endif; ?>
+    <?php foreach ( $context['tag_terms'] as $tag_term ) : ?>
+      <a class="single-hero__pill" href="<?php echo esc_url( $tag_term['url'] ); ?>"><?php echo esc_html( $tag_term['name'] ); ?></a>
+    <?php endforeach; ?>
+  </div>
+  <?php
+}
+
+function cvipi_render_single_details( $post_id, $context ) {
+  $share_label   = cvipi_get_single_share_label( $post_id );
+  $share_classes = 'single-hero__action single-hero__share';
+
+  if ( 'success_story' !== get_post_type( $post_id ) ) {
+    $share_classes .= ' single-hero__share--subtle';
+  }
+  ?>
+  <?php if ( ! empty( $context['details'] ) ) : ?>
+    <dl class="single-hero__details">
+      <?php foreach ( $context['details'] as $detail ) : ?>
+        <div class="single-hero__detail">
+          <dt><?php echo esc_html( $detail['label'] ); ?></dt>
+          <dd><?php echo esc_html( $detail['value'] ); ?></dd>
+        </div>
+      <?php endforeach; ?>
+    </dl>
+  <?php endif; ?>
+  <?php if ( ! empty( $context['action']['url'] ) && ! empty( $context['action']['video'] ) ) : ?>
+    <button
+      class="single-hero__action"
+      type="button"
+      data-video-lightbox-trigger
+      data-video-url="<?php echo esc_url( $context['action']['url'] ); ?>"
+      data-video-title="<?php echo esc_attr( get_the_title( $post_id ) ); ?>"
+    >
+      <?php echo svg_icon( 'single-hero__action-icon', ! empty( $context['action']['icon'] ) ? $context['action']['icon'] : 'aside-play' ); ?>
+      <?php echo esc_html( $context['action']['label'] ); ?>
+    </button>
+  <?php elseif ( ! empty( $context['action']['url'] ) ) : ?>
+    <a class="single-hero__action" href="<?php echo esc_url( $context['action']['url'] ); ?>" <?php echo ! empty( $context['action']['target'] ) ? 'target="' . esc_attr( $context['action']['target'] ) . '" rel="noopener noreferrer"' : ''; ?>>
+      <?php echo svg_icon( 'single-hero__action-icon', ! empty( $context['action']['icon'] ) ? $context['action']['icon'] : 'file1' ); ?>
+      <?php echo esc_html( $context['action']['label'] ); ?>
+    </a>
+  <?php endif; ?>
+  <button
+    class="<?php echo esc_attr( $share_classes ); ?>"
+    type="button"
+    data-share-button
+    aria-label="<?php echo esc_attr( $share_label . ': ' . get_the_title( $post_id ) ); ?>"
+  >
+    <?php echo svg_icon( 'single-hero__action-icon', 'aside-share' ); ?>
+    <?php echo esc_html( $share_label ); ?>
+  </button>
+  <?php
+}
+
+function cvipi_get_single_video_url( $post_id ) {
+  if ( 'event' === get_post_type( $post_id ) ) {
+    return cvipi_get_event_field( 'event_recording_url', $post_id );
+  }
+
+  if ( 'post' === get_post_type( $post_id ) ) {
+    return cvipi_get_resource_meta_value( $post_id, 'resource_youtube_link' );
+  }
+
+  return '';
+}
+
+function cvipi_get_single_video_label( $post_id ) {
+  if ( 'event' === get_post_type( $post_id ) ) {
+    return cvipi_get_event_field( 'event_duration', $post_id );
+  }
+
+  if ( 'post' === get_post_type( $post_id ) ) {
+    return cvipi_get_resource_meta_value( $post_id, 'resource_length' );
+  }
+
+  return '';
+}
+
+function cvipi_get_youtube_video_id( $url ) {
+  $parts = wp_parse_url( $url );
+
+  if ( empty( $parts['host'] ) ) {
+    return '';
+  }
+
+  $host = preg_replace( '/^www\./', '', $parts['host'] );
+
+  if ( 'youtu.be' === $host && ! empty( $parts['path'] ) ) {
+    return trim( $parts['path'], '/' );
+  }
+
+  if ( false !== strpos( $host, 'youtube.com' ) ) {
+    if ( ! empty( $parts['query'] ) ) {
+      parse_str( $parts['query'], $query_args );
+
+      if ( ! empty( $query_args['v'] ) ) {
+        return sanitize_text_field( $query_args['v'] );
+      }
+    }
+
+    if ( ! empty( $parts['path'] ) ) {
+      $path_parts = array_values( array_filter( explode( '/', trim( $parts['path'], '/' ) ) ) );
+      return ! empty( $path_parts ) ? sanitize_text_field( end( $path_parts ) ) : '';
+    }
+  }
+
+  return '';
+}
+
+function cvipi_get_single_video_thumbnail_url( $post_id, $video_url ) {
+  $youtube_video_id = cvipi_get_youtube_video_id( $video_url );
+
+  if ( $youtube_video_id ) {
+    return 'https://i.ytimg.com/vi/' . rawurlencode( $youtube_video_id ) . '/maxresdefault.jpg';
+  }
+
+  return has_post_thumbnail( $post_id ) ? get_the_post_thumbnail_url( $post_id, 'large' ) : '';
+}
+
+function cvipi_render_single_resource_video( $post_id ) {
+  $video_url = cvipi_get_single_video_url( $post_id );
+
+  if ( ! $video_url ) {
+    return;
+  }
+
+  $poster = cvipi_get_single_video_thumbnail_url( $post_id, $video_url );
+  $label  = cvipi_get_single_video_label( $post_id );
+  ?>
+  <div class="single-content__video">
+    <button
+      class="single-content__video-trigger"
+      type="button"
+      data-video-lightbox-trigger
+      data-video-url="<?php echo esc_url( $video_url ); ?>"
+      data-video-title="<?php echo esc_attr( get_the_title( $post_id ) ); ?>"
+      <?php echo $poster ? 'style="--single-video-poster: url(\'' . esc_url( $poster ) . '\');"' : ''; ?>
+    >
+      <span class="single-content__video-screen" aria-hidden="true"></span>
+      <span class="single-content__video-play">
+        <?php echo svg_icon( 'single-content__video-icon', 'play1' ); ?>
+      </span>
+      <?php if ( $label ) : ?>
+        <span class="single-content__video-label"><?php echo esc_html( $label ); ?></span>
+      <?php endif; ?>
+    </button>
+  </div>
+  <?php
+}
+
+function cvipi_get_related_resources( $post_id, $count = 4 ) {
+  $tag_ids = wp_get_post_terms( $post_id, 'post_tag', array( 'fields' => 'ids' ) );
+  $args    = array(
+    'post_type'           => 'post',
+    'post_status'         => 'publish',
+    'posts_per_page'      => $count,
+    'post__not_in'        => array( $post_id ),
+    'ignore_sticky_posts' => true,
+  );
+
+  if ( ! is_wp_error( $tag_ids ) && ! empty( $tag_ids ) ) {
+    $args['tax_query'] = array(
+      array(
+        'taxonomy' => 'post_tag',
+        'field'    => 'term_id',
+        'terms'    => $tag_ids,
+      ),
+    );
+  }
+
+  $related_query = new WP_Query( $args );
+
+  if ( $related_query->have_posts() || empty( $args['tax_query'] ) ) {
+    return $related_query;
+  }
+
+  wp_reset_postdata();
+
+  unset( $args['tax_query'] );
+  return new WP_Query( $args );
+}
+
+function cvipi_render_related_resource_list( $related_resources ) {
+  if ( ! $related_resources->have_posts() ) {
+    echo '<p class="single-related__empty">No resources are available yet.</p>';
+    return;
+  }
+  ?>
+  <div class="single-related__list">
+    <?php
+    while ( $related_resources->have_posts() ) :
+      $related_resources->the_post();
+      $resource_type = cvipi_get_resource_meta_value( get_the_ID(), 'resource_type' );
+      $resource_type = $resource_type ? $resource_type : 'Resource';
+      ?>
+      <article class="single-related__item">
+        <a href="<?php echo esc_url( get_permalink() ); ?>">
+          <span class="single-related__type"><?php echo esc_html( $resource_type ); ?></span>
+          <span class="single-related__title"><?php echo esc_html( get_the_title() ); ?></span>
+          <span class="single-related__date"><?php echo esc_html( cvipi_get_resource_display_date( get_the_ID(), 'M Y' ) ); ?></span>
+        </a>
+      </article>
+      <?php
+    endwhile;
+    wp_reset_postdata();
+    ?>
+  </div>
+  <?php
+}
+
+function cvipi_render_more_success_stories( $post_id ) {
+  $stories = new WP_Query(
+    array(
+      'post_type'           => 'success_story',
+      'post_status'         => 'publish',
+      'posts_per_page'      => 3,
+      'post__not_in'        => array( $post_id ),
+      'ignore_sticky_posts' => true,
+    )
+  );
+
+  if ( ! $stories->have_posts() ) {
+    return;
+  }
+  ?>
+  <section class="single-more-stories">
+    <h2 class="single-more-stories__heading">More Stories</h2>
+    <div class="single-more-stories__list">
+      <?php
+      while ( $stories->have_posts() ) :
+        $stories->the_post();
+        ?>
+        <article class="single-more-stories__item">
+          <a href="<?php echo esc_url( get_permalink() ); ?>">
+            <span class="single-more-stories__title"><?php echo esc_html( get_the_title() ); ?></span>
+            <span class="single-more-stories__link">Read Story <?php echo svg_icon( 'single-more-stories__icon', 'arrow-right' ); ?></span>
+          </a>
+        </article>
+        <?php
+      endwhile;
+      wp_reset_postdata();
+      ?>
+    </div>
+  </section>
+  <?php
+}
+
 function cvipi_render_resource_card( $post_id = null, $hidden = false ) {
   $post_id       = $post_id ? $post_id : get_the_ID();
   $category_card = cvipi_get_resource_category_card_by_post( $post_id );
@@ -841,6 +1309,65 @@ function cvipi_register_resource_acf_fields() {
   );
 }
 add_action( 'acf/init', 'cvipi_register_resource_acf_fields' );
+
+function cvipi_register_single_header_acf_fields() {
+  if ( ! function_exists( 'acf_add_local_field_group' ) ) {
+    return;
+  }
+
+  acf_add_local_field_group(
+    array(
+      'key'      => 'group_cvipi_single_header_media',
+      'title'    => 'Single Header Media',
+      'fields'   => array(
+        array(
+          'key'           => 'field_cvipi_single_header_video',
+          'label'         => 'Header Background Video',
+          'name'          => 'single_header_video',
+          'type'          => 'file',
+          'instructions'  => 'Optional looping background video for this single page header.',
+          'return_format' => 'url',
+          'library'       => 'all',
+          'mime_types'    => 'mp4,webm,mov',
+        ),
+        array(
+          'key'           => 'field_cvipi_single_header_image',
+          'label'         => 'Header Background Image',
+          'name'          => 'single_header_image',
+          'type'          => 'image',
+          'instructions'  => 'Optional image used instead of the featured image for this single page header.',
+          'return_format' => 'url',
+          'preview_size'  => 'medium',
+          'library'       => 'all',
+        ),
+      ),
+      'location' => array(
+        array(
+          array(
+            'param'    => 'post_type',
+            'operator' => '==',
+            'value'    => 'post',
+          ),
+        ),
+        array(
+          array(
+            'param'    => 'post_type',
+            'operator' => '==',
+            'value'    => 'success_story',
+          ),
+        ),
+        array(
+          array(
+            'param'    => 'post_type',
+            'operator' => '==',
+            'value'    => 'event',
+          ),
+        ),
+      ),
+    )
+  );
+}
+add_action( 'acf/init', 'cvipi_register_single_header_acf_fields' );
 
 function cvipi_enforce_single_featured_resource( $post_id ) {
   if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
@@ -1434,7 +1961,7 @@ function cvipi_get_event_query_args( $filters = array() ) {
   $query_args = array(
     'post_type'           => 'event',
     'posts_per_page'      => -1,
-    'post_status'         => array( 'publish', 'future' ),
+    'post_status'         => 'publish',
     'ignore_sticky_posts' => true,
     'meta_key'            => 'event_date',
     'orderby'             => 'meta_value_num',
@@ -1496,9 +2023,9 @@ function cvipi_render_event_card( $post_id = null, $hidden = false ) {
   $event_recording_url = cvipi_get_event_field( 'event_recording_url', $post_id );
   $event_cta_url       = cvipi_get_event_field( 'event_cta_url', $post_id );
   $event_duration      = cvipi_get_event_field( 'event_duration', $post_id );
-  $event_action_url    = $event_recording_url ? $event_recording_url : ( $event_cta_url ? $event_cta_url : get_permalink( $post_id ) );
-  $event_action_label  = $event_recording_url ? 'Watch Recording' : 'RSVP';
-  $event_link_target   = $event_recording_url || $event_cta_url ? '_blank' : '';
+  $event_action_url    = get_permalink( $post_id );
+  $event_action_label  = $event_recording_url ? 'View Recording' : 'View Event';
+  $event_link_target   = '';
   $event_card_classes  = 'events-page__event-card' . ( $event_recording_url ? ' events-page__event-card--recording' : '' );
 
   ob_start();
@@ -1773,6 +2300,27 @@ function cvipi_register_posts_header_acf_fields() {
 }
 add_action( 'acf/init', 'cvipi_register_posts_header_acf_fields' );
 
+/**
+ * Prevent core footnotes meta from blocking page/editor saves.
+ *
+ * WordPress registers the `footnotes` post meta for REST saves on post types
+ * that support the editor, custom fields, and revisions. This site does not use
+ * the core Footnotes block, and a failed empty footnotes meta update can cause
+ * the block editor to report "Updating failed" before ACF media fields save.
+ */
+function cvipi_unregister_core_footnotes_meta() {
+  if ( ! function_exists( 'unregister_post_meta' ) ) {
+    return;
+  }
+
+  $post_types = array( 'page', 'post', 'resource', 'event', 'success_story' );
+
+  foreach ( $post_types as $post_type ) {
+    unregister_post_meta( $post_type, 'footnotes' );
+  }
+}
+add_action( 'init', 'cvipi_unregister_core_footnotes_meta', 21 );
+
 function cvipi_register_home_banner_acf_fields() {
   if ( ! function_exists( 'acf_add_local_field_group' ) ) {
     return;
@@ -1923,6 +2471,12 @@ function cvipi_register_event_acf_fields() {
           'type'  => 'text',
         ),
         array(
+          'key'   => 'field_cvipi_event_presented_by',
+          'label' => 'Presented By',
+          'name'  => 'event_presented_by',
+          'type'  => 'text',
+        ),
+        array(
           'key'   => 'field_cvipi_event_cta_url',
           'label' => 'RSVP URL',
           'name'  => 'event_cta_url',
@@ -2002,7 +2556,7 @@ function custom_post_types() {
 register_post_type('event', array(
   'show_in_rest' => true,
   'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'page-attributes'),
-  'rewrite' => array('slug' => 'events'),
+  'rewrite' => array('slug' => 'event'),
   'taxonomies'  => array( 'event_type', 'event_topic' ),
   'public' => true,
   'labels' => array(
@@ -2034,6 +2588,23 @@ register_post_type('success_story', array(
   'menu_icon' => 'dashicons-star-filled'
 ));
 
+// FAQs Post Type
+register_post_type('faq', array(
+  'show_in_rest' => true,
+  'supports' => array('title', 'editor', 'page-attributes'),
+  'rewrite' => array('slug' => 'faqs'),
+  'public' => true,
+  'labels' => array(
+    'name' => 'FAQs',
+    'add_new_item' => 'Add New FAQ',
+    'edit_item' => 'Edit FAQ',
+    'all_items' => 'All FAQs',
+    'singular_name' => 'FAQ'
+  ),
+  'menu_position' => 8,
+  'menu_icon' => 'dashicons-editor-help'
+));
+
 // TA Providers Post Type
 register_post_type('ta_provider', array(
   'show_in_rest' => true,
@@ -2048,12 +2619,149 @@ register_post_type('ta_provider', array(
     'all_items' => 'All TA Providers',
     'singular_name' => 'TA Provider'
   ),
-  'menu_position' => 8,
+  'menu_position' => 9,
   'menu_icon' => 'dashicons-groups'
 ));
 
 
 }
  
-  add_action('init', 'custom_post_types');
+add_action('init', 'custom_post_types');
   // . 8 Enable custom post types
+
+function cvipi_seed_contact_faqs() {
+  $seed_version = '2026-06-29-contact-faqs-v3';
+
+  if ( get_option( 'cvipi_contact_faqs_seeded' ) === $seed_version ) {
+    return;
+  }
+
+  $legacy_faq_titles = array(
+    'Who should use the contact form?',
+    'How quickly will I receive a response?',
+    'Can I request training or technical assistance?',
+    'Where can I find CVIPI resources?',
+    'Can I share a success story or event?',
+  );
+
+  foreach ( $legacy_faq_titles as $legacy_faq_title ) {
+    $legacy_faqs = get_posts(
+      array(
+        'post_type'      => 'faq',
+        'post_status'    => 'any',
+        'title'          => $legacy_faq_title,
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+      )
+    );
+
+    foreach ( $legacy_faqs as $legacy_faq_id ) {
+      wp_delete_post( $legacy_faq_id, true );
+    }
+  }
+
+  $faqs = array(
+    array(
+      'title'   => 'What is the Community Violence Intervention and Prevention Initiative?',
+      'content' => 'CVIPI is a historic federal investment in community violence intervention programs, administered through the U.S. Department of Justice\'s Office of Justice Programs. The initiative provides funding, training, and technical assistance to community-based organizations, local and state governments, research partners, and capacity-building intermediaries working to reduce violence in the communities most impacted by gun violence.',
+    ),
+    array(
+      'title'   => 'How do I request technical assistance?',
+      'content' => 'Use the contact form and include a short description of your organization, location, and the support you are looking for so the CVIPI team can route your request appropriately.',
+    ),
+    array(
+      'title'   => 'Who is eligible for CVIPI funding?',
+      'content' => 'Eligibility can vary by funding opportunity. Review the active solicitation details and related guidance from the Bureau of Justice Assistance or other Office of Justice Programs components.',
+    ),
+    array(
+      'title'   => 'What types of programs does CVIPI support?',
+      'content' => 'CVIPI supports evidence-informed and community-centered violence intervention strategies, including street outreach, hospital-based violence intervention, place-based approaches, and ecosystem-building work.',
+    ),
+    array(
+      'title'   => 'How can I access CVIPI resources and webinar recordings?',
+      'content' => 'Visit the Resources page to browse toolkits, reports, webinar recordings, and other materials designed for community violence intervention practitioners and partners.',
+    ),
+    array(
+      'title'   => 'I\'m a current grantee. Who is my point of contact?',
+      'content' => 'Current grantees should use their assigned grant or technical assistance contacts when available. If you are not sure who to reach, send a message through the contact form.',
+    ),
+    array(
+      'title'   => 'How can my organization partner with CVIPI?',
+      'content' => 'Share a brief description of your organization, the communities you serve, and the type of partnership you are interested in through the contact form.',
+    ),
+  );
+
+  foreach ( $faqs as $index => $faq ) {
+    $existing_faqs = get_posts(
+      array(
+        'post_type'      => 'faq',
+        'post_status'    => 'any',
+        'title'          => $faq['title'],
+        'posts_per_page' => -1,
+        'orderby'        => 'ID',
+        'order'          => 'ASC',
+      )
+    );
+
+    if ( ! empty( $existing_faqs ) ) {
+      $primary_faq = array_shift( $existing_faqs );
+
+      wp_update_post(
+        array(
+          'ID'           => $primary_faq->ID,
+          'post_status'  => 'publish',
+          'post_content' => $faq['content'],
+          'menu_order'   => $index,
+        )
+      );
+
+      foreach ( $existing_faqs as $duplicate_faq ) {
+        wp_delete_post( $duplicate_faq->ID, true );
+      }
+
+      continue;
+    }
+
+    wp_insert_post(
+      array(
+        'post_type'    => 'faq',
+        'post_status'  => 'publish',
+        'post_title'   => $faq['title'],
+        'post_content' => $faq['content'],
+        'menu_order'   => $index,
+      )
+    );
+  }
+
+  update_option( 'cvipi_contact_faqs_seeded', $seed_version );
+}
+add_action( 'init', 'cvipi_seed_contact_faqs', 25 );
+
+function cvipi_seed_contact_page() {
+  if ( get_page_by_path( 'contact' ) ) {
+    return;
+  }
+
+  wp_insert_post(
+    array(
+      'post_type'    => 'page',
+      'post_status'  => 'publish',
+      'post_title'   => 'Contact',
+      'post_name'    => 'contact',
+      'post_content' => '',
+    )
+  );
+}
+add_action( 'init', 'cvipi_seed_contact_page', 25 );
+
+function cvipi_maybe_flush_event_rewrite_rules() {
+  $rewrite_version = '2026-06-26-event-single-slug';
+
+  if ( get_option( 'cvipi_rewrite_rules_version' ) === $rewrite_version ) {
+    return;
+  }
+
+  flush_rewrite_rules();
+  update_option( 'cvipi_rewrite_rules_version', $rewrite_version );
+}
+add_action( 'init', 'cvipi_maybe_flush_event_rewrite_rules', 30 );

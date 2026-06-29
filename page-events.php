@@ -27,7 +27,7 @@ $upcoming_events_query = new WP_Query(
 	array(
 			'post_type'           => 'event',
 			'posts_per_page'      => 3,
-			'post_status'         => array( 'publish', 'future' ),
+			'post_status'         => 'publish',
 			'ignore_sticky_posts' => true,
 		'meta_key'            => 'event_date',
 		'orderby'             => 'meta_value_num',
@@ -75,11 +75,11 @@ $events_query = new WP_Query(
 							$event_cta_label  = cvipi_get_event_field( 'event_cta_label' );
 								$event_location   = cvipi_get_event_field( 'event_location' );
 								$event_terms      = cvipi_get_event_card_terms();
-								$event_url        = $event_cta_url ? $event_cta_url : get_permalink();
+								$event_url        = get_permalink();
 								$event_timestamp  = cvipi_get_event_timestamp();
 								?>
 								<article class="events-page__upcoming-card">
-									<a href="<?php echo esc_url( $event_url ); ?>" class="events-page__upcoming-link" aria-label="<?php echo esc_attr( ( $event_cta_label ? $event_cta_label : 'View event' ) . ': ' . get_the_title() ); ?>" <?php echo $event_cta_url ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>>
+									<a href="<?php echo esc_url( $event_url ); ?>" class="events-page__upcoming-link" aria-label="<?php echo esc_attr( 'View event: ' . get_the_title() ); ?>">
 										<span class="events-page__upcoming-date">
 											<span class="events-page__date-badge">
 												<span><?php echo esc_html( $event_date_parts['month'] ); ?></span>

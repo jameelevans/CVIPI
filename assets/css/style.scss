@@ -69,9 +69,11 @@ Text Domain: cvipi
 @use 'pages/login' as login;
 @use 'pages/front-page' as frontpage;
 @use 'pages/cvipi-page' as cvipipage;
+@use 'pages/contact-page' as contactpage;
 @use 'pages/stories-page' as storiespage;
 @use 'pages/resources-page' as resourcespage;
 @use 'pages/events-page' as eventspage;
+@use 'pages/single-page' as singlepage;
 
 /* Optionally, if styles need to reference namespaced values
 Example:

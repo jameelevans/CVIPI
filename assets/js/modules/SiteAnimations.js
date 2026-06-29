@@ -35,7 +35,24 @@ class SiteAnimations {
       element.classList.add('site-animation--from-right');
     });
 
-    this.initStoryRevealElements([...storyContent, ...storyMedia]);
+    this.initPageLoadSplitReveal([...storyContent, ...storyMedia]);
+  }
+
+  initPageLoadSplitReveal(elements) {
+    elements.forEach((element) => {
+      element.classList.add('site-animation--slide-ready');
+    });
+
+    if (this.reducedMotion.matches) {
+      elements.forEach((element) => {
+        element.classList.add('site-animation--is-visible');
+      });
+      return;
+    }
+
+    window.setTimeout(() => {
+      elements.forEach((element) => this.showRevealElement(element));
+    }, 220);
   }
 
   initPageLoadReveal(selectors, readyClass) {
