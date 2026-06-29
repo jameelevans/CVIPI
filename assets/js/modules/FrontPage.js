@@ -30,14 +30,16 @@ class FrontPage {
 
     let currentVideo = 0;
     let hasEndedListener = false;
+    let isChangingVideo = false;
 
     const unloadVideo = () => {
       video.pause();
       video.removeAttribute('src');
+      video.classList.remove('banner__video--is-visible');
       video.load();
     };
 
-    const playVideo = (index) => {
+    const loadVideo = (index, revealOnLoad = true) => {
       const nextVideo = videos[index];
 
       if (!nextVideo || !nextVideo.src) {
@@ -54,7 +56,39 @@ class FrontPage {
       }
 
       video.load();
-      video.play().catch(() => {});
+
+      const playWhenReady = () => {
+        if (revealOnLoad) {
+          video.classList.add('banner__video--is-visible');
+        }
+
+        video.play().catch(() => {});
+        isChangingVideo = false;
+      };
+
+      if (video.readyState >= 2) {
+        playWhenReady();
+        return;
+      }
+
+      video.addEventListener('loadeddata', playWhenReady, { once: true });
+    };
+
+    const playVideo = (index) => {
+      loadVideo(index);
+    };
+
+    const transitionToVideo = (index) => {
+      if (isChangingVideo) {
+        return;
+      }
+
+      isChangingVideo = true;
+      video.classList.remove('banner__video--is-visible');
+
+      window.setTimeout(() => {
+        loadVideo(index);
+      }, 260);
     };
 
     const enableDesktopVideo = () => {
@@ -65,13 +99,15 @@ class FrontPage {
         video.addEventListener('ended', () => {
           // Move forward one item and wrap back to the first video forever.
           currentVideo = (currentVideo + 1) % videos.length;
-          playVideo(currentVideo);
+          transitionToVideo(currentVideo);
         });
 
         hasEndedListener = true;
       }
 
-      playVideo(currentVideo);
+      if (!video.src) {
+        playVideo(currentVideo);
+      }
     };
 
     const syncVideoToViewport = () => {

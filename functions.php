@@ -2382,6 +2382,36 @@ function cvipi_register_home_banner_acf_fields() {
           'type'  => 'textarea',
           'rows'  => 5,
         ),
+        array(
+          'key'          => 'field_6a0df09592f1e',
+          'label'        => 'Background Videos',
+          'name'         => 'banner_videos',
+          'type'         => 'repeater',
+          'instructions' => 'Add multiple videos to cycle through them on the homepage banner.',
+          'layout'       => 'block',
+          'button_label' => 'Add Video',
+          'sub_fields'   => array(
+            array(
+              'key'           => 'field_6a0df0fa92f1f',
+              'label'         => 'Video',
+              'name'          => 'video',
+              'type'          => 'file',
+              'instructions'  => 'Upload one MP4/WebM/MOV file.',
+              'return_format' => 'array',
+              'library'       => 'all',
+              'mime_types'    => 'mp4,webm,mov',
+            ),
+            array(
+              'key'           => 'field_6a0df15b92f20',
+              'label'         => 'Poster Image',
+              'name'          => 'poster_image',
+              'type'          => 'image',
+              'instructions'  => 'Optional fallback image shown while the video loads.',
+              'return_format' => 'array',
+              'preview_size'  => 'medium',
+            ),
+          ),
+        ),
       ),
       'location' => array(
         array(
