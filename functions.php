@@ -427,29 +427,21 @@ function cvipi_get_resource_link_data( $post_id ) {
   $youtube_link     = cvipi_get_resource_meta_value( $post_id, 'resource_youtube_link' );
   $resource_document = cvipi_get_resource_meta_value( $post_id, 'resource_document' );
   $custom_link_text = cvipi_get_resource_meta_value( $post_id, 'resource_link_text' );
-  $document_url     = '';
-
-  if ( is_array( $resource_document ) && ! empty( $resource_document['url'] ) ) {
-    $document_url = $resource_document['url'];
-  } elseif ( is_numeric( $resource_document ) ) {
-    $document_url = wp_get_attachment_url( (int) $resource_document );
-  } elseif ( is_string( $resource_document ) ) {
-    $document_url = $resource_document;
-  }
+  $has_document     = (bool) cvipi_get_resource_document_url( $resource_document );
 
   if ( $youtube_link ) {
     return array(
-      'url'    => esc_url_raw( $youtube_link ),
+      'url'    => get_permalink( $post_id ),
       'label'  => $custom_link_text ? $custom_link_text : 'Watch Resource',
-      'target' => '_blank',
+      'target' => '',
     );
   }
 
-  if ( $document_url ) {
+  if ( $has_document ) {
     return array(
-      'url'    => esc_url_raw( $document_url ),
+      'url'    => get_permalink( $post_id ),
       'label'  => $custom_link_text ? $custom_link_text : 'Download Resource',
-      'target' => '_blank',
+      'target' => '',
     );
   }
 
@@ -458,6 +450,49 @@ function cvipi_get_resource_link_data( $post_id ) {
     'label'  => $custom_link_text ? $custom_link_text : 'View Resource',
     'target' => '',
   );
+}
+
+function cvipi_get_resource_external_link_data( $post_id ) {
+  $youtube_link      = cvipi_get_resource_meta_value( $post_id, 'resource_youtube_link' );
+  $resource_document = cvipi_get_resource_meta_value( $post_id, 'resource_document' );
+  $custom_link_text  = cvipi_get_resource_meta_value( $post_id, 'resource_link_text' );
+  $document_url      = cvipi_get_resource_document_url( $resource_document );
+
+  if ( $youtube_link ) {
+    return array(
+      'url'    => esc_url_raw( $youtube_link ),
+      'label'  => $custom_link_text ? $custom_link_text : 'Watch Resource',
+      'target' => '',
+      'video'  => true,
+    );
+  }
+
+  if ( $document_url ) {
+    return array(
+      'url'    => esc_url_raw( $document_url ),
+      'label'  => $custom_link_text ? $custom_link_text : 'Download Resource',
+      'target' => '_blank',
+      'video'  => false,
+    );
+  }
+
+  return null;
+}
+
+function cvipi_get_resource_document_url( $resource_document ) {
+  if ( is_array( $resource_document ) && ! empty( $resource_document['url'] ) ) {
+    return $resource_document['url'];
+  }
+
+  if ( is_numeric( $resource_document ) ) {
+    return wp_get_attachment_url( (int) $resource_document );
+  }
+
+  if ( is_string( $resource_document ) ) {
+    return trim( $resource_document );
+  }
+
+  return '';
 }
 
 function cvipi_get_resource_primary_topic_tag( $post_id ) {
@@ -531,7 +566,7 @@ function cvipi_get_single_context( $post_id ) {
     $event_type          = ! empty( $event_terms[0] ) ? $event_terms[0] : null;
     $event_tags          = array_slice( $event_terms, 1 );
     $event_cta_url       = cvipi_get_event_field( 'event_cta_url', $post_id );
-    $event_recording_url = cvipi_get_event_field( 'event_recording_url', $post_id );
+    $event_recording_url = cvipi_get_event_recording_url( $post_id );
     $event_label         = cvipi_get_event_field( 'event_cta_label', $post_id );
     $event_presented_by  = cvipi_get_event_field( 'event_presented_by', $post_id );
 
@@ -575,7 +610,7 @@ function cvipi_get_single_context( $post_id ) {
   }
 
   $resource_category_card = cvipi_get_resource_category_card_by_post( $post_id );
-  $resource_link          = cvipi_get_resource_link_data( $post_id );
+  $resource_action        = cvipi_get_resource_external_link_data( $post_id );
   $resource_type          = cvipi_get_resource_meta_value( $post_id, 'resource_type' );
   $resource_length        = cvipi_get_resource_meta_value( $post_id, 'resource_length' );
   $resource_document      = cvipi_get_resource_meta_value( $post_id, 'resource_document' );
@@ -596,12 +631,14 @@ function cvipi_get_single_context( $post_id ) {
     }
   );
   $context['aside_icon']   = $resource_document ? 'file1' : 'book';
-  $context['action']       = array_merge(
-    $resource_link,
-    array(
-      'icon' => 'file1',
-    )
-  );
+  if ( $resource_action ) {
+    $context['action'] = array_merge(
+      $resource_action,
+      array(
+        'icon' => ! empty( $resource_action['video'] ) ? 'aside-play' : 'file1',
+      )
+    );
+  }
 
   return $context;
 }
@@ -765,7 +802,7 @@ function cvipi_render_single_details( $post_id, $context ) {
 
 function cvipi_get_single_video_url( $post_id ) {
   if ( 'event' === get_post_type( $post_id ) ) {
-    return cvipi_get_event_field( 'event_recording_url', $post_id );
+    return cvipi_get_event_recording_url( $post_id );
   }
 
   if ( 'post' === get_post_type( $post_id ) ) {
@@ -773,6 +810,12 @@ function cvipi_get_single_video_url( $post_id ) {
   }
 
   return '';
+}
+
+function cvipi_get_event_recording_url( $post_id ) {
+  $recording_url = cvipi_get_event_field( 'event_recording_url', $post_id );
+
+  return cvipi_get_youtube_video_id( $recording_url ) ? $recording_url : '';
 }
 
 function cvipi_get_single_video_label( $post_id ) {
@@ -797,26 +840,42 @@ function cvipi_get_youtube_video_id( $url ) {
   $host = preg_replace( '/^www\./', '', $parts['host'] );
 
   if ( 'youtu.be' === $host && ! empty( $parts['path'] ) ) {
-    return trim( $parts['path'], '/' );
+    $path_parts = array_values( array_filter( explode( '/', trim( $parts['path'], '/' ) ) ) );
+    $video_id   = ! empty( $path_parts[0] ) ? sanitize_text_field( $path_parts[0] ) : '';
+
+    return preg_match( '/^[A-Za-z0-9_-]{11}$/', $video_id ) ? $video_id : '';
   }
 
-  if ( false !== strpos( $host, 'youtube.com' ) ) {
+  if ( in_array( $host, array( 'youtube.com', 'm.youtube.com', 'music.youtube.com', 'youtube-nocookie.com' ), true ) ) {
     if ( ! empty( $parts['query'] ) ) {
       parse_str( $parts['query'], $query_args );
 
       if ( ! empty( $query_args['v'] ) ) {
-        return sanitize_text_field( $query_args['v'] );
+        $video_id = sanitize_text_field( $query_args['v'] );
+
+        return preg_match( '/^[A-Za-z0-9_-]{11}$/', $video_id ) ? $video_id : '';
       }
     }
 
     if ( ! empty( $parts['path'] ) ) {
       $path_parts = array_values( array_filter( explode( '/', trim( $parts['path'], '/' ) ) ) );
-      return ! empty( $path_parts ) ? sanitize_text_field( end( $path_parts ) ) : '';
+      $video_id   = ! empty( $path_parts ) ? sanitize_text_field( end( $path_parts ) ) : '';
+
+      return preg_match( '/^[A-Za-z0-9_-]{11}$/', $video_id ) ? $video_id : '';
     }
   }
 
   return '';
 }
+
+function cvipi_validate_event_recording_url( $valid, $value ) {
+  if ( true !== $valid || '' === trim( (string) $value ) ) {
+    return $valid;
+  }
+
+  return cvipi_get_youtube_video_id( $value ) ? $valid : 'Please enter a valid YouTube recording URL.';
+}
+add_filter( 'acf/validate_value/name=event_recording_url', 'cvipi_validate_event_recording_url', 10, 2 );
 
 function cvipi_get_single_video_thumbnail_url( $post_id, $video_url ) {
   $youtube_video_id = cvipi_get_youtube_video_id( $video_url );
@@ -2020,9 +2079,10 @@ function cvipi_render_event_card( $post_id = null, $hidden = false ) {
   $post_id             = $post_id ? $post_id : get_the_ID();
   $event_terms         = cvipi_get_event_card_terms( $post_id );
   $event_location      = cvipi_get_event_field( 'event_location', $post_id );
-  $event_recording_url = cvipi_get_event_field( 'event_recording_url', $post_id );
+  $event_recording_url = cvipi_get_event_recording_url( $post_id );
   $event_cta_url       = cvipi_get_event_field( 'event_cta_url', $post_id );
   $event_duration      = cvipi_get_event_field( 'event_duration', $post_id );
+  $event_poster        = $event_recording_url ? cvipi_get_single_video_thumbnail_url( $post_id, $event_recording_url ) : '';
   $event_action_url    = get_permalink( $post_id );
   $event_action_label  = $event_recording_url ? 'View Recording' : 'View Event';
   $event_link_target   = '';
@@ -2034,8 +2094,8 @@ function cvipi_render_event_card( $post_id = null, $hidden = false ) {
     <a href="<?php echo esc_url( $event_action_url ); ?>" class="events-page__event-link" aria-label="<?php echo esc_attr( $event_action_label . ': ' . get_the_title( $post_id ) ); ?>" <?php echo $event_link_target ? 'target="' . esc_attr( $event_link_target ) . '" rel="noopener noreferrer"' : ''; ?>>
       <?php if ( $event_recording_url ) : ?>
         <span class="events-page__video" aria-hidden="true">
-          <?php if ( has_post_thumbnail( $post_id ) ) : ?>
-            <?php echo get_the_post_thumbnail( $post_id, 'regular', array( 'class' => 'events-page__video-img' ) ); ?>
+          <?php if ( $event_poster ) : ?>
+            <img class="events-page__video-img" src="<?php echo esc_url( $event_poster ); ?>" alt="" loading="lazy" decoding="async" />
           <?php endif; ?>
           <span class="events-page__play"><?php echo svg_icon( 'events-page__play-icon', 'play1' ); ?></span>
           <?php if ( $event_duration ) : ?>
@@ -2563,10 +2623,11 @@ function cvipi_register_event_acf_fields() {
           'default_value' => 'RSVP',
         ),
         array(
-          'key'   => 'field_cvipi_event_recording_url',
-          'label' => 'Recording URL',
-          'name'  => 'event_recording_url',
-          'type'  => 'url',
+          'key'          => 'field_cvipi_event_recording_url',
+          'label'        => 'Recording URL',
+          'name'         => 'event_recording_url',
+          'type'         => 'url',
+          'instructions' => 'YouTube URLs only. The Events archive uses this URL to show the video thumbnail, but visitors still click through to the event page to play it.',
         ),
         array(
           'key'   => 'field_cvipi_event_duration',

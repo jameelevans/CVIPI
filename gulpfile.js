@@ -141,14 +141,16 @@ function scripts(callback) {
 function watch() {
     const log = require('fancy-log');
     const useBrowserSync = process.argv.includes('--sync');
+    const localUrl = 'http://cvipi.local';
 
     if (useBrowserSync) {
         log('Starting BrowserSync...');
         browserSync = require('browser-sync').create();
         browserSync.init({
-            proxy: 'http://cvipi.local', // Update to match your Local environment URL
-            // Bind to the LAN so physical devices can preview the proxied Local site.
-            listen: '0.0.0.0',
+            proxy: localUrl, // Update to match your Local environment URL
+            port: 3000,
+            // Bind locally; open http://127.0.0.1:3000 rather than http://0.0.0.0:3000.
+            listen: '127.0.0.1',
             // Keep WordPress-generated asset and page URLs on the BrowserSync origin.
             rewriteRules: [
                 {
@@ -159,6 +161,14 @@ function watch() {
             open: false,
             notify: false,
             ghostMode: false
+        }, (err, bs) => {
+            if (err) {
+                log.error('BrowserSync failed to start:', err.message);
+                return;
+            }
+
+            log(`BrowserSync proxying ${localUrl}`);
+            log(`Open ${bs.options.get('urls').get('local')}`);
         });
     } else {
         log('BrowserSync disabled. Use `npm run gulpwatch:sync` to enable browser reloads.');

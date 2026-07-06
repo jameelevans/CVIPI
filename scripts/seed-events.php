@@ -147,7 +147,7 @@ function cvipi_seed_event( $db, $event ) {
 		'event_location'      => $event['location'],
 		'event_cta_url'       => $event['status'] === 'upcoming' ? 'https://example.com/register/' . $slug : '',
 		'event_cta_label'     => $event['status'] === 'upcoming' ? 'Register' : '',
-		'event_recording_url' => $event['status'] === 'past' ? 'https://example.com/recordings/' . $slug : '',
+		'event_recording_url' => $event['status'] === 'past' ? $event['recording_url'] : '',
 		'event_duration'      => $event['status'] === 'past' ? $event['duration'] : '',
 	);
 
@@ -210,6 +210,7 @@ $events = array(
 
 foreach ( $events as $event ) {
 	$event['duration']  = isset( $event['duration'] ) ? $event['duration'] : '';
+	$event['recording_url'] = isset( $event['recording_url'] ) ? $event['recording_url'] : 'https://www.youtube.com/watch?v=M7lc1UVf-VE';
 	$event['post_date'] = substr( $event['date'], 0, 4 ) . '-' . substr( $event['date'], 4, 2 ) . '-' . substr( $event['date'], 6, 2 ) . ' ' . $event['time'] . ':00';
 	$event['excerpt']   = 'A practical CVIPI event for practitioners focused on ' . strtolower( $event['topic'] ) . '.';
 	$event['content']   = 'This sample event supports testing of the Events archive filters, AJAX updates, upcoming and archived states, and accessible card links.';

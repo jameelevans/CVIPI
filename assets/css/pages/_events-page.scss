@@ -81,8 +81,7 @@
       }
     }
 
-    &__upcoming-grid,
-    &__grid {
+    &__upcoming-grid {
       display: grid;
       gap: 2.4rem;
       grid-template-columns: 1fr;
@@ -94,6 +93,20 @@
 
       @include mixins.respond(large) {
         grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    &__grid {
+      column-count: 1;
+      column-gap: 2.4rem;
+      transition: opacity 0.2s ease;
+
+      @include mixins.respond(medium) {
+        column-count: 2;
+      }
+
+      @include mixins.respond(large) {
+        column-count: 3;
       }
     }
 
@@ -462,8 +475,11 @@
 
     &__event-card {
       border-top: 5px solid var(--color-copper);
+      break-inside: avoid;
       display: flex;
       flex-direction: column;
+      margin-bottom: 2.4rem;
+      width: 100%;
 
       &[hidden] {
         display: none;
