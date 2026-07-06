@@ -5,55 +5,67 @@
 
 //* Overall Login page
 .login {
-  background: var(--color-blue);
+  align-items: center;
+  background:
+    radial-gradient(circle at top left, rgba(var(--color-azure-blue-a), 0.32), transparent 34rem),
+    linear-gradient(135deg, var(--color-deep) 0%, var(--color-dark-midnight-teal) 100%);
+  color: var(--color-white);
+  display: flex;
+  min-height: 100vh;
   position: relative;
 
   //* Login box
   #login {
-    font-size: 1.6rem;
-    width: 32rem;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    padding: 3rem 2.4rem;
+    width: min(100%, 42rem);
   }
 
   //* Login logo and header
   & h1 a {
-    color: var(--color-white);
-    background-image: url('assets/img/ovc-htc-logo.png');
-    background-size: 30rem;
-    height: 5rem;
-    width: auto;
-    padding-bottom: 2rem;
-    margin: 0 auto 5rem;
+    background-image: url('assets/img/cvipi-logo-white.webp');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    display: block;
+    height: 9rem;
+    margin: 0 auto 3.2rem;
+    width: 24rem;
   }
 
   //* Login form
   & form {
-    border: 2.5px solid var(--color-white);
-    background-color: transparent;
-    padding: 1.5rem 2.4rem 3.4rem;
+    background-color: rgba(var(--color-white-a), 0.96);
+    border: 1px solid rgba(var(--color-carmine-a), 0.32);
+    border-radius: 0.8rem;
+    box-shadow: 0 2.4rem 7rem rgba(var(--color-black-a), 0.28);
+    color: var(--color-deep);
+    padding: 2.8rem;
 
     //* Login labels
     & label {
-      color: var(--color-white);
-      font-weight: 100;
-      margin-top: 5.5rem;
+      color: var(--color-deep);
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      margin-bottom: 0.7rem;
     }
 
     & input[type='checkbox'] {
-      border-radius: 0;
+      border-color: rgba(var(--color-deep-a), 0.35);
+      border-radius: 0.2rem;
 
       &:checked:before {
-        color: var(--color-white);
+        color: var(--color-copper);
         margin: -0.2rem 0 0 -0.5rem;
         height: 2.5rem;
         width: 2.5rem;
       }
 
       &:focus {
-        border-color: var(--color-teal);
+        border-color: var(--color-copper);
+        box-shadow: 0 0 0 1px var(--color-copper);
       }
     }
 
@@ -79,18 +91,23 @@
     & input[type='week'],
     select,
     textarea {
-      border-radius: 0;
-      color: var(--color-charcoal);
+      background-color: var(--color-white);
+      border: 1px solid rgba(var(--color-deep-a), 0.18);
+      border-radius: 0.4rem;
+      color: var(--color-deep);
+      font-size: 1.6rem;
+      min-height: 4.8rem;
+      padding: 0.8rem 1.2rem;
 
       &:focus {
-        border-color: var(--color-teal);
-        box-shadow: 0 0 0 1px var(--color-teal);
+        border-color: var(--color-copper);
+        box-shadow: 0 0 0 1px var(--color-copper);
       }
     }
 
     & .dashicons-visibility,
     & .dashicons-hidden {
-      color: var(--color-teal);
+      color: var(--color-copper);
     }
 
     & .submit {
@@ -98,45 +115,63 @@
     }
 
     & .button-primary {
-      width: 12.5rem;
-      background: var(--color-teal);
-      font-size: 1.6rem;
-      color: var(--color-black);
-      cursor: pointer;
-      height: 3.5rem;
-      text-align: center;
+      background: var(--color-copper);
       border: none;
-      background-size: 450% 150%;
-      border-radius: 2px;
-      transition: all 0.3s ease-in-out;
-      margin: 5rem 0 3rem;
-      text-shadow: none;
+      border-radius: 0.3rem;
       box-shadow: none;
+      color: var(--color-white);
+      cursor: pointer;
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      height: auto;
+      letter-spacing: 0.8px;
       line-height: 1;
+      margin: 3rem 0 0;
+      min-height: 4.8rem;
+      padding: 1.4rem 2.4rem;
+      text-align: center;
+      text-shadow: none;
+      text-transform: uppercase;
+      transition: all 0.3s ease-in-out;
+      width: 100%;
 
       &:hover {
-        background: var(--color-dark-teal);
-        color: var(--color-black);
+        background: var(--color-dark-orange);
+        color: var(--color-white);
+        transform: translateY(-1px);
         transition: all 0.3s ease-in-out;
       }
 
       &:active,
       &:focus {
-        background: var(--color-dark-teal);
+        background: var(--color-dark-orange);
         outline: none;
         transition: all 0.3s ease-in-out;
-        box-shadow: none;
+        box-shadow: 0 0 0 3px rgba(var(--color-copper-a), 0.28);
       }
     }
 
     & .forgetmenot label {
-      color: var(--color-white);
+      color: var(--color-medium-blue);
+      font-weight: 500;
     }
+  }
+
+  & .message,
+  & .notice,
+  & .success {
+    border-left-color: var(--color-copper);
+    border-radius: 0.4rem;
+    color: var(--color-deep);
+    font-family: 'Syne', sans-serif;
   }
 
   & #backtoblog a,
   & #nav a {
-    color: var(--color-white);
+    color: rgba(var(--color-white-a), 0.82);
+    font-family: 'Syne', sans-serif;
+    text-decoration: none;
 
     &:hover {
       color: var(--color-white);
@@ -144,7 +179,8 @@
   }
 
   & .privacy-policy-page-link a {
-    color: var(--color-white);
+    color: rgba(var(--color-white-a), 0.78);
+    font-family: 'Syne', sans-serif;
     text-decoration: none;
 
     &:hover {
