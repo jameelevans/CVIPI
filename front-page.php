@@ -117,7 +117,30 @@ get_header();
 							</div>
 						</div>
 
-					<div class="highlights__events">
+					<?php
+					$upcoming_event_query = new WP_Query(
+						array(
+							'post_type'           => 'event',
+							'posts_per_page'      => 3,
+							'post_status'         => 'publish',
+							'ignore_sticky_posts' => true,
+							'meta_key'            => 'event_date',
+							'orderby'             => 'meta_value_num',
+							'order'               => 'ASC',
+							'meta_query'          => array(
+								array(
+									'key'     => 'event_date',
+									'value'   => current_time( 'Ymd' ),
+									'compare' => '>=',
+									'type'    => 'NUMERIC',
+								),
+							),
+						)
+					);
+					?>
+
+					<?php if ( $upcoming_event_query->have_posts() ) : ?>
+						<div class="highlights__events">
 							<div class="highlights__top">
 								
 								<h2 class="highlights__section-heading">Upcoming Events</h2>
@@ -126,35 +149,14 @@ get_header();
 							</div>
 							<div class="events">
 								<?php
-								$upcoming_event_query = new WP_Query(
-									array(
-										'post_type'           => 'event',
-										'posts_per_page'      => 3,
-										'post_status'         => 'publish',
-										'ignore_sticky_posts' => true,
-										'meta_key'            => 'event_date',
-										'orderby'             => 'meta_value_num',
-										'order'               => 'ASC',
-										'meta_query'          => array(
-											array(
-												'key'     => 'event_date',
-												'value'   => current_time( 'Ymd' ),
-												'compare' => '>=',
-												'type'    => 'NUMERIC',
-											),
-										),
-									)
-								);
-
-								if ( $upcoming_event_query->have_posts() ) :
-									while ( $upcoming_event_query->have_posts() ) :
-										$upcoming_event_query->the_post();
-										$event_cta_url = cvipi_get_event_field( 'event_cta_url' );
-										$event_url     = $event_cta_url ? $event_cta_url : get_permalink();
-										$event_terms   = cvipi_get_event_card_terms();
-										?>
-										<a href="<?php echo esc_url( $event_url ); ?>" class="event">
-											<article class="event__container">
+								while ( $upcoming_event_query->have_posts() ) :
+									$upcoming_event_query->the_post();
+									$event_cta_url = cvipi_get_event_field( 'event_cta_url' );
+									$event_url     = $event_cta_url ? $event_cta_url : get_permalink();
+									$event_terms   = cvipi_get_event_card_terms();
+									?>
+									<a href="<?php echo esc_url( $event_url ); ?>" class="event">
+										<article class="event__container">
 												<?php if ( cvipi_get_event_date_label() ) : ?>
 													<time
 														class="event__date"
@@ -177,17 +179,15 @@ get_header();
 														<?php endforeach; ?>
 													</ul>
 												<?php endif; ?>
-											</article>
-										</a>
-										<?php
-									endwhile;
-									wp_reset_postdata();
-								endif;
+										</article>
+									</a>
+									<?php
+								endwhile;
 								?>
-
-						
 							</div>
-					</div>
+						</div>
+					<?php endif; ?>
+					<?php wp_reset_postdata(); ?>
 
 					
 				</div>

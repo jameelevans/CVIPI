@@ -124,9 +124,24 @@
 		$banner_first_poster = $banner_first_video && ! empty( $banner_first_video['poster'] ) ? $banner_first_video['poster'] : '';
 		$banner_data = cvipi_get_home_banner_data( $banner_page_id );
 		$banner_cta = null;
+		$banner_stats = array();
 
 		if ( ( is_front_page() || is_home() ) && function_exists( 'get_field' ) ) {
 			$banner_cta = get_field( 'banner_cta', $banner_page_id );
+			$banner_stats = array(
+				array(
+					'number'      => trim( (string) get_field( 'home_banner_grantee_count', $banner_page_id ) ),
+					'description' => 'Grantee organizations<br /> supported nationwide',
+				),
+				array(
+					'number'      => trim( (string) get_field( 'home_banner_resource_count', $banner_page_id ) ),
+					'description' => 'Resources, guides & toolkits<br /> in the library',
+				),
+				array(
+					'number'      => trim( (string) get_field( 'home_banner_webinar_count', $banner_page_id ) ),
+					'description' => 'Webinars and trainings<br /> delivered annually',
+				),
+			);
 		}
 		?>
 		<!-- Homepage banner: media layer sits behind the content and stats columns. -->
@@ -170,19 +185,19 @@
 						<?php endif; ?>
 					</div>
 				</div>
-				<div class="banner__right">
-					<div class="banner__stats">
-						<span class="banner__number">300+</span>
-						<p class="banner__description">Grantee organizations<br /> supported nationwide</p>
+				<?php if ( array_filter( wp_list_pluck( $banner_stats, 'number' ), 'strlen' ) ) : ?>
+					<div class="banner__right">
+						<?php foreach ( $banner_stats as $banner_stat ) : ?>
+							<?php if ( '' === $banner_stat['number'] ) : ?>
+								<?php continue; ?>
+							<?php endif; ?>
+
+							<div class="banner__stats">
+								<span class="banner__number"><?php echo esc_html( $banner_stat['number'] ); ?></span>
+								<p class="banner__description"><?php echo wp_kses_post( $banner_stat['description'] ); ?></p>
+							</div>
+						<?php endforeach; ?>
 					</div>
-					<div class="banner__stats">
-						<span class="banner__number">1,200+</span>
-						<p class="banner__description">Resources, guides & toolkits<br /> in the library</p>
-					</div>
-					<div class="banner__stats">
-						<span class="banner__number">50+</span>
-						<p class="banner__description">Webinars and trainings<br /> delivered annually</p>
-					</div>
-				</div>
+				<?php endif; ?>
 			</div>
 		</div>

@@ -2464,6 +2464,27 @@ function cvipi_register_home_banner_acf_fields() {
           'rows'  => 5,
         ),
         array(
+          'key'          => 'field_cvipi_home_banner_grantee_count',
+          'label'        => 'Grantee Organizations Supported',
+          'name'         => 'home_banner_grantee_count',
+          'type'         => 'text',
+          'instructions' => 'Enter the number as it should appear, for example 300+. Leave blank to hide this statistic.',
+        ),
+        array(
+          'key'          => 'field_cvipi_home_banner_resource_count',
+          'label'        => 'Resources in the Library',
+          'name'         => 'home_banner_resource_count',
+          'type'         => 'text',
+          'instructions' => 'Enter the number as it should appear, for example 1,200+. Leave blank to hide this statistic.',
+        ),
+        array(
+          'key'          => 'field_cvipi_home_banner_webinar_count',
+          'label'        => 'Webinars Delivered',
+          'name'         => 'home_banner_webinar_count',
+          'type'         => 'text',
+          'instructions' => 'Enter the number as it should appear, for example 50+. Leave blank to hide this statistic.',
+        ),
+        array(
           'key'          => 'field_6a0df09592f1e',
           'label'        => 'Background Videos',
           'name'         => 'banner_videos',

@@ -43,7 +43,8 @@
   },
   "scripts": {
     "gulpwatch": "gulp watch",
-    "gulpwatch:sync": "gulp watch --sync",
+    "gulpwatch:sync": "gulp watch",
+    "gulpwatch:no-sync": "gulp watch --no-sync",
     "gulpstyles": "gulp styles",
     "gulpscripts": "gulp scripts",
     "images": "gulp images",

@@ -6,6 +6,7 @@ const { execFile } = require('child_process');
 // Gulp handles local theme build tasks: Sass compilation, Webpack bundling,
 // optional BrowserSync reloads, and source image conversion to WebP.
 let browserSync;
+let webpackCompiler;
 
 // WordPress requires this theme header at the top of the compiled root style.css.
 const themeHeader = `!\nTheme Name: CVIPI\nAuthor: Jameel Evans\nDescription: This theme was designed by Laura Myers and Eduardo Minaya. The theme was coded by Jameel Evans.\nVersion: 1.1\nText Domain: cvipi\n`;
@@ -35,7 +36,7 @@ const paths = {
         src: 'assets/img/**/*.{jpg,jpeg,png}',
         watch: 'assets/img/**/*.{jpg,jpeg,png}'
     },
-    php: './**/*.php'
+    php: ['./*.php', './scripts/**/*.php']
 };
 
 function webpPathFor(imagePath) {
@@ -91,20 +92,27 @@ function images(done) {
     });
 }
 
-// Compile SCSS into CSS with PostCSS
-function styles() {
+// Compile SCSS into CSS with PostCSS. Minification is reserved for the
+// explicit `gulp styles` build so save-and-reload cycles stay quick.
+function compileStyles({ minify = true } = {}) {
     const sass = require('gulp-sass')(require('sass'));
     const postcss = require('gulp-postcss');
-    const cssnano = require('cssnano');
     const autoprefixer = require('autoprefixer');
     const plugins = [
-        autoprefixer(),
-        cssnano(),
-        addThemeHeader()
+        autoprefixer()
     ];
 
+    if (minify) {
+        plugins.push(require('cssnano')());
+    }
+
+    plugins.push(addThemeHeader());
+
     let stream = gulp.src(paths.styles.src)
-        .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
+        .pipe(sass({
+            outputStyle: 'expanded',
+            loadPaths: ['assets/css']
+        }).on('error', sass.logError))
         .pipe(postcss(plugins))
         .pipe(gulp.dest(paths.styles.dest)); // Output to the root of the theme
 
@@ -115,14 +123,26 @@ function styles() {
     return stream;
 }
 
+function styles() {
+    return compileStyles();
+}
+
+function watchStyles() {
+    return compileStyles({ minify: false });
+}
+
 // Compile scripts using Webpack
 function scripts(callback) {
     const webpack = require('webpack');
     const log = require('fancy-log');
     const PluginError = require('plugin-error');
 
+    if (!webpackCompiler) {
+        webpackCompiler = webpack(require('./webpack.config.js'));
+    }
+
     log('Starting Webpack...');
-    webpack(require('./webpack.config.js'), (err, stats) => {
+    webpackCompiler.run((err, stats) => {
         if (err) {
             log.error('Webpack error:', err.toString());
             callback(new PluginError('scripts', err));
@@ -140,8 +160,25 @@ function scripts(callback) {
 // Watch for changes
 function watch() {
     const log = require('fancy-log');
-    const useBrowserSync = process.argv.includes('--sync');
+    const useBrowserSync = !process.argv.includes('--no-sync');
     const localUrl = 'http://cvipi.local';
+    const startDevelopment = () => {
+        // Watch PHP files
+        gulp.watch(paths.php).on('change', () => {
+            if (browserSync && browserSync.active) {
+                browserSync.reload();
+            }
+        });
+
+        // Watch SCSS files
+        gulp.watch(paths.styles.watch, watchStyles);
+
+        // Watch JS files
+        gulp.watch(paths.scripts.watch, scripts);
+
+        // Watch source images and create matching WebP files
+        gulp.watch(paths.images.watch).on('add', convertImageToWebp).on('change', convertImageToWebp);
+    };
 
     if (useBrowserSync) {
         log('Starting BrowserSync...');
@@ -149,18 +186,13 @@ function watch() {
         browserSync.init({
             proxy: localUrl, // Update to match your Local environment URL
             port: 3000,
-            // Bind locally; open http://127.0.0.1:3000 rather than http://0.0.0.0:3000.
             listen: '127.0.0.1',
-            // Keep WordPress-generated asset and page URLs on the BrowserSync origin.
-            rewriteRules: [
-                {
-                    match: /http:\/\/cvipi\.local/g,
-                    fn: () => ''
-                }
-            ],
-            open: false,
+            host: '127.0.0.1',
+            online: false,
+            open: 'local',
             notify: false,
-            ghostMode: false
+            ghostMode: false,
+            reloadDebounce: 150
         }, (err, bs) => {
             if (err) {
                 log.error('BrowserSync failed to start:', err.message);
@@ -169,33 +201,17 @@ function watch() {
 
             log(`BrowserSync proxying ${localUrl}`);
             log(`Open ${bs.options.get('urls').get('local')}`);
+            startDevelopment();
         });
     } else {
-        log('BrowserSync disabled. Use `npm run gulpwatch:sync` to enable browser reloads.');
+        log('BrowserSync disabled by --no-sync.');
+        startDevelopment();
     }
-
-    styles();
-    scripts(() => {});
-
-    // Watch PHP files
-    gulp.watch(paths.php).on('change', () => {
-        if (browserSync && browserSync.active) {
-            browserSync.reload();
-        }
-    });
-
-    // Watch SCSS files
-    gulp.watch(paths.styles.watch, styles);
-
-    // Watch JS files
-    gulp.watch(paths.scripts.watch, scripts);
-
-    // Watch source images and create matching WebP files
-    gulp.watch(paths.images.watch).on('add', convertImageToWebp).on('change', convertImageToWebp);
 }
 
 // Default task
 exports.styles = styles;
+exports.devstyles = watchStyles;
 exports.scripts = scripts;
 exports.images = images;
 exports.watch = watch;

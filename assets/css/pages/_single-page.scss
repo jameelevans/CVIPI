@@ -403,11 +403,11 @@
       }
 
       h2 {
-        font-size: clamp(3.4rem, 4vw, 5.2rem);
+        font-size: 4rem;
       }
 
       h3 {
-        font-size: clamp(2.7rem, 3vw, 3.8rem);
+        font-size: 2.8rem;
       }
 
       h4 {
@@ -430,6 +430,7 @@
       ul,
       ol {
         padding-left: 2.2rem;
+        line-height: 1;
       }
 
       li + li {
@@ -479,13 +480,24 @@
 
       .wp-block-button__link {
         background-color: var(--color-copper);
-        border-radius: 0;
+        border-radius: 2px;
         color: var(--color-white);
         font-family: Syne, sans-serif;
-        font-size: 1.5rem;
-        font-weight: 700;
-        padding: 1.3rem 2rem;
+        cursor: pointer;
+        border: none;
+        font-size: 1.4rem;
+        font-weight: 600;
+        padding: 1.5rem 3.2rem;
+        letter-spacing: 0.4px;
+        line-height: 1;
         text-decoration: none;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+          filter: brightness(1.2);
+          transform: scale(1.025, 1.025);
+          box-shadow: 0 1rem 2rem rgba(var(--color-black-a), 0.2);
+        }
       }
 
       .wp-block-separator {

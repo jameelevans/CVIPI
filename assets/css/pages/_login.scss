@@ -7,8 +7,16 @@
 .login {
   align-items: center;
   background:
-    radial-gradient(circle at top left, rgba(var(--color-azure-blue-a), 0.32), transparent 34rem),
-    linear-gradient(135deg, var(--color-deep) 0%, var(--color-dark-midnight-teal) 100%);
+    radial-gradient(
+      circle at top left,
+      rgba(var(--color-azure-blue-a), 0.32),
+      transparent 34rem
+    ),
+    linear-gradient(
+      135deg,
+      var(--color-deep) 0%,
+      var(--color-dark-midnight-teal) 100%
+    );
   color: var(--color-white);
   display: flex;
   min-height: 100vh;
@@ -123,7 +131,7 @@
       cursor: pointer;
       font-family: 'Syne', sans-serif;
       font-size: 1.4rem;
-      font-weight: 800;
+      font-weight: 600;
       height: auto;
       letter-spacing: 0.8px;
       line-height: 1;
