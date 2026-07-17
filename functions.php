@@ -61,6 +61,7 @@ function cvipi_custom_logo_setup() {
       'header-text' => array( 'CVIPI', 'The National Community Violence Intervention & Prevention Initiative' ),
   );
   add_theme_support( 'custom-logo', $defaults );
+  add_theme_support( 'site-icon' );
 
   // Custom image sizes available to templates and media functions.
   add_image_size( 'my-thumbnail', 300, 169, false);
@@ -80,6 +81,127 @@ add_theme_support( 'post-thumbnails' );
 // .Activate the ability to add custom logo in customizer
 // .Enable support for Post Thumbnails on posts and pages
 
+//* Add a direct Appearance page for the site icon, using WordPress' native site_icon option.
+function cvipi_add_site_icon_admin_page() {
+  add_theme_page(
+    __( 'Site Icon / Favicon', 'cvipi' ),
+    __( 'Site Icon / Favicon', 'cvipi' ),
+    'manage_options',
+    'cvipi-site-icon',
+    'cvipi_render_site_icon_admin_page'
+  );
+}
+add_action( 'admin_menu', 'cvipi_add_site_icon_admin_page' );
+
+function cvipi_register_site_icon_setting() {
+  register_setting(
+    'cvipi_site_icon_settings',
+    'site_icon',
+    array(
+      'type'              => 'integer',
+      'sanitize_callback' => 'absint',
+    )
+  );
+}
+add_action( 'admin_init', 'cvipi_register_site_icon_setting' );
+
+function cvipi_enqueue_site_icon_admin_assets( $hook ) {
+  if ( 'appearance_page_cvipi-site-icon' !== $hook ) {
+    return;
+  }
+
+  wp_enqueue_media();
+  wp_add_inline_script(
+    'jquery-core',
+    "jQuery(function($) {
+      var frame;
+
+      $('#cvipi-site-icon-upload').on('click', function(event) {
+        event.preventDefault();
+
+        if (frame) {
+          frame.open();
+          return;
+        }
+
+        frame = wp.media({
+          title: 'Choose Site Icon / Favicon',
+          button: {
+            text: 'Use this image'
+          },
+          library: {
+            type: 'image'
+          },
+          multiple: false
+        });
+
+        frame.on('select', function() {
+          var attachment = frame.state().get('selection').first().toJSON();
+          var preview = attachment.sizes && attachment.sizes.thumbnail ? attachment.sizes.thumbnail.url : attachment.url;
+
+          $('#site_icon').val(attachment.id);
+          $('#cvipi-site-icon-preview').html('<img src=\"' + preview + '\" alt=\"\" style=\"max-width:128px;height:auto;display:block;margin-top:12px;\" />');
+          $('#cvipi-site-icon-remove').show();
+        });
+
+        frame.open();
+      });
+
+      $('#cvipi-site-icon-remove').on('click', function(event) {
+        event.preventDefault();
+        $('#site_icon').val('');
+        $('#cvipi-site-icon-preview').empty();
+        $(this).hide();
+      });
+    });"
+  );
+}
+add_action( 'admin_enqueue_scripts', 'cvipi_enqueue_site_icon_admin_assets' );
+
+function cvipi_render_site_icon_admin_page() {
+  if ( ! current_user_can( 'manage_options' ) ) {
+    return;
+  }
+
+  $site_icon_id = absint( get_option( 'site_icon' ) );
+  ?>
+  <div class="wrap">
+    <h1><?php esc_html_e( 'Site Icon / Favicon', 'cvipi' ); ?></h1>
+    <p><?php esc_html_e( 'Upload a square image at least 512 by 512 pixels. WordPress uses this for browser tabs, bookmarks, and app icons.', 'cvipi' ); ?></p>
+
+    <form method="post" action="options.php">
+      <?php settings_fields( 'cvipi_site_icon_settings' ); ?>
+      <input type="hidden" id="site_icon" name="site_icon" value="<?php echo esc_attr( $site_icon_id ); ?>" />
+
+      <p>
+        <button type="button" class="button button-secondary" id="cvipi-site-icon-upload">
+          <?php esc_html_e( 'Choose Site Icon', 'cvipi' ); ?>
+        </button>
+        <button type="button" class="button button-link-delete" id="cvipi-site-icon-remove" <?php echo $site_icon_id ? '' : 'style="display:none;"'; ?>>
+          <?php esc_html_e( 'Remove', 'cvipi' ); ?>
+        </button>
+      </p>
+
+      <div id="cvipi-site-icon-preview">
+        <?php
+        if ( $site_icon_id ) {
+          echo wp_get_attachment_image(
+            $site_icon_id,
+            'thumbnail',
+            false,
+            array(
+              'style' => 'max-width:128px;height:auto;display:block;margin-top:12px;',
+            )
+          );
+        }
+        ?>
+      </div>
+
+      <?php submit_button(); ?>
+    </form>
+  </div>
+  <?php
+}
 
 //* 5. Add site link to logo on login screen
 function ourHeaderUrl() {
@@ -1872,6 +1994,27 @@ function cvipi_get_event_field( $field_name, $post_id = null ) {
   return get_post_meta( $post_id, $field_name, true );
 }
 
+function cvipi_get_ta_provider_link( $post_id = null ) {
+  $post_id       = $post_id ? $post_id : get_the_ID();
+  $provider_link = function_exists( 'get_field' ) ? get_field( 'provider_link', $post_id ) : get_post_meta( $post_id, 'provider_link', true );
+
+  $link = array(
+    'url'    => get_permalink( $post_id ),
+    'title'  => get_the_title( $post_id ),
+    'target' => '',
+  );
+
+  if ( is_array( $provider_link ) && ! empty( $provider_link['url'] ) ) {
+    $link['url']    = $provider_link['url'];
+    $link['title']  = ! empty( $provider_link['title'] ) ? $provider_link['title'] : $link['title'];
+    $link['target'] = ! empty( $provider_link['target'] ) ? $provider_link['target'] : '';
+  } elseif ( is_string( $provider_link ) && '' !== trim( $provider_link ) ) {
+    $link['url'] = trim( $provider_link );
+  }
+
+  return $link;
+}
+
 function cvipi_get_event_timestamp( $post_id = null ) {
   $event_date = cvipi_get_event_field( 'event_date', $post_id );
   $event_time = cvipi_get_event_field( 'event_time', $post_id );
@@ -2583,6 +2726,39 @@ function cvipi_create_default_event_types() {
   }
 }
 add_action( 'init', 'cvipi_create_default_event_types', 20 );
+
+function cvipi_register_ta_provider_acf_fields() {
+  if ( ! function_exists( 'acf_add_local_field_group' ) ) {
+    return;
+  }
+
+  acf_add_local_field_group(
+    array(
+      'key'      => 'group_cvipi_ta_provider_details',
+      'title'    => 'TA Provider Details',
+      'fields'   => array(
+        array(
+          'key'           => 'field_cvipi_ta_provider_link',
+          'label'         => 'Provider Link',
+          'name'          => 'provider_link',
+          'type'          => 'link',
+          'instructions'  => 'Choose an internal page or paste an external URL. The homepage provider logo will link here.',
+          'return_format' => 'array',
+        ),
+      ),
+      'location' => array(
+        array(
+          array(
+            'param'    => 'post_type',
+            'operator' => '==',
+            'value'    => 'ta_provider',
+          ),
+        ),
+      ),
+    )
+  );
+}
+add_action( 'acf/init', 'cvipi_register_ta_provider_acf_fields' );
 
 function cvipi_register_event_acf_fields() {
   if ( ! function_exists( 'acf_add_local_field_group' ) ) {

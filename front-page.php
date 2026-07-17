@@ -15,10 +15,8 @@ get_header();
 				<div class="about__content">
 					<p class="about__subheader">What is CVIPI?</p>
 					<h2 class="about__heading">Your Resource for <em>Community-Led Safety</em></h2>
-					<p class="about__description">The Community Violence Intervention and Prevention Initiative CVIPI) is a national
-					platform that equips organizations with the training, technical assistance, and evidencebased
-					resources they need to reduce violence and build resilient neighborhoods.</p>
-					<a href="" class="btn__outline-white">Who We Are</a>
+					<p class="about__description">Your Resources for Safer Communities: The Community Violence Intervention and Prevention Initiative (CVIPI) is a national platform that equips organizations with the training, technical assistance, and evidence - based resources they need to reduce violence and build resilient neighborhoods.</p>
+					<a href="<?php echo esc_url( home_url( '/what-is-cvipi' ) ); ?>" class="btn__outline-white">Who We Are</a>
 				</div>
 				<div class="about__image-wrap">
 					<div class="about__image top">&nbsp;</div>
@@ -32,10 +30,8 @@ get_header();
 				<div class="about__content">
 					<p class="about__subheader">CVIPI Across the Nation</p>
 					<h2 class="about__heading">Real people, real <em>neighborhoods, real impact.</em></h2>
-					<p class="about__description">CVIPI works hand-in-hand with our grantee organizations throughout our country and our
-					communities. We help our violence interrupters, outreach workers, and community
-					leaders gain the resources they need to make lasting change.</p>
-					<a href="" class="btn__outline-white">The Communities We Impact</a>
+					<p class="about__description">CVIPI works hand-in-hand with grantee organizations to help public safety stakeholders and frontline interventionists gain the resources they need to reduce community violence.</p>
+					<a href="<?php echo esc_url( home_url( '/what-is-cvipi#who-we-serve' ) ); ?>" class="btn__outline-white">The Communities We Impact</a>
 				</div>
 			</div>
 			
@@ -294,6 +290,7 @@ get_header();
 					while ( $provider_query->have_posts() ) {
 						$provider_query->the_post();
 						$provider_logo = function_exists( 'get_field' ) ? get_field( 'provider_logo' ) : null;
+						$provider_link = cvipi_get_ta_provider_link();
 						$provider_logo_id = 0;
 						$provider_logo_url = '';
 
@@ -311,7 +308,13 @@ get_header();
 						}
 						?>
 						<li class="providers__item">
-							<a href="<?php echo esc_url( get_permalink() ); ?>" class="providers__link">
+							<a
+								href="<?php echo esc_url( $provider_link['url'] ); ?>"
+								class="providers__link"
+								aria-label="<?php echo esc_attr( $provider_link['title'] ); ?>"
+								<?php echo $provider_link['target'] ? 'target="' . esc_attr( $provider_link['target'] ) . '"' : ''; ?>
+								<?php echo '_blank' === $provider_link['target'] ? 'rel="noopener noreferrer"' : ''; ?>
+							>
 								<?php
 								if ( $provider_logo_id ) {
 									echo wp_get_attachment_image(

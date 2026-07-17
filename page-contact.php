@@ -53,7 +53,7 @@ $faq_query = new WP_Query(
 								</div>
 								<div class="contact-intro__card-content">
 									<h2 class="contact-intro__card-heading">Email Directly</h2>
-									<p class="contact-intro__card-text">You can also reach us at <a href="mailto:cvipi@iir.com">cvipi@iir.com</a> for general inquiries.</p>
+									<p class="contact-intro__card-text">You can also reach us at <a href="mailto:cvipitacollab@icf.com">cvipitacollab@icf.com</a> for general inquiries.</p>
 								</div>
 							</article>
 						</div>

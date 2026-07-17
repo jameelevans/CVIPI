@@ -97,7 +97,8 @@
     }
   }
 
-  &__p {
+  &__p,
+  &__body p {
     font-size: 2rem;
     margin-bottom: 2.5rem;
     color: rgba(var(--color-white-a), 0.95);

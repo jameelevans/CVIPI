@@ -8,6 +8,7 @@
 ?>
     <!-- Site footer: newsletter signup, footer navigation, legal copy, and back-to-top control. -->
     <footer class="footer">
+       <?php if ( ! is_page( 'what-is-cvipi' ) ) : ?>
        <div class="footer__container">
              <!-- Newsletter signup block. Form action is intentionally blank until an email provider is connected. -->
              <div class="footer__subscribe">
@@ -30,6 +31,7 @@
 
             </div>
         </div>
+        <?php endif; ?>
         <!-- Primary footer content: brand summary, social links, navigation groups, and grant language. -->
         <div class="footer__main">
             <div class="footer__wrapper">
@@ -38,33 +40,17 @@
                         <header class="footer__header">
                             <img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="<?php bloginfo( 'name' ); ?> logo" class="footer__logo">
                             <h3 class="footer__heading"><span class="sr-only">CVIPI </span>Your resource for building, managing, and sustaining community-led safety.</h3>
-                            <ul class="social__list">
-                                <li class="social__item">
-                                    <a href="" class="social__link">
-                                        <?php echo svg_icon('social__icon', 'x');?>
-                                    </a>
-                                </li>
-                                <li class="social__item">
-                                    <a href="" class="social__link">
-                                        <?php echo svg_icon('social__icon', 'linkedin');?>
-                                    </a>
-                                </li>
-                                <li class="social__item">
-                                    <a href="" class="social__link">
-                                        <?php echo svg_icon('social__icon', 'youtube');?>
-                                    </a>
-                                </li>
-                            </ul>
+
                         </header>
 
                         <div class="footer__menu">
                             <h4 class="footer__cat-heading">Navigate</h4>
                             <nav class="footer__nav">
                                 <ul class="footer__list">
-                                    <li class="footer__item"><a href="" class="footer__link">Home</a></li>
-                                    <li class="footer__item"><a href="" class="footer__link">What is CVIPI?</a></li>
-                                    <li class="footer__item"><a href="" class="footer__link">Resources</a></li>
-                                    <li class="footer__item"><a href="" class="footer__link">Events</a></li>
+                                    <li class="footer__item"><a href="<?php echo esc_url( home_url( '' ) ); ?>" class="footer__link">Home</a></li>
+                                    <li class="footer__item"><a href="<?php echo esc_url( home_url( '/what-is-cvipi' ) ); ?>" class="footer__link">What is CVIPI?</a></li>
+                                    <li class="footer__item"><a href="<?php echo esc_url( home_url( '/resources' ) ); ?>" class="footer__link">Resources</a></li>
+                                    <li class="footer__item"><a href="<?php echo esc_url( home_url( '/events' ) ); ?>" class="footer__link">Events</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -73,10 +59,9 @@
                             <h4 class="footer__cat-heading">Connect</h4>
                             <nav class="footer__nav">
                                 <ul class="footer__list">
-                                    <li class="footer__item"><a href="" class="footer__link">Our Stories</a></li>
-                                    <li class="footer__item"><a href="" class="footer__link">Who We Serve</a></li>
-                                    <li class="footer__item"><a href="" class="footer__link">Newsletter</a></li>
-                                    <li class="footer__item"><a href="" class="footer__link">Contact Us</a></li>
+                                    <li class="footer__item"><a href="<?php echo esc_url( home_url( '/success-stories' ) ); ?>" class="footer__link">Our Stories</a></li>
+                                    <li class="footer__item"><a href="<?php echo esc_url( home_url( '/what-is-cvipi#who-we-serve' ) ); ?>" class="footer__link">Who We Serve</a></li>
+                                    <li class="footer__item"><a href="<?php echo esc_url( home_url( '/contact' ) ); ?>" class="footer__link">Contact Us</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -85,10 +70,8 @@
                             <h4 class="footer__cat-heading">legal</h4>
                             <nav class="footer__nav">
                                 <ul class="footer__list">
-                                    <li class="footer__item"><a href="" class="footer__link">Privacy Policy</a></li>
-                                    <li class="footer__item"><a href="" class="footer__link">Terms of Use</a></li>
-                                    <li class="footer__item"><a href="" class="footer__link">Accessibility</a></li>
-                                    <li class="footer__item"><a href="" class="footer__link">FOIA</a></li>
+                                    <li class="footer__item"><a href="https://digital.gov/topics/accessibility" class="footer__link" target="_blank">Accessibility</a></li>
+                                    <li class="footer__item"><a href="https://www.foia.gov/" target="_blank" class="footer__link">FOIA</a></li>
                                 </ul>
                             </nav>
                         </div>
