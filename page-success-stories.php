@@ -50,25 +50,27 @@ $past_story_count    = count( $past_stories );
 				<?php echo cvipi_render_success_story_cards( $featured_stories ); ?>
 			</div>
 
-			<section class="stories__past" aria-labelledby="past-stories-heading">
-				<div class="stories__past-header">
-					<h2 class="stories__past-heading" id="past-stories-heading">Past Stories</h2>
-					<p class="stories__past-count" data-success-stories-past-count>
-						<?php echo esc_html( cvipi_get_success_story_count_label( $past_story_count ) ); ?>
-					</p>
-				</div>
+			<?php if ( 0 < $past_story_count ) : ?>
+				<section class="stories__past" aria-labelledby="past-stories-heading">
+					<div class="stories__past-header">
+						<h2 class="stories__past-heading" id="past-stories-heading">Past Stories</h2>
+						<p class="stories__past-count" data-success-stories-past-count>
+							<?php echo esc_html( cvipi_get_success_story_count_label( $past_story_count ) ); ?>
+						</p>
+					</div>
 
-				<div class="stories__past-list" data-success-stories-past-grid aria-live="polite">
-					<?php echo cvipi_render_success_story_past_items( $past_stories ); ?>
-				</div>
-			</section>
+					<div class="stories__past-list" data-success-stories-past-grid aria-live="polite">
+						<?php echo cvipi_render_success_story_past_items( $past_stories ); ?>
+					</div>
+				</section>
+			<?php endif; ?>
 		</div>
 	</section>
 
 	<section class="stories-impact">
 		<div class="stories-impact__content">
 			<p class="stories-impact__eyebrow">What Is CVIPI?</p>
-			<h2 class="stories-impact__heading">Your Resource for <em>safer communities</em></h2>
+			<h2 class="stories-impact__heading">Your Resources for <em>safer communities</em></h2>
 			<p class="stories-impact__description">The Community Violence Intervention and Prevention Initiative (CVIPI) is a national
 					platform that equips organizations with the training, technical assistance, and evidencebased resources they need to reduce violence and build resilient neighborhoods.</p>
 			<a href="<?php echo esc_url( home_url( '/what-is-cvipi/' ) ); ?>" class="stories-impact__button">

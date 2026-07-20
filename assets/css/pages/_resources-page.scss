@@ -296,25 +296,26 @@
     }
 
     &__grid {
-      display: grid;
-      gap: 2.4rem;
-      grid-template-columns: 1fr;
+      column-count: 1;
+      column-gap: 2.4rem;
       transition: opacity 0.2s ease;
 
       @include mixins.respond(medium) {
-        grid-template-columns: repeat(2, 1fr);
+        column-count: 2;
       }
 
       @include mixins.respond(large) {
-        grid-template-columns: repeat(3, 1fr);
+        column-count: 3;
       }
     }
 
     &__card {
       background-color: var(--color-white);
       border-radius: 3px;
+      break-inside: avoid;
       display: flex;
       flex-direction: column;
+      margin-bottom: 2.4rem;
       min-height: 32rem;
       overflow: hidden;
       transition:

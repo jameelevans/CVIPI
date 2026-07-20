@@ -42,6 +42,7 @@ $upcoming_events_query = new WP_Query(
 		),
 	)
 );
+$has_upcoming_events = 0 < (int) $upcoming_events_query->found_posts;
 
 $events_query = new WP_Query(
 	cvipi_get_event_query_args(
@@ -62,7 +63,7 @@ $events_query = new WP_Query(
 				<header class="events-page__section-header">
 					<p class="events-page__eyebrow">Coming Up</p>
 					<h2 id="upcoming-events-heading" class="events-page__heading">Upcoming <em>Events</em></h2>
-					<p class="events-page__intro">Monthly webinars held via Zoom. Free and open to all CVIPI grantees and CVI practitioners.</p>
+					<p class="events-page__intro">Monthly Zoom webinars are free and open to all CVIPI grantees and CVI practitioners</p>
 				</header>
 
 				<div class="events-page__upcoming-grid">
@@ -179,7 +180,9 @@ $events_query = new WP_Query(
 
 				<nav class="events-page__pills" aria-label="Quick event filters">
 					<a href="<?php echo esc_url( cvipi_get_filtered_events_url() ); ?>" data-event-status-filter="" class="events-page__pill--deep events-page__pill--separator <?php echo '' === $event_status ? 'is-active' : ''; ?>">All Events</a>
-					<a href="<?php echo esc_url( cvipi_get_filtered_events_url( array( 'event_status' => 'upcoming' ) ) ); ?>" data-event-status-filter="upcoming" class="<?php echo 'upcoming' === $event_status ? 'is-active' : ''; ?>">Upcoming</a>
+					<?php if ( $has_upcoming_events ) : ?>
+						<a href="<?php echo esc_url( cvipi_get_filtered_events_url( array( 'event_status' => 'upcoming' ) ) ); ?>" data-event-status-filter="upcoming" class="<?php echo 'upcoming' === $event_status ? 'is-active' : ''; ?>">Upcoming</a>
+					<?php endif; ?>
 					<a href="<?php echo esc_url( cvipi_get_filtered_events_url( array( 'event_status' => 'past' ) ) ); ?>" data-event-status-filter="past" class="events-page__pill--separator <?php echo 'past' === $event_status ? 'is-active' : ''; ?>">Past / Archived</a>
 					<?php if ( ! is_wp_error( $event_types ) ) : ?>
 						<a href="<?php echo esc_url( cvipi_get_filtered_events_url( array( 'event_search' => $event_search, 'event_topic' => $event_topic, 'event_status' => $event_status ) ) ); ?>" data-event-type-filter="" class="<?php echo '' === $event_type ? 'is-active' : ''; ?>">All Types</a>
