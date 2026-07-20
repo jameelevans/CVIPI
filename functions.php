@@ -16,6 +16,8 @@
   // Loads the compiled theme bundle without blocking document parsing.
   add_filter( 'script_loader_tag', 'cvipi_defer_theme_bundle', 10, 3 );
 
+  add_action( 'wp_head', 'cvipi_render_video_poster_fallback_script' );
+
 
 
 
@@ -50,6 +52,91 @@
 
   return '<script src="' . esc_url( $src ) . '" defer></script>';
   }
+
+function cvipi_render_video_poster_fallback_script() {
+  ?>
+  <script>
+    window.cvipiUseNextPoster = function(img) {
+      var fallbacks = [];
+
+      try {
+        fallbacks = JSON.parse(img.dataset.posterFallbacks || '[]');
+      } catch (error) {
+        fallbacks = [];
+      }
+
+      if (!fallbacks.length) {
+        return;
+      }
+
+      img.dataset.posterFallbacks = JSON.stringify(fallbacks.slice(1));
+      img.src = fallbacks[0];
+    };
+
+    window.cvipiCheckPoster = function(img) {
+      if (img.dataset.posterChecked === img.src) {
+        return;
+      }
+
+      img.dataset.posterChecked = img.src;
+
+      if (img.naturalWidth <= 120 && img.naturalHeight <= 90) {
+        window.cvipiUseNextPoster(img);
+      }
+    };
+
+    window.cvipiUseNextPosterBackground = function(element) {
+      var fallbacks = [];
+
+      try {
+        fallbacks = JSON.parse(element.dataset.posterBackgroundFallbacks || '[]');
+      } catch (error) {
+        fallbacks = [];
+      }
+
+      if (!fallbacks.length) {
+        return;
+      }
+
+      var nextPoster = fallbacks.shift();
+      element.dataset.posterBackgroundFallbacks = JSON.stringify(fallbacks);
+      element.dataset.posterBackgroundCurrent = nextPoster;
+      element.style.setProperty('--single-video-poster', 'url("' + nextPoster.replace(/"/g, '\\"') + '")');
+      window.cvipiCheckPosterBackground(element);
+    };
+
+    window.cvipiCheckPosterBackground = function(element) {
+      var poster = element.dataset.posterBackgroundCurrent;
+
+      if (!poster || element.dataset.posterBackgroundChecked === poster) {
+        return;
+      }
+
+      element.dataset.posterBackgroundChecked = poster;
+
+      var image = new Image();
+
+      image.onload = function() {
+        if (image.naturalWidth <= 120 && image.naturalHeight <= 90) {
+          window.cvipiUseNextPosterBackground(element);
+        }
+      };
+
+      image.onerror = function() {
+        window.cvipiUseNextPosterBackground(element);
+      };
+
+      image.src = poster;
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('[data-poster-background-current]').forEach(function(element) {
+        window.cvipiCheckPosterBackground(element);
+      });
+    });
+  </script>
+  <?php
+}
 
 //* Register theme supports and custom image sizes.
 function cvipi_custom_logo_setup() {
@@ -1004,13 +1091,31 @@ function cvipi_validate_event_recording_url( $valid, $value ) {
 add_filter( 'acf/validate_value/name=event_recording_url', 'cvipi_validate_event_recording_url', 10, 2 );
 
 function cvipi_get_single_video_thumbnail_url( $post_id, $video_url ) {
+  $poster_urls = cvipi_get_video_poster_urls( $post_id, $video_url );
+
+  return ! empty( $poster_urls ) ? $poster_urls[0] : '';
+}
+
+function cvipi_get_video_poster_urls( $post_id, $video_url = '' ) {
+  $poster_urls = array();
+
+  if ( has_post_thumbnail( $post_id ) ) {
+    $poster_urls[] = get_the_post_thumbnail_url( $post_id, 'large' );
+  }
+
   $youtube_video_id = cvipi_get_youtube_video_id( $video_url );
 
   if ( $youtube_video_id ) {
-    return 'https://i.ytimg.com/vi/' . rawurlencode( $youtube_video_id ) . '/maxresdefault.jpg';
+    $youtube_thumbnail_base = 'https://i.ytimg.com/vi/' . rawurlencode( $youtube_video_id ) . '/';
+
+    foreach ( array( 'maxresdefault.jpg', 'sddefault.jpg', 'hqdefault.jpg', 'mqdefault.jpg' ) as $thumbnail_file ) {
+      $poster_urls[] = $youtube_thumbnail_base . $thumbnail_file;
+    }
   }
 
-  return has_post_thumbnail( $post_id ) ? get_the_post_thumbnail_url( $post_id, 'large' ) : '';
+  $poster_urls[] = get_theme_file_uri( 'assets/img/banner-img-1.webp' );
+
+  return array_values( array_unique( array_filter( $poster_urls ) ) );
 }
 
 function cvipi_render_single_resource_video( $post_id ) {
@@ -1020,8 +1125,9 @@ function cvipi_render_single_resource_video( $post_id ) {
     return;
   }
 
-  $poster = cvipi_get_single_video_thumbnail_url( $post_id, $video_url );
-  $label  = cvipi_get_single_video_label( $post_id );
+  $poster_urls = cvipi_get_video_poster_urls( $post_id, $video_url );
+  $poster      = ! empty( $poster_urls ) ? array_shift( $poster_urls ) : '';
+  $label       = cvipi_get_single_video_label( $post_id );
   ?>
   <div class="single-content__video">
     <button
@@ -1030,6 +1136,8 @@ function cvipi_render_single_resource_video( $post_id ) {
       data-video-lightbox-trigger
       data-video-url="<?php echo esc_url( $video_url ); ?>"
       data-video-title="<?php echo esc_attr( get_the_title( $post_id ) ); ?>"
+      <?php echo $poster ? 'data-poster-background-current="' . esc_attr( $poster ) . '"' : ''; ?>
+      data-poster-background-fallbacks="<?php echo esc_attr( wp_json_encode( $poster_urls ) ); ?>"
       <?php echo $poster ? 'style="--single-video-poster: url(\'' . esc_url( $poster ) . '\');"' : ''; ?>
     >
       <span class="single-content__video-screen" aria-hidden="true"></span>
@@ -2229,7 +2337,8 @@ function cvipi_render_event_card( $post_id = null, $hidden = false ) {
   $event_recording_url = cvipi_get_event_recording_url( $post_id );
   $event_cta_url       = cvipi_get_event_field( 'event_cta_url', $post_id );
   $event_duration      = cvipi_get_event_field( 'event_duration', $post_id );
-  $event_poster        = $event_recording_url ? cvipi_get_single_video_thumbnail_url( $post_id, $event_recording_url ) : '';
+  $event_poster_urls   = $event_recording_url ? cvipi_get_video_poster_urls( $post_id, $event_recording_url ) : array();
+  $event_poster        = ! empty( $event_poster_urls ) ? array_shift( $event_poster_urls ) : '';
   $event_action_url    = get_permalink( $post_id );
   $event_action_label  = $event_recording_url ? 'View Recording' : 'View Event';
   $event_link_target   = '';
@@ -2242,7 +2351,16 @@ function cvipi_render_event_card( $post_id = null, $hidden = false ) {
       <?php if ( $event_recording_url ) : ?>
         <span class="events-page__video" aria-hidden="true">
           <?php if ( $event_poster ) : ?>
-            <img class="events-page__video-img" src="<?php echo esc_url( $event_poster ); ?>" alt="" loading="lazy" decoding="async" />
+            <img
+              class="events-page__video-img"
+              src="<?php echo esc_url( $event_poster ); ?>"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              data-poster-fallbacks="<?php echo esc_attr( wp_json_encode( $event_poster_urls ) ); ?>"
+              onerror="window.cvipiUseNextPoster && window.cvipiUseNextPoster(this)"
+              onload="window.cvipiCheckPoster && window.cvipiCheckPoster(this)"
+            />
           <?php endif; ?>
           <span class="events-page__play"><?php echo svg_icon( 'events-page__play-icon', 'play1' ); ?></span>
           <?php if ( $event_duration ) : ?>
