@@ -75,9 +75,13 @@ function cvipi_custom_logo_setup() {
   add_image_size( 'xx-large', 3000, 1688, false);
   add_image_size( 'full-size', 3200, 1801, false);
   add_image_size('pageBanner', 1300, 700, true);
+
+  add_theme_support(
+    'post-thumbnails',
+    array( 'post', 'page', 'event', 'success_story' )
+  );
 }
 add_action( 'after_setup_theme', 'cvipi_custom_logo_setup' );
-add_theme_support( 'post-thumbnails' );
 // .Activate the ability to add custom logo in customizer
 // .Enable support for Post Thumbnails on posts and pages
 
@@ -2913,7 +2917,11 @@ register_post_type('success_story', array(
     'add_new_item' => 'Add New Success Story',
     'edit_item' => 'Edit Success Story',
     'all_items' => 'All Success Stories',
-    'singular_name' => 'Success Story'
+    'singular_name' => 'Success Story',
+    'featured_image' => 'Success Story Image',
+    'set_featured_image' => 'Set success story image',
+    'remove_featured_image' => 'Remove success story image',
+    'use_featured_image' => 'Use as success story image'
   ),
   'menu_position' => 7,
   'menu_icon' => 'dashicons-star-filled'
