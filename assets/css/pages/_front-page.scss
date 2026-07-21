@@ -889,15 +889,18 @@
         .story__top {
           aspect-ratio: 16 / 9;
           overflow: hidden;
+          position: relative;
 
           @include mixins.respond(smed) {
             aspect-ratio: auto;
             height: 100%;
-            min-height: 100%;
+            min-height: 0;
           }
         }
 
         .story__img {
+          inset: 0;
+          position: absolute;
           object-position: center center;
           transform: scale(1);
           transition: transform 8s ease;
