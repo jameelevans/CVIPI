@@ -54,9 +54,7 @@ get_header( 'cvipi' ); ?>
 			<header class="we-serve__header">
 				<p id="who-we-serve" class="we-serve__eyebrow">CVIPI Across the Nation</p>
 				<h2 class="we-serve__heading">Who <em>we serve.</em></h2>
-				<p class="we-serve__description">In FY 2022 and FY 2023, OJP awarded nearly $200 million in CVIPI grants, partially funded by the Bipartisan Safer Communities Act. This historic level of funding reflects the federal
-government’s commitment to evidence-based, community-driven approaches to
-reducing violence. Click any marker to learn more about the organization.</p>
+				<p class="we-serve__description">OJP has awarded nearly $300 million in CVIPI grants, partially funded by the Bipartisan Safer Communities Act. Funding equips law enforcement agencies and community partners with resources to combat violent crime and build safer communities. CVIPI works hand-in-hand with law enforcement, local government, and public safety partners in communities across the country. Click any marker to learn more about the organization.</p>
 			</header>
 			<div class="we-serve__details">
 				<div class="we-serve__stats">

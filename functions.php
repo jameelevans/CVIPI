@@ -427,9 +427,9 @@ function cvipi_get_primary_nav_items() {
       'title' => 'Go to the Events page',
     ),
     'contact' => array(
-      'label' => 'Contact',
+      'label' => 'Contact Us',
       'url'   => site_url( '/contact' ),
-      'title' => 'Go to the Contact page',
+      'title' => 'Go to the Contact Us page',
     ),
   );
 }
@@ -832,7 +832,7 @@ function cvipi_get_single_context( $post_id ) {
     'name' => wp_specialchars_decode( $resource_category_card['term']->name, ENT_QUOTES ),
     'url'  => cvipi_get_filtered_resources_url( $resource_category_card['term']->slug ),
   ) : null;
-  $context['tag_terms']    = cvipi_get_post_tags_for_single( $post_id );
+  $context['tag_terms']    = cvipi_get_post_tags_for_single( $post_id, 'resource' );
   $context['details']      = array_filter(
     array(
       array( 'label' => 'Published', 'value' => cvipi_get_resource_display_date( $post_id, 'F j, Y' ) ),
@@ -876,7 +876,7 @@ function cvipi_get_single_share_label( $post_id ) {
   return 'Share This Page';
 }
 
-function cvipi_get_post_tags_for_single( $post_id ) {
+function cvipi_get_post_tags_for_single( $post_id, $context_type = '' ) {
   $tags = get_the_terms( $post_id, 'post_tag' );
 
   if ( is_wp_error( $tags ) || empty( $tags ) ) {
@@ -884,8 +884,16 @@ function cvipi_get_post_tags_for_single( $post_id ) {
   }
 
   return array_map(
-    function( $tag ) {
+    function( $tag ) use ( $context_type ) {
       $tag_link = get_term_link( $tag );
+
+      if ( 'resource' === $context_type ) {
+        $tag_link = cvipi_get_filtered_resources_url(
+          array(
+            'resource_topic' => $tag->slug,
+          )
+        );
+      }
 
       return array(
         'name' => wp_specialchars_decode( $tag->name, ENT_QUOTES ),
@@ -1142,7 +1150,7 @@ function cvipi_render_single_resource_video( $post_id ) {
     >
       <span class="single-content__video-screen" aria-hidden="true"></span>
       <span class="single-content__video-play">
-        <?php echo svg_icon( 'single-content__video-icon', 'play1' ); ?>
+        <img class="single-content__video-icon" src="<?php echo esc_url( get_theme_file_uri( 'assets/img/play-button.svg' ) ); ?>" alt="" aria-hidden="true" />
       </span>
       <?php if ( $label ) : ?>
         <span class="single-content__video-label"><?php echo esc_html( $label ); ?></span>
@@ -1513,12 +1521,24 @@ function cvipi_get_resource_count_by_category( $term_id ) {
 function cvipi_get_filtered_resources_url( $term_slug = '' ) {
   $resources_page = get_page_by_path( 'resources' );
   $resources_url  = $resources_page ? get_permalink( $resources_page ) : home_url( '/resources/' );
+  $fragment       = '#resources-filter-form';
 
-  if ( ! $term_slug ) {
-    return $resources_url;
+  if ( is_array( $term_slug ) ) {
+    $query_args = array_filter(
+      $term_slug,
+      function( $value ) {
+        return '' !== $value && null !== $value;
+      }
+    );
+
+    return ( $query_args ? add_query_arg( $query_args, $resources_url ) : $resources_url ) . $fragment;
   }
 
-  return add_query_arg( 'resource_category', $term_slug, $resources_url );
+  if ( ! $term_slug ) {
+    return $resources_url . $fragment;
+  }
+
+  return add_query_arg( 'resource_category', $term_slug, $resources_url ) . $fragment;
 }
 // .Homepage resource category helpers.
 
@@ -2205,6 +2225,7 @@ function cvipi_get_event_short_date_parts( $post_id = null ) {
 function cvipi_get_filtered_events_url( $args = array() ) {
   $events_page = get_page_by_path( 'events' );
   $events_url  = $events_page ? get_permalink( $events_page ) : home_url( '/events/' );
+  $fragment    = '#events-filter-form';
   $query_args  = array_filter(
     $args,
     function( $value ) {
@@ -2212,7 +2233,7 @@ function cvipi_get_filtered_events_url( $args = array() ) {
     }
   );
 
-  return $query_args ? add_query_arg( $query_args, $events_url ) : $events_url;
+  return ( $query_args ? add_query_arg( $query_args, $events_url ) : $events_url ) . $fragment;
 }
 
 function cvipi_get_event_type_terms() {
@@ -2258,6 +2279,17 @@ function cvipi_get_event_card_terms( $post_id = null ) {
     }
   }
 
+  $event_topics = get_the_terms( $post_id, 'event_topic' );
+
+  if ( ! is_wp_error( $event_topics ) && ! empty( $event_topics ) ) {
+    foreach ( $event_topics as $event_topic ) {
+      $terms[] = array(
+        'name' => $event_topic->name,
+        'url'  => cvipi_get_filtered_events_url( array( 'event_topic' => $event_topic->slug ) ),
+      );
+    }
+  }
+
   return $terms;
 }
 
@@ -2277,8 +2309,7 @@ function cvipi_get_event_query_args( $filters = array() ) {
     'posts_per_page'      => -1,
     'post_status'         => 'publish',
     'ignore_sticky_posts' => true,
-    'meta_key'            => 'event_date',
-    'orderby'             => 'meta_value_num',
+    'orderby'             => 'date',
     'order'               => 'DESC',
   );
 
@@ -2313,6 +2344,8 @@ function cvipi_get_event_query_args( $filters = array() ) {
   }
 
   if ( $event_status ) {
+    $query_args['meta_key'] = 'event_date';
+    $query_args['orderby']  = 'meta_value_num';
     $query_args['meta_query'] = array(
       array(
         'key'     => 'event_date',
@@ -2325,6 +2358,23 @@ function cvipi_get_event_query_args( $filters = array() ) {
     if ( 'upcoming' === $event_status ) {
       $query_args['order'] = 'ASC';
     }
+  } else {
+    $query_args['meta_query'] = array(
+      'relation' => 'OR',
+      'event_date_clause' => array(
+        'key'     => 'event_date',
+        'compare' => 'EXISTS',
+        'type'    => 'NUMERIC',
+      ),
+      'event_date_missing_clause' => array(
+        'key'     => 'event_date',
+        'compare' => 'NOT EXISTS',
+      ),
+    );
+    $query_args['orderby'] = array(
+      'event_date_clause' => 'DESC',
+      'date'              => 'DESC',
+    );
   }
 
   return $query_args;
@@ -2362,7 +2412,9 @@ function cvipi_render_event_card( $post_id = null, $hidden = false ) {
               onload="window.cvipiCheckPoster && window.cvipiCheckPoster(this)"
             />
           <?php endif; ?>
-          <span class="events-page__play"><?php echo svg_icon( 'events-page__play-icon', 'play1' ); ?></span>
+          <span class="events-page__play">
+            <img class="events-page__play-icon" src="<?php echo esc_url( get_theme_file_uri( 'assets/img/play-button.svg' ) ); ?>" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+          </span>
           <?php if ( $event_duration ) : ?>
             <span class="events-page__duration"><?php echo esc_html( $event_duration ); ?></span>
           <?php endif; ?>

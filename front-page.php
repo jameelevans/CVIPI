@@ -147,9 +147,8 @@ get_header();
 								<?php
 								while ( $upcoming_event_query->have_posts() ) :
 									$upcoming_event_query->the_post();
-									$event_cta_url = cvipi_get_event_field( 'event_cta_url' );
-									$event_url     = $event_cta_url ? $event_cta_url : get_permalink();
-									$event_terms   = cvipi_get_event_card_terms();
+									$event_url   = get_permalink();
+									$event_terms = cvipi_get_event_card_terms();
 									?>
 									<a href="<?php echo esc_url( $event_url ); ?>" class="event">
 										<article class="event__container">
@@ -207,35 +206,53 @@ get_header();
 					</div>
 				</div>
 
-				<div class="stories__posts">
-					<?php
-					$story_query = new WP_Query(
-						array(
-							'post_type'           => 'success_story',
-							'posts_per_page'      => 3,
-							'post_status'         => 'publish',
-							'ignore_sticky_posts' => true,
-							'no_found_rows'       => true,
-						)
-					);
+				<?php
+				$story_query = new WP_Query(
+					array(
+						'post_type'           => 'success_story',
+						'posts_per_page'      => 3,
+						'post_status'         => 'publish',
+						'ignore_sticky_posts' => true,
+						'no_found_rows'       => true,
+					)
+				);
 
+				$home_story_is_single = 1 === (int) $story_query->post_count;
+				$home_story_grid_classes = array( 'stories__posts' );
+
+				if ( $home_story_is_single ) {
+					$home_story_grid_classes[] = 'stories__posts--single';
+				}
+				?>
+
+				<div class="<?php echo esc_attr( implode( ' ', $home_story_grid_classes ) ); ?>">
+					<?php
 					if ( $story_query->have_posts() ) :
 						while ( $story_query->have_posts() ) :
 							$story_query->the_post();
 							$story_categories = get_the_category();
 							$story_category   = ! empty( $story_categories ) ? $story_categories[0]->name : '';
+							$story_classes    = array( 'story', 'story--home' );
+							$story_image_size = $home_story_is_single ? 'x-large' : 'regular';
+							$story_image_sizes = $home_story_is_single
+								? '(min-width: 900px) 50vw, 100vw'
+								: '(min-width: 900px) 280px, (min-width: 600px) 33vw, 100vw';
+
+							if ( $home_story_is_single ) {
+								$story_classes[] = 'story--home-single';
+							}
 							?>
-							<article class="story">
+							<article class="<?php echo esc_attr( implode( ' ', $story_classes ) ); ?>">
 								<?php if ( has_post_thumbnail() ) : ?>
 									<div class="story__top">
 										<?php
 										echo wp_get_attachment_image(
 											get_post_thumbnail_id(),
-											'regular',
+											$story_image_size,
 											false,
 											array(
 												'class' => 'story__img',
-												'sizes' => '(min-width: 900px) 280px, (min-width: 600px) 33vw, 100vw',
+												'sizes' => $story_image_sizes,
 											)
 										);
 										?>

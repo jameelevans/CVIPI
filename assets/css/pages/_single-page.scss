@@ -339,21 +339,19 @@
 
     &__video-play {
       align-items: center;
-      border: 2px solid rgba(var(--color-white-a), 0.5);
-      border-radius: 50%;
       display: grid;
-      height: 7rem;
+      height: 7.2rem;
       place-items: center;
       position: relative;
       transition: transform 0.2s ease;
-      width: 7rem;
+      width: 7.2rem;
       z-index: 1;
     }
 
     &__video-icon {
-      fill: currentColor;
-      height: 2rem;
-      width: 2rem;
+      display: block;
+      height: 100%;
+      width: 100%;
     }
 
     &__video-label {

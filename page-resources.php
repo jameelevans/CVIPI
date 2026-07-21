@@ -183,7 +183,7 @@ $resource_query = new WP_Query(
 				</article>
 			<?php endif; ?>
 
-			<form class="resources-page__filters" action="<?php echo esc_url( cvipi_get_filtered_resources_url() ); ?>" method="get">
+			<form id="resources-filter-form" class="resources-page__filters" action="<?php echo esc_url( cvipi_get_filtered_resources_url() ); ?>" method="get">
 				<label class="resources-page__search">
 					<span>Search Resources</span>
 					<input type="search" name="resource_search" value="<?php echo esc_attr( $resource_search ); ?>" placeholder="Search by keyword, title, or topic..." />

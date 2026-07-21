@@ -54,7 +54,6 @@
       margin-bottom: 1.2rem;
 
       em {
-        color: var(--color-copper);
         font-weight: 350;
       }
     }
@@ -324,6 +323,7 @@
       grid-template-columns: 1fr;
       margin-bottom: 2.4rem;
       padding: 2.4rem;
+      scroll-margin-top: 12rem;
 
       @include mixins.respond(medium) {
         grid-template-columns: 1.5fr 1fr 1fr auto;
@@ -541,9 +541,6 @@
 
     &__play {
       align-items: center;
-      border: 2px solid rgba(var(--color-white-a), 0.28);
-      border-radius: 50%;
-      color: var(--color-white);
       display: grid;
       height: 5.8rem;
       place-items: center;
@@ -553,9 +550,9 @@
     }
 
     &__play-icon {
-      fill: currentColor;
-      height: 1.8rem;
-      width: 1.8rem;
+      display: block;
+      height: 100%;
+      width: 100%;
     }
 
     &__duration {

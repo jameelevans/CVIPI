@@ -51,6 +51,7 @@ class ResourceFilters {
           categoryField.value = pill.dataset.resourceFilter || '';
         }
 
+        this.scrollToFilters();
         this.fetchResources();
       });
     });
@@ -129,8 +130,15 @@ class ResourceFilters {
       }
     });
 
-    const nextUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}`;
+    const nextUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}#resources-filter-form`;
     window.history.replaceState({}, '', nextUrl);
+  }
+
+  scrollToFilters() {
+    this.form.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
   }
 
   syncVisibleCards() {

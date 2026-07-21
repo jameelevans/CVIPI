@@ -139,7 +139,7 @@ $events_query = new WP_Query(
 					<h2 id="events-library-heading" class="events-page__heading">All Events &amp; Recordings</h2>
 				</header>
 
-				<form class="events-page__filters" action="<?php echo esc_url( cvipi_get_filtered_events_url() ); ?>" method="get">
+				<form id="events-filter-form" class="events-page__filters" action="<?php echo esc_url( cvipi_get_filtered_events_url() ); ?>" method="get">
 					<input type="hidden" name="event_status" value="<?php echo esc_attr( $event_status ); ?>" />
 
 					<label class="events-page__search">

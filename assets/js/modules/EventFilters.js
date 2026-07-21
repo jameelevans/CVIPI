@@ -52,6 +52,7 @@ class EventFilters {
           statusField.value = pill.dataset.eventStatusFilter || '';
         }
 
+        this.scrollToFilters();
         this.fetchEvents();
       });
     });
@@ -65,6 +66,7 @@ class EventFilters {
           typeField.value = pill.dataset.eventTypeFilter || '';
         }
 
+        this.scrollToFilters();
         this.fetchEvents();
       });
     });
@@ -145,8 +147,15 @@ class EventFilters {
       }
     });
 
-    const nextUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}`;
+    const nextUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}#events-filter-form`;
     window.history.replaceState({}, '', nextUrl);
+  }
+
+  scrollToFilters() {
+    this.form.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
   }
 
   syncVisibleCards() {
