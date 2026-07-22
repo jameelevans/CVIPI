@@ -98,12 +98,84 @@
     gap: 10px;
     max-width: 52rem;
     margin: 0 auto 1.5rem;
+
+    .footer__btn {
+      align-items: center;
+      flex: 0 0 auto;
+      justify-content: center;
+      margin-top: 0;
+      min-height: 5.4rem;
+      width: 100%;
+      padding: 0 3rem;
+
+      @include mixins.respond(small) {
+        width: max-content;
+      }
+    }
+  }
+
+  &__form--names-visible {
+    max-width: 58rem;
+  }
+
+  &__form-step {
+    display: grid;
+    flex: 1 1 100%;
+    gap: 1rem;
+    min-width: 0;
+  }
+
+  &__form-step--email {
+    flex: 1 1 30rem;
+  }
+
+  &__form-step--names {
+    flex: 1 1 100%;
+    grid-template-columns: 1fr;
+
+    @include mixins.respond(small) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__form-step[hidden] {
+    display: none;
+  }
+
+  &__email-preview {
+    color: rgba(var(--color-white-a), 0.55);
+    font-family: typography.$font-secondary;
+    font-size: 1.4rem;
+    font-weight: 300;
+    grid-column: 1 / -1;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  &__message {
+    flex: 1 1 100%;
+    font-family: typography.$font-secondary;
+    font-size: 1.4rem;
+    line-height: 1.5;
+
+    &:empty {
+      display: none;
+    }
+
+    .mc_error_msg {
+      color: var(--color-carmine);
+    }
+
+    .mc_success_msg {
+      color: var(--color-white);
+    }
   }
 
   &__input {
     padding: 1.5rem 1.8rem;
     font-family: typography.$font-secondary;
-    flex: 1;
+    width: 100%;
+    min-height: 5.4rem;
     font-size: 1.8rem;
     text-align: center;
     font-weight: 300;
@@ -126,6 +198,27 @@
     @include mixins.respond(small) {
       font-size: 1.4rem;
       text-align: left;
+    }
+  }
+
+  &__edit-email {
+    background: transparent;
+    border: 0;
+    color: var(--color-carmine);
+    cursor: pointer;
+    font-family: typography.$font-secondary;
+    font-size: 1.3rem;
+    font-weight: 600;
+    grid-column: 1 / -1;
+    justify-self: center;
+    padding: 0.2rem 0;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.35rem;
+
+    &:focus {
+      outline: 2px dashed var(--color-carmine);
+      outline-offset: 0.5rem;
     }
   }
 

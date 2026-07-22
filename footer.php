@@ -18,12 +18,36 @@
                         <h2 class="footer__heading">Get updates on <em>what matters.</em></h2>
                         <p class="footer__description">Subscribe to the CVIPI newsletter for the latest resources, event announcements, and stories from the field.</p>
                     </header>
-                    <form class="footer__form" action="">
-                        <label class="sr-only" for="footer-email">Enter your email address</label>
+                    <?php $footer_mailchimp_list_id = get_option( 'mc_list_id' ); ?>
+                    <form class="footer__form mc_signup_form" action="#footer-subscribe" method="post" id="footer-subscribe" data-list-id="<?php echo esc_attr( $footer_mailchimp_list_id ); ?>" data-footer-subscribe>
+                        <input type="hidden" class="mc_submit_type" name="mc_submit_type" value="html">
+                        <input type="hidden" name="mcsf_action" value="mc_submit_signup_form">
+                        <?php wp_nonce_field( 'mc_submit_signup_form', '_mc_submit_signup_form_nonce', false ); ?>
+                        <?php
+                        if ( function_exists( 'mailchimp_sf_honeypot_field' ) ) {
+                            mailchimp_sf_honeypot_field();
+                        }
+                        ?>
+                        <div class="mc_message_wrapper footer__message" aria-live="polite"></div>
 
-                        <input class="footer__input" type="email" id="footer-email"  name="email"  placeholder="Enter your email address">
+                        <div class="footer__form-step footer__form-step--email" data-footer-subscribe-email-step>
+                            <label class="sr-only" for="footer-email">Enter your email address</label>
+                            <input class="footer__input" type="email" id="footer-email" name="mc_mv_EMAIL" placeholder="Enter your email address" autocomplete="email" required data-footer-subscribe-email>
+                        </div>
 
-                        <button class="footer__btn" type="submit">Subscribe</button>
+                        <div class="footer__form-step footer__form-step--names" hidden data-footer-subscribe-name-step>
+                            <p class="footer__email-preview" data-footer-subscribe-email-preview></p>
+
+                            <label class="sr-only" for="footer-first-name">First name</label>
+                            <input class="footer__input" type="text" id="footer-first-name" name="mc_mv_FNAME" placeholder="First name" autocomplete="given-name" data-footer-subscribe-name>
+
+                            <label class="sr-only" for="footer-last-name">Last name</label>
+                            <input class="footer__input" type="text" id="footer-last-name" name="mc_mv_LNAME" placeholder="Last name" autocomplete="family-name" data-footer-subscribe-name>
+
+                            <button class="footer__edit-email" type="button" data-footer-subscribe-edit-email>Edit email</button>
+                        </div>
+
+                        <button class="footer__btn mc_signup_submit_button" type="submit" data-footer-subscribe-submit>Continue</button>
                     </form>
 
                     <p class="footer__privacy">We respect your privacy. Unsubscribe at any time.</p>
