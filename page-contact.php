@@ -134,7 +134,7 @@ $faq_query = new WP_Query(
 	<section class="stories-impact">
 		<div class="stories-impact__content">
 			<p class="stories-impact__eyebrow">What Is CVIPI?</p>
-			<h2 class="stories-impact__heading">Your Resource for <em>safer communities</em></h2>
+			<h2 class="stories-impact__heading">Your Resources for <em>safer communities</em></h2>
 			<p class="stories-impact__description">The Community Violence Intervention and Prevention Initiative (CVIPI) is a national platform that equips organizations with the training, technical assistance, and evidence-based resources they need to reduce violence and build resilient neighborhoods.</p>
 			<a href="<?php echo esc_url( home_url( '/what-is-cvipi/' ) ); ?>" class="stories-impact__button">
 				Who We Are
