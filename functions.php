@@ -400,7 +400,7 @@ function svg_icon( $class, $icon ) {
 // .Display inline svg icon from sprite sheet with custom class
 
 function cvipi_get_primary_nav_items() {
-  return array(
+  $nav_items = array(
     'home' => array(
       'label' => 'Home',
       'url'   => home_url( '/' ),
@@ -432,6 +432,11 @@ function cvipi_get_primary_nav_items() {
       'title' => 'Go to the Contact Us page',
     ),
   );
+
+  // Temporarily hide these nav items from the front end; keep their pages intact.
+  unset( $nav_items['resources'], $nav_items['events'] );
+
+  return $nav_items;
 }
 
 function cvipi_is_primary_nav_item_current( $item_key ) {

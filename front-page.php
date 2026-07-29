@@ -14,7 +14,7 @@ get_header();
 			<div class="about__container">
 				<div class="about__content">
 					<p class="about__subheader">What is CVIPI?</p>
-					<h2 class="about__heading">Your Resources for <em>Community-Led Safety</em></h2>
+					<h2 class="about__heading">The Hub for <em>Community-Led Safety</em></h2>
 					<p class="about__description">Your Resources for Safer Communities: The Community Violence Intervention and Prevention Initiative (CVIPI) is a national platform that equips organizations with the training, technical assistance, and evidence - based resources they need to reduce violence and build resilient neighborhoods.</p>
 					<a href="<?php echo esc_url( home_url( '/what-is-cvipi' ) ); ?>" class="btn__outline-white">Who We Are</a>
 				</div>
@@ -34,9 +34,10 @@ get_header();
 					<a href="<?php echo esc_url( home_url( '/what-is-cvipi#who-we-serve' ) ); ?>" class="btn__outline-white">The Communities We Impact</a>
 				</div>
 			</div>
-			
+
 		</section>
 		
+		<?php if ( false ) : // Temporarily hidden until homepage Resources and Events highlights return. ?>
 		<!-- Highlights section: paired event and resource teasers for the homepage. -->
 		<section class="highlights">
 			<div class="highlights__section">
@@ -188,10 +189,10 @@ get_header();
 				</div>
 
 
-				
 			</div>
 
 		</section>
+		<?php endif; ?>
 		<!-- Stories section: spotlight cards for partner/community success stories. -->
 		<section class="stories">
 			<div class="stories__container">

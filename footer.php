@@ -16,7 +16,7 @@
                     <header class="footer__header">
                         <p class="footer__subheading">Stay Connected</p>
                         <h2 class="footer__heading">Get updates on <em>what matters.</em></h2>
-                        <p class="footer__description">Subscribe to the CVIPI newsletter for the latest resources, event announcements, and stories from the field.</p>
+                        <p class="footer__description">Subscribe to the CVIPI bulletin for the latest stories from the field.</p>
                     </header>
                     <?php $footer_mailchimp_list_id = get_option( 'mc_list_id' ); ?>
                     <form class="footer__form mc_signup_form" action="#footer-subscribe" method="post" id="footer-subscribe" data-list-id="<?php echo esc_attr( $footer_mailchimp_list_id ); ?>" data-footer-subscribe>
@@ -73,8 +73,10 @@
                                 <ul class="footer__list">
                                     <li class="footer__item"><a href="<?php echo esc_url( home_url( '' ) ); ?>" class="footer__link">Home</a></li>
                                     <li class="footer__item"><a href="<?php echo esc_url( home_url( '/what-is-cvipi' ) ); ?>" class="footer__link">What is CVIPI?</a></li>
+                                    <?php if ( false ) : // Temporarily hidden until Resources and Events return to navigation. ?>
                                     <li class="footer__item"><a href="<?php echo esc_url( home_url( '/resources' ) ); ?>" class="footer__link">Resources</a></li>
                                     <li class="footer__item"><a href="<?php echo esc_url( home_url( '/events' ) ); ?>" class="footer__link">Events</a></li>
+                                    <?php endif; ?>
                                 </ul>
                             </nav>
                         </div>
@@ -106,8 +108,7 @@
                 <div class="footer__bottom">
                 <p class="footer__copyright">© 2026 Community Violence Intervention & Prevention Initiative. All rights
     reserved.</p>
-                    <p class="footer__copyright">This project was supported by Grant No. 15PBJA-24-GK-04073-CVIP awarded by the Bureau of Justice Assistance. The Bureau of Justice Assistance is a component of the U.S. Department of Justice's Office of Justice Programs, which also
-                    includes the Bureau of Justice Statistics, the National Institute of Justice, the Office of Juvenile Justice and Delinquency</p>
+                    <p class="footer__copyright">The Bureau of Justice Assistance is a component of the U.S. Department of Justice's Office of Justice Programs, which also includes the Bureau of Justice Statistics, the National Institute of Justice, the Office of Juvenile Justice and Delinquency Prevention, the Office for Victims of Crime, and the SMART Office. Points of view or opinions in this on this website are those of the author and do not necessarily represent the official position or policies of the U.S. Department of Justice.</p>
                 </div> 
             </div>
         </div>
