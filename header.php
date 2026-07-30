@@ -128,23 +128,36 @@
 
 		if ( ( is_front_page() || is_home() ) && function_exists( 'get_field' ) ) {
 			$banner_cta = get_field( 'banner_cta', $banner_page_id );
+			$banner_communities = trim( (string) get_field( 'home_banner_grantee_count', $banner_page_id ) );
 			$banner_federal_investment = trim( (string) get_field( 'home_banner_resource_count', $banner_page_id ) );
+
+			if ( '' !== $banner_communities && '+' !== substr( $banner_communities, -1 ) ) {
+				$banner_communities .= '+';
+			}
+
+			$banner_communities_html = '';
+
+			if ( '' !== $banner_communities ) {
+				$banner_communities_number = rtrim( $banner_communities, '+' );
+				$banner_communities_html = esc_html( $banner_communities_number ) . '<em>+</em>';
+			}
 
 			if ( '' !== $banner_federal_investment ) {
 				$banner_federal_investment = '$' . ltrim( $banner_federal_investment, '$' );
+				$banner_federal_investment = preg_replace( '/m$/i', '', $banner_federal_investment );
 
-				if ( ! preg_match( '/m$/i', $banner_federal_investment ) ) {
-					$banner_federal_investment .= 'M';
-				}
+				$banner_federal_investment = trim( $banner_federal_investment );
 			}
 
 			$banner_stats = array(
 				array(
-					'number'      => trim( (string) get_field( 'home_banner_grantee_count', $banner_page_id ) ),
+					'number'      => $banner_communities,
+					'number_html' => $banner_communities_html,
 					'description' => 'Communities',
 				),
 				array(
 					'number'      => $banner_federal_investment,
+					'number_html' => $banner_federal_investment ? esc_html( $banner_federal_investment ) . '<em>M</em>' : '',
 					'description' => 'Federal Investment',
 				),
 				array(
@@ -203,7 +216,7 @@
 							<?php endif; ?>
 
 							<div class="banner__stats">
-								<span class="banner__number"><?php echo esc_html( $banner_stat['number'] ); ?></span>
+								<span class="banner__number"><?php echo isset( $banner_stat['number_html'] ) ? wp_kses( $banner_stat['number_html'], array( 'em' => array() ) ) : esc_html( $banner_stat['number'] ); ?></span>
 								<p class="banner__description"><?php echo wp_kses_post( $banner_stat['description'] ); ?></p>
 							</div>
 						<?php endforeach; ?>
