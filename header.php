@@ -128,18 +128,28 @@
 
 		if ( ( is_front_page() || is_home() ) && function_exists( 'get_field' ) ) {
 			$banner_cta = get_field( 'banner_cta', $banner_page_id );
+			$banner_federal_investment = trim( (string) get_field( 'home_banner_resource_count', $banner_page_id ) );
+
+			if ( '' !== $banner_federal_investment ) {
+				$banner_federal_investment = '$' . ltrim( $banner_federal_investment, '$' );
+
+				if ( ! preg_match( '/m$/i', $banner_federal_investment ) ) {
+					$banner_federal_investment .= 'M';
+				}
+			}
+
 			$banner_stats = array(
 				array(
 					'number'      => trim( (string) get_field( 'home_banner_grantee_count', $banner_page_id ) ),
-					'description' => 'Grantee organizations<br /> supported nationwide',
+					'description' => 'Communities',
 				),
 				array(
-					'number'      => trim( (string) get_field( 'home_banner_resource_count', $banner_page_id ) ),
-					'description' => 'Resources, guides & toolkits<br /> in the library',
+					'number'      => $banner_federal_investment,
+					'description' => 'Federal Investment',
 				),
 				array(
 					'number'      => trim( (string) get_field( 'home_banner_webinar_count', $banner_page_id ) ),
-					'description' => 'Webinars and trainings<br /> delivered annually',
+					'description' => 'Grantees',
 				),
 			);
 		}
