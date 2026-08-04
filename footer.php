@@ -63,7 +63,8 @@
                     <div class="footer__columns">
                         <header class="footer__header">
                             <img src="<?php echo get_template_directory_uri(); ?>/assets/img/cvipi-logo-white.webp" alt="<?php bloginfo( 'name' ); ?> logo" class="footer__logo">
-                            <h3 class="footer__heading"><span class="sr-only">CVIPI </span>Your resource for building, managing, and sustaining community-led safety.</h3>
+                            <h3 class="footer__heading"><span class="sr-only">CVIPI </span>© 2026 Community Violence Intervention & Prevention Initiative. All rights
+    reserved.</h3>
 
                         </header>
 
@@ -106,8 +107,6 @@
                     </div>
                 </div>
                 <div class="footer__bottom">
-                <p class="footer__copyright">© 2026 Community Violence Intervention & Prevention Initiative. All rights
-    reserved.</p>
                     <p class="footer__copyright">The Bureau of Justice Assistance is a component of the U.S. Department of Justice's Office of Justice Programs, which also includes the Bureau of Justice Statistics, the National Institute of Justice, the Office of Juvenile Justice and Delinquency Prevention, the Office for Victims of Crime, and the SMART Office. Points of view or opinions in this on this website are those of the author and do not necessarily represent the official position or policies of the U.S. Department of Justice.</p>
                 </div> 
             </div>
