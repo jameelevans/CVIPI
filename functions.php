@@ -2640,6 +2640,28 @@ function cvipi_register_posts_header_acf_fields() {
     return;
   }
 
+  $posts_header_location = array(
+    array(
+      'param'    => 'post_type',
+      'operator' => '==',
+      'value'    => 'page',
+    ),
+    array(
+      'param'    => 'page_type',
+      'operator' => '!=',
+      'value'    => 'front_page',
+    ),
+  );
+  $home_page = get_page_by_path( 'home' );
+
+  if ( $home_page ) {
+    $posts_header_location[] = array(
+      'param'    => 'page',
+      'operator' => '!=',
+      'value'    => (string) $home_page->ID,
+    );
+  }
+
   acf_add_local_field_group(
     array(
       'key'      => 'group_cvipi_posts_header',
@@ -2693,20 +2715,7 @@ function cvipi_register_posts_header_acf_fields() {
           'preview_size'  => 'medium',
         ),
       ),
-      'location' => array(
-        array(
-          array(
-            'param'    => 'post_type',
-            'operator' => '==',
-            'value'    => 'page',
-          ),
-          array(
-            'param'    => 'page_type',
-            'operator' => '!=',
-            'value'    => 'front_page',
-          ),
-        ),
-      ),
+      'location' => array( $posts_header_location ),
     )
   );
 }
