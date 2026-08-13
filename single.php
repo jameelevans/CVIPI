@@ -18,7 +18,8 @@ get_header( 'general' );
       $post_type          = get_post_type( $post_id );
       $single_context     = cvipi_get_single_context( $post_id );
       $header_media       = cvipi_get_single_header_media( $post_id );
-      $related_resources  = cvipi_get_related_resources( $post_id, 4 );
+      $show_related_resources = 'success_story' !== $post_type;
+      $related_resources      = $show_related_resources ? cvipi_get_related_resources( $post_id, 4 ) : null;
       ?>
 
       <article <?php post_class( 'single-page__article single-page__article--' . $single_context['type'] ); ?>>
@@ -79,15 +80,17 @@ get_header( 'general' );
             </div>
           </div>
 
-          <aside class="single-content__sidebar" aria-label="<?php echo 'success_story' === $post_type ? esc_attr__( 'More Stories and Related Resources', 'cvipi' ) : esc_attr__( 'Related Resources', 'cvipi' ); ?>">
+          <aside class="single-content__sidebar" aria-label="<?php echo 'success_story' === $post_type ? esc_attr__( 'More Success Stories', 'cvipi' ) : esc_attr__( 'Related Resources', 'cvipi' ); ?>">
             <?php if ( 'success_story' === $post_type ) : ?>
               <?php cvipi_render_more_success_stories( $post_id ); ?>
             <?php endif; ?>
 
-            <section class="single-related">
-              <h2 class="single-related__heading">Related Resources</h2>
-              <?php cvipi_render_related_resource_list( $related_resources ); ?>
-            </section>
+            <?php if ( $show_related_resources ) : ?>
+              <section class="single-related">
+                <h2 class="single-related__heading">Related Resources</h2>
+                <?php cvipi_render_related_resource_list( $related_resources ); ?>
+              </section>
+            <?php endif; ?>
           </aside>
         </div>
       </article>
