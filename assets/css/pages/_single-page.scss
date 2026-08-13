@@ -440,8 +440,8 @@
         border-left: 0.5rem solid var(--color-copper);
         color: var(--color-deep);
         font-family: Fraunces, serif;
-        font-size: clamp(2.4rem, 3vw, 3.4rem);
-        line-height: 1.25;
+        font-size: 1.8rem;
+        line-height: 1.5;
         padding-left: 2.4rem;
 
         cite {
@@ -452,6 +452,15 @@
           font-style: normal;
           margin-top: 1.4rem;
         }
+      }
+
+      .wp-block-paragraph {
+        font-size: 1.8rem;
+        line-height: 1.5;
+      }
+
+      .wp-block-file__button .wp-element-button {
+        color: var(--color-white);
       }
 
       .wp-block-pullquote {
