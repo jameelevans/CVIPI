@@ -459,7 +459,7 @@
         line-height: 1.5;
       }
 
-      .wp-block-file__button .wp-element-button {
+      .wp-block-file .wp-block-file__button {
         color: var(--color-white);
       }
 
@@ -506,10 +506,6 @@
           box-shadow: 0 1rem 2rem rgba(var(--color-black-a), 0.2);
         }
       }
-      wp-block-file__button wp-element-button {
-        color: var(--color-white);
-      }
-
       .wp-block-separator {
         border: 0;
         border-top: 1px solid rgba(var(--color-deep-a), 0.18);
