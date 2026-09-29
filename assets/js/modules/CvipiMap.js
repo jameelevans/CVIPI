@@ -134,6 +134,7 @@ class CvipiMap {
         }
 
         this.markersLayer.innerHTML = response.data.html;
+        this.analyticsAction('filter');
         this.filters.querySelectorAll('[data-map-filter]').forEach(filter => {
           filter.classList.toggle('is-active', filter === button);
         });
@@ -185,6 +186,7 @@ class CvipiMap {
   }
 
   showPopup(marker) {
+    if (this.activeMarker !== marker || this.popup.hidden) this.analyticsAction('marker_open');
     const markerRect = marker.getBoundingClientRect();
     const mapRect = this.map.getBoundingClientRect();
     const markerLeft = markerRect.left + (markerRect.width / 2) - mapRect.left;
@@ -547,6 +549,7 @@ class CvipiMap {
   }
 
   endPan() {
+    if (this.isPanning) this.analyticsAction('pan');
     this.isPanning = false;
     this.panStart = null;
     this.map.classList.remove('cvipi-map--is-panning');
@@ -586,6 +589,7 @@ class CvipiMap {
   }
 
   panBy(x, y) {
+    this.analyticsAction('pan');
     this.translate.x += x;
     this.translate.y += y;
     this.applyTransform();
@@ -597,6 +601,7 @@ class CvipiMap {
   }
 
   zoomBy(amount) {
+    this.analyticsAction('zoom');
     this.scale = Math.min(3, Math.max(1, this.scale + amount));
 
     if (this.scale === 1) {
@@ -607,9 +612,18 @@ class CvipiMap {
   }
 
   resetTransform() {
+    this.analyticsAction('reset');
     this.scale = 1;
     this.translate = { x: 0, y: 0 };
     this.applyTransform();
+  }
+
+  analyticsAction(action) {
+    const now = Date.now();
+    if (this.lastAnalyticsAction === action && now - this.lastAnalyticsAt < 1000) return;
+    this.lastAnalyticsAction = action;
+    this.lastAnalyticsAt = now;
+    document.dispatchEvent(new CustomEvent('cvipi:map-action', {detail: {action}}));
   }
 
   applyTransform() {

@@ -1,0 +1,58 @@
+@use '../base/typography' as typography;
+
+.analytics-consent {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 999990;
+  max-height: 70dvh;
+  overflow-y: auto;
+  border-top: .1rem solid var(--color-medium-blue);
+  background: var(--color-deep);
+  color: var(--color-white);
+  box-shadow: 0 -.6rem 2.4rem rgba(var(--color-deep-a), .1);
+  font: 1.6rem/1.55 typography.$font-secondary;
+  letter-spacing: 0;
+
+  &[hidden], [hidden] { display: none !important; }
+  &__inner { max-width: 144rem; margin: auto; padding: 2rem 4rem; display: flex; align-items: center; justify-content: space-between; gap: 2.8rem; }
+  &__copy { min-width: 0; max-width: 92rem; overflow-wrap: anywhere; }
+  h2 { margin: 0 0 .4rem; font: 500 2.2rem/1.3 typography.$font-primary; }
+  p { margin: 0; }
+  &__details { margin-top: .6rem; font-size: 1.4rem; }
+  summary { width: fit-content; cursor: pointer; color: var(--color-carmine); text-decoration: underline; text-underline-offset: .3rem; padding: .5rem 0; }
+  &__details p { margin: .8rem 0; }
+  a { color: var(--color-carmine); }
+  &__state:empty { display: none; }
+  &__state { margin-top: .8rem !important; font-size: 1.4rem; }
+  &__actions { display: grid; grid-template-columns: repeat(2, minmax(11rem, 1fr)); gap: 1rem; flex: 0 0 auto; }
+  button { min-height: 5.5rem; padding: 1.2rem 2.2rem; border: .1rem solid var(--color-carmine); border-radius: .3rem; color: var(--color-deep); background: var(--color-carmine); font: 700 1.6rem/1.4 typography.$font-secondary; cursor: pointer; }
+  button:hover { background: var(--color-white); border-color: var(--color-white); }
+  button:disabled { cursor: not-allowed; opacity: .6; }
+  &__cancel { grid-column: 1 / -1; border-color: transparent !important; background: transparent !important; color: var(--color-carmine) !important; font-weight: 400 !important; text-decoration: underline; }
+  button:focus-visible, summary:focus-visible, a:focus-visible { outline: .3rem solid var(--color-white); outline-offset: .3rem; }
+  h2:focus { outline: none; }
+  @media (max-width: 50em) {
+    &__inner { padding: 2rem 2.4rem; gap: 1.6rem; flex-direction: column; align-items: stretch; }
+    &__actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    &__cancel { min-height: 4.4rem; padding: .6rem; }
+    font-size: 1.8rem;
+    &__details, &__state { font-size: 1.6rem; }
+  }
+}
+.analytics-preferences {
+  padding: .8rem 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: .3rem;
+  min-height: 5.5rem;
+  &:focus-visible { outline: .3rem solid var(--color-carmine); outline-offset: .3rem; }
+  &[hidden] { display: none; }
+}
+body { padding-bottom: var(--cvipi-consent-space, 0px); }
+html { scroll-padding-bottom: var(--cvipi-consent-space, 0px); }
+body:has(.analytics-consent:not([hidden])) .backtop { bottom: calc(var(--cvipi-consent-space, 0px) + 2rem); }

@@ -99,6 +99,7 @@
                                 <ul class="footer__list">
                                     <li class="footer__item"><a href="https://digital.gov/topics/accessibility" class="footer__link" target="_blank">Accessibility</a></li>
                                     <li class="footer__item"><a href="https://www.foia.gov/" target="_blank" class="footer__link">FOIA</a></li>
+                                    <li class="footer__item"><button type="button" class="footer__link analytics-preferences" data-analytics-preferences hidden>Analytics preferences</button></li>
                                 </ul>
                             </nav>
                         </div>

@@ -104,6 +104,7 @@ class EventFilters {
         }
 
         this.grid.innerHTML = response.data.html;
+        document.dispatchEvent(new CustomEvent('cvipi:filter-results', {detail: {section: 'events', searchUsed: !!this.form.querySelector('input[type="search"]')?.value.trim()}}));
 
         if (this.count) {
           this.count.textContent = response.data.label;

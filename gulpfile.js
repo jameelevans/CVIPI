@@ -185,6 +185,11 @@ function watch() {
         browserSync = require('browser-sync').create();
         browserSync.init({
             proxy: localUrl, // Update to match your Local environment URL
+            // Preserve escaped Gutenberg URLs before BrowserSync's default rewrite.
+            rewriteRules: [{
+                match: /https?:\\?\/\\?\/cvipi\.local(?=[/\\?"'\s]|$)/g,
+                fn: (req, res, match) => match.replace('cvipi.local', req.headers.host)
+            }],
             port: 3000,
             listen: '127.0.0.1',
             host: '127.0.0.1',

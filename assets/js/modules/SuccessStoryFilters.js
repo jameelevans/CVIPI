@@ -53,6 +53,7 @@ class SuccessStoryFilters {
         }
 
         this.grid.innerHTML = response.data.featured_html || response.data.html;
+        document.dispatchEvent(new CustomEvent('cvipi:filter-results', {detail: {section: 'stories'}}));
 
         if (this.pastGrid) {
           this.pastGrid.innerHTML = response.data.past_html || '';

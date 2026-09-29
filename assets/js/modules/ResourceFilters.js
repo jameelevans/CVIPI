@@ -93,6 +93,7 @@ class ResourceFilters {
         }
 
         this.grid.innerHTML = response.data.html;
+        document.dispatchEvent(new CustomEvent('cvipi:filter-results', {detail: {section: 'resources', searchUsed: !!this.form.querySelector('input[type="search"]')?.value.trim()}}));
 
         if (this.count) {
           this.count.textContent = response.data.label;

@@ -10,6 +10,25 @@
 
 // * * --------| Actions and filters in order |-------- *
 
+require_once get_template_directory() . '/inc/story-submissions.php';
+require_once get_template_directory() . '/inc/contact-messages.php';
+require_once get_template_directory() . '/inc/analytics.php';
+require_once get_template_directory() . '/inc/analytics-dashboard.php';
+require_once get_template_directory() . '/inc/seo.php';
+
+// Use Google's native compact widget where the Contact form is narrow.
+add_filter( 'wpforms_frontend_captcha_inline_script', 'cvipi_contact_captcha_size' );
+function cvipi_contact_captcha_size( $script ) {
+  $size_script = <<<'JS'
+if (window.matchMedia('(max-width: 30rem)').matches) {
+  document.querySelectorAll('.contact-intro__form .g-recaptcha').forEach(function (element) {
+    element.setAttribute('data-size', 'compact');
+  });
+}
+JS;
+  return $size_script . "\n" . $script;
+}
+
   // Register front-end styles and scripts.
   add_action( 'wp_enqueue_scripts', 'theme_enqueue_scripts' );
 
@@ -50,7 +69,13 @@
     return $tag;
   }
 
-  return '<script src="' . esc_url( $src ) . '" defer></script>';
+  $processor = new WP_HTML_Tag_Processor( $tag );
+  while ( $processor->next_tag( 'SCRIPT' ) ) {
+    if ( $src === $processor->get_attribute( 'src' ) ) {
+      $processor->set_attribute( 'defer', true );
+    }
+  }
+  return $processor->get_updated_html();
   }
 
 function cvipi_render_video_poster_fallback_script() {
@@ -476,6 +501,11 @@ function cvipi_render_primary_navigation( $mobile = false ) {
     </li>
     <?php
   }
+  ?>
+  <li class="<?php echo esc_attr( $item_class ); ?>">
+    <button type="button" class="story-invite-button" data-story-open aria-haspopup="dialog" aria-controls="story-dialog">Submit Content</button>
+  </li>
+  <?php
 }
 
 //* Resource category cards shown on the homepage.

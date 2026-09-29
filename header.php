@@ -189,7 +189,7 @@
 						<?php endif; ?>
 
 						<?php if ( ! empty( $banner_data['title'] ) ) : ?>
-							<h2 class="banner__heading"><?php echo wp_kses_post( $banner_data['title'] ); ?></h2>
+							<h1 class="banner__heading"><?php echo wp_kses_post( $banner_data['title'] ); ?></h1>
 						<?php endif; ?>
 						<?php if ( ! empty( $banner_data['description'] ) ) : ?>
 							<div class="banner__details">

@@ -57,6 +57,8 @@ Text Domain: cvipi
 //*--------| Components |--------*//
 @use 'components/buttons' as btns;
 @use 'components/backtop' as backtop;
+@use 'components/story-submission';
+@use 'components/analytics-consent';
 
 //*--------| Layouts |--------*//
 @use 'layout/header' as header;

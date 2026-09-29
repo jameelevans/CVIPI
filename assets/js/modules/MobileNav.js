@@ -29,7 +29,7 @@ class MobileNav {
     }
 
     this.nav.addEventListener('click', event => {
-      if (event.target.closest('a')) {
+      if (event.target.closest('a, [data-story-open]')) {
         this.closeMenu();
       }
     });

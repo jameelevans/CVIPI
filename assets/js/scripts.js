@@ -15,11 +15,14 @@ import ShareButton from './modules/ShareButton';
 import SiteAnimations from './modules/SiteAnimations';
 import SuccessStoryFilters from './modules/SuccessStoryFilters';
 import VideoLightbox from './modules/VideoLightbox';
+import StorySubmission from './modules/StorySubmission';
+import AnalyticsConsent from './modules/AnalyticsConsent';
 
 
 
 // Instantiate a new object using our modules/classes
 const siteAnimations = new SiteAnimations();
+const analyticsConsent = new AnalyticsConsent();
 let backTop = new BackTop();
 const contactFaqs = new ContactFaqs();
 const cvipiMap = new CvipiMap();
@@ -31,3 +34,4 @@ const resourceFilters = new ResourceFilters();
 const shareButton = new ShareButton();
 const successStoryFilters = new SuccessStoryFilters();
 const videoLightbox = new VideoLightbox();
+const storySubmission = new StorySubmission();
