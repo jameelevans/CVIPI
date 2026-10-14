@@ -119,7 +119,12 @@ function cvipi_story_send_notifications( $post_id ) {
     $subject = sanitize_text_field( strtr( $settings[$type . '_subject'], $tokens ) );
     $message = strtr( $settings[$type . '_message'], $tokens );
     $heading = strtr( $settings[$type . '_heading'], $tokens );
-    $details = 'admin' === $type ? array( 'Submission type' => $admin_tokens['{submission_type}'], 'Story' => $admin_tokens['{title}'], 'Location' => $admin_tokens['{location}'], 'Submitted by' => $admin_tokens['{name}'], 'Email' => $admin_tokens['{email}'], 'Organization' => $admin_tokens['{organization}'] ) : array();
+    $details = 'admin' === $type ? array( 'Submission type' => $admin_tokens['{submission_type}'], 'Title' => $admin_tokens['{title}'], 'Location' => $admin_tokens['{location}'], 'Submitted by' => $admin_tokens['{name}'], 'Email' => $admin_tokens['{email}'], 'Organization' => $admin_tokens['{organization}'] ) : array();
+    $attachment = get_post_meta( $post_id, '_cvipi_submission_attachment', true );
+    if ( 'admin' === $type && is_array( $attachment ) ) {
+      $file_type = cvipi_story_attachment_types()[$attachment['type'] ?? ''] ?? 'File';
+      $details['Attachment'] = $file_type . ' attachment received. Available privately in Submission Details; not attached to this email.';
+    }
     $review_url = 'admin' === $type ? $admin_tokens['{review_url}'] : '';
     $plain = $heading . "\n\n" . $message;
     foreach ( $details as $label => $value ) if ( '' !== $value ) $plain .= "\n\n" . $label . ': ' . $value;

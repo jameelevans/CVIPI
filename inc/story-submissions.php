@@ -2,6 +2,7 @@
 /** Public submissions stay pending until an editor publishes them. */
 defined( 'ABSPATH' ) || exit;
 require_once __DIR__ . '/story-notifications.php';
+require_once __DIR__ . '/story-attachments.php';
 
 function cvipi_story_captcha_config() {
   $host = wp_parse_url( home_url(), PHP_URL_HOST );
@@ -68,6 +69,8 @@ add_action( 'wp_ajax_nopriv_cvipi_story_session', 'cvipi_story_form_session' );
 
 function cvipi_submit_story() {
   nocache_headers();
+  $post_limit = wp_convert_hr_to_bytes( ini_get( 'post_max_size' ) );
+  if ( $post_limit > 0 && (int) ( $_SERVER['CONTENT_LENGTH'] ?? 0 ) > $post_limit ) wp_send_json_error( array( 'message' => 'Your upload exceeds the server limit. Choose a smaller file and try again.' ), 413 );
   if ( ! wp_verify_nonce( cvipi_story_input( 'nonce' ), 'cvipi_submit_story' ) ) {
     wp_send_json_error( array( 'message' => 'Your form session expired. Close and reopen the form; your text will be kept.' ), 403 );
   }
@@ -97,8 +100,18 @@ function cvipi_submit_story() {
   if ( ! array_key_exists( $fields['submission_type'], cvipi_story_submission_types() ) ) $errors['submission_type'] = 'Choose Content or Share a story.';
   $fields['location'] = cvipi_story_normalize_location( $fields['location'] );
   if ( '' === $fields['location'] ) $errors['location'] = 'Enter your location as City, State (for example, Tucson, AZ).';
-  if ( mb_strlen( $fields['story'] ) < 80 ) $errors['story'] = 'Please share at least 80 characters about your story.';
-  if ( 'yes' !== cvipi_story_input( 'consent' ) ) $errors['consent'] = 'Please confirm permission to review your story.';
+  $kind = 'content' === $fields['submission_type'] ? 'content' : 'story';
+  if ( mb_strlen( $fields['story'] ) < 50 ) $errors['story'] = 'Please share at least 50 characters about your ' . $kind . '.';
+  if ( 'yes' !== cvipi_story_input( 'consent' ) ) $errors['consent'] = 'Please confirm permission to review your ' . $kind . ' and any attached file.';
+  $attachment = null;
+  if ( $_FILES ) {
+    if ( 1 !== count( $_FILES ) || ! isset( $_FILES['attachment'] ) ) $errors['attachment'] = 'Attach only one Word (.docx), PDF, or TXT file.';
+    else {
+      $attachment = cvipi_story_attachment_validate( $_FILES['attachment'] );
+      if ( is_wp_error( $attachment ) ) $errors['attachment'] = $attachment->get_error_message();
+      elseif ( $attachment && ! is_uploaded_file( $_FILES['attachment']['tmp_name'] ) ) $errors['attachment'] = 'The file could not be verified. Choose it again and retry.';
+    }
+  }
   if ( $errors ) wp_send_json_error( array( 'message' => 'Please check the highlighted fields.', 'fields' => $errors ), 422 );
   if ( '' === $fields['title'] ) $fields['title'] = $fields['location'];
   $config = cvipi_story_captcha_config();
@@ -149,6 +162,14 @@ function cvipi_submit_story() {
   if ( is_wp_error( $post_id ) ) {
     delete_option( $lock );
     wp_send_json_error( array( 'message' => 'We could not save your story. Your text is still here; please try again.' ), 500 );
+  }
+  if ( $attachment ) {
+    $stored = cvipi_story_attachment_store( $_FILES['attachment'], $attachment, $post_id );
+    if ( is_wp_error( $stored ) ) {
+      wp_delete_post( $post_id, true );
+      delete_option( $lock );
+      wp_send_json_error( array( 'message' => 'We could not save your attachment. Your text is still here; please check the file and retry.', 'fields' => array( 'attachment' => $stored->get_error_message() ) ), 500 );
+    }
   }
   $session['submitted'] = true;
   set_transient( 'cvipi_story_' . $session_id, $session, HOUR_IN_SECONDS );
@@ -215,6 +236,7 @@ add_action( 'add_meta_boxes_success_story', function ( $post ) {
     wp_nonce_field( 'cvipi_edit_submission', 'cvipi_submission_nonce' );
     echo '<p><label for="cvipi-review-location"><strong>Location</strong></label><input class="widefat" id="cvipi-review-location" name="cvipi_story_location" maxlength="180" value="' . esc_attr( get_post_meta( $post->ID, '_cvipi_story_location', true ) ) . '"></p>';
     echo '<p>Permission to review and publish: received. Contact details are private. Review the story and complete its header fields before publishing.</p>';
+    cvipi_story_attachment_admin_details( $post->ID );
     cvipi_story_notification_summary( $post->ID );
   }, 'success_story', 'side' );
 } );

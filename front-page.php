@@ -203,7 +203,8 @@ get_header();
 						<p class="stories__subheading">These are some of our partner organizations and the programs they created to transform their communities.</p>
 					</header>
 					<div class="stories__cta">
-						<a href="<?php echo esc_url( site_url( '/success-stories' ) ); ?>" class="stories__btn btn__outline-deep">View Success Stories</a>
+						<a href="<?php echo esc_url( site_url( '/success-stories' ) ); ?>" class="stories__btn btn__outline-deep" title="Browse CVIPI success stories">View Success Stories</a>
+						<button type="button" class="stories__btn btn__outline-deep stories__btn--submit" data-story-open aria-haspopup="dialog" aria-controls="story-dialog" title="Open the content submission form for review by the CVIPI team">Submit Content</button>
 					</div>
 				</div>
 

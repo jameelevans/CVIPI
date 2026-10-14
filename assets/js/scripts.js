@@ -1,5 +1,6 @@
 // 3rd party packages from NPM
 import $ from 'jquery';
+import { createIcons, Download, ArrowUpRight } from 'lucide';
 
 
 // Our modules/ classes
@@ -21,6 +22,9 @@ import AnalyticsConsent from './modules/AnalyticsConsent';
 
 
 // Instantiate a new object using our modules/classes
+if (document.querySelector('.grantee-template')) {
+  createIcons({ icons: { Download, ArrowUpRight }, nameAttr: 'data-grantee-icon', attrs: { 'aria-hidden': 'true', focusable: 'false' } });
+}
 const siteAnimations = new SiteAnimations();
 const analyticsConsent = new AnalyticsConsent();
 let backTop = new BackTop();

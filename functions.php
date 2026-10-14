@@ -15,6 +15,8 @@ require_once get_template_directory() . '/inc/contact-messages.php';
 require_once get_template_directory() . '/inc/analytics.php';
 require_once get_template_directory() . '/inc/analytics-dashboard.php';
 require_once get_template_directory() . '/inc/seo.php';
+require_once get_template_directory() . '/inc/event-calendar.php';
+require_once get_template_directory() . '/inc/grantee-templates.php';
 
 // Use Google's native compact widget where the Contact form is narrow.
 add_filter( 'wpforms_frontend_captcha_inline_script', 'cvipi_contact_captcha_size' );
@@ -2540,6 +2542,11 @@ function cvipi_get_posts_header_defaults( $page_id = null ) {
       'eyebrow'     => 'Webinars, Trainings & Peer Learning',
       'title'       => 'Events <em>&amp; Webinars</em>',
       'description' => 'Join CVIPI events, trainings, and recordings designed to support community violence intervention practitioners.',
+    ),
+    'tta-calendar' => array(
+      'eyebrow'     => 'Training & Technical Assistance',
+      'title'       => 'TTA <em>Calendar</em>',
+      'description' => 'Connect, learn, and exchange ideas through CVIPI webinars, training sessions, peer learning, and conferences.',
     ),
     'resources' => array(
       'eyebrow'     => 'Resource Library',

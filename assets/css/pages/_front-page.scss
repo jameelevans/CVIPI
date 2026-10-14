@@ -777,6 +777,8 @@
 
     &__cta {
       display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
       place-self: center;
       margin-bottom: 8.5rem;
       width: 100%;
@@ -790,6 +792,29 @@
 
     &__btn {
       align-self: flex-end;
+      width: 100%;
+      margin-top: 0;
+      line-height: 1.5;
+      letter-spacing: 0;
+
+      &:focus-visible {
+        outline: 0.3rem solid var(--color-carmine);
+        outline-offset: 0.4rem;
+      }
+
+      &--submit {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background-color: var(--color-deep);
+        color: var(--color-sand);
+
+        &:hover {
+          background-color: var(--color-dark-midnight-teal);
+          color: var(--color-sand);
+        }
+      }
     }
 
     &__posts {

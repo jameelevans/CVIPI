@@ -23,6 +23,16 @@ class StorySubmission {
     this.form.elements.story.addEventListener('input', () => {
       this.dialog.querySelector('[data-story-count]').textContent = `${this.form.elements.story.value.length.toLocaleString()} / 20,000`;
     });
+    this.form.addEventListener('change', event => {
+      if (event.target.name === 'submission_type') this.updateType(true);
+      if (event.target.name === 'attachment') this.validateAttachment();
+    });
+    this.updateType();
+    this.dialog.querySelector('[data-story-remove-attachment]').addEventListener('click', () => {
+      this.form.elements.attachment.value = '';
+      this.validateAttachment();
+      this.form.elements.attachment.focus();
+    });
     document.querySelectorAll('[data-story-open]').forEach(button => button.addEventListener('click', () => this.open(button)));
     this.dialog.querySelectorAll('[data-story-close]').forEach(button => button.addEventListener('click', () => this.dialog.close()));
     this.dialog.querySelector('[data-story-create]').addEventListener('click', () => { this.started = true; this.view('form'); this.prepare(); });
@@ -97,11 +107,40 @@ class StorySubmission {
 
   async request(data) {
     const response = await fetch(this.dialog.dataset.endpoint, {
-      method: 'POST', credentials: 'same-origin', body: new URLSearchParams(data),
+      method: 'POST', credentials: 'same-origin', body: data instanceof FormData ? data : new URLSearchParams(data),
     });
     const json = await response.json();
     if (!json.success) { const error = new Error(json.data?.message || 'Unable to submit. Please try again.'); error.fields = json.data?.fields; throw error; }
     return json.data;
+  }
+
+  updateType(announce = false) {
+    const content = this.form.elements.submission_type.value === 'content';
+    const kind = content ? 'content' : 'story';
+    this.dialog.querySelector('[data-story-title-label]').textContent = content ? 'Content title' : 'Story title';
+    this.dialog.querySelector('[data-story-body-label]').textContent = `Your ${kind}`;
+    this.dialog.querySelector('[data-story-form-kind]').textContent = content ? 'content.' : 'success story.';
+    this.dialog.querySelector('[data-story-summary]').textContent = content ? 'Share research, events, or work from the field. The CVIPI team will review your content before publication.' : 'Submit Your Success Story. Share the work, research and events that are making a difference.';
+    this.dialog.querySelector('#story-story-hint').textContent = content ? 'Describe your research, event, or work from the field. Please omit sensitive personal information.' : 'Include the work, its impact, and lessons learned. Please omit sensitive personal information.';
+    this.dialog.querySelector('[data-story-consent-label]').textContent = `I have permission to share this ${kind} and any attached file and agree that CVIPI may contact me, edit it, and publish it following review.`;
+    this.dialog.querySelector('[data-story-submit-label]').textContent = content ? 'Submit Content' : 'Submit Story';
+    if (announce) this.dialog.querySelector('[data-story-type-status]').textContent = `${content ? 'Content' : 'Share a story'} selected. The title and description fields now refer to your ${kind}.`;
+    this.form.elements.story.removeAttribute('aria-invalid');
+    this.dialog.querySelector('#story-story-error').textContent = '';
+  }
+
+  validateAttachment() {
+    const input = this.form.elements.attachment;
+    const file = input.files[0];
+    this.dialog.querySelector('[data-story-remove-attachment]').hidden = !file;
+    let message = '';
+    if (file && !/\.(docx|pdf|txt)$/i.test(file.name)) message = 'Choose a Word (.docx), PDF, or TXT file.';
+    else if (file && (!file.size || file.size > Number(input.dataset.maxBytes))) message = 'Choose a nonempty file within the size limit shown below.';
+    input.setCustomValidity(message);
+    this.dialog.querySelector('#story-attachment-error').textContent = message;
+    if (message) input.setAttribute('aria-invalid', 'true');
+    else input.removeAttribute('aria-invalid');
+    return !message;
   }
 
   loadCaptcha() {
@@ -157,7 +196,9 @@ class StorySubmission {
 
   async send(event) {
     event.preventDefault();
-    if (this.sending || !this.session || !this.form.reportValidity()) return;
+    if (this.sending || !this.session) return;
+    this.validateAttachment();
+    if (!this.form.reportValidity()) return;
     this.form.querySelectorAll('[aria-invalid]').forEach(field => field.removeAttribute('aria-invalid'));
     this.form.querySelectorAll('.story-dialog__field-error').forEach(error => { error.textContent = ''; });
     const captcha = this.widget !== null ? window.grecaptcha.getResponse(this.widget) : '';
@@ -165,12 +206,18 @@ class StorySubmission {
     this.sending = true;
     this.submit.disabled = true;
     this.form.setAttribute('aria-busy', 'true');
-    this.status.textContent = 'Sending your story...';
+    this.status.textContent = 'Sending your submission...';
     try {
-      await this.request({ ...Object.fromEntries(new FormData(this.form)), action: 'cvipi_submit_story', nonce: this.session.nonce, session: this.session.session, captcha });
+      const data = new FormData(this.form);
+      if (!this.form.elements.attachment.files.length) data.delete('attachment');
+      Object.entries({ action: 'cvipi_submit_story', nonce: this.session.nonce, session: this.session.session, captcha }).forEach(([key, value]) => data.set(key, value));
+      await this.request(data);
       this.completed = true;
       document.dispatchEvent(new CustomEvent('cvipi:form-success', {detail: {form: 'story'}}));
       this.form.reset();
+      this.updateType();
+      this.validateAttachment();
+      this.dialog.querySelector('[data-story-count]').textContent = '0 / 20,000';
       this.view('thanks');
     } catch (error) {
       document.dispatchEvent(new CustomEvent('cvipi:form-error', {detail: {form: 'story'}}));

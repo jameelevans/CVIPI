@@ -1,0 +1,85 @@
+@use '../abstracts/mixins' as mixins;
+@use '../base/typography' as typography;
+
+.grantee-template {
+  background: var(--color-white);
+  color: var(--color-deep);
+
+  &__inner {
+    width: min(100% - 6rem, 110rem);
+    margin-inline: auto;
+  }
+
+  &__intro { padding: 17rem 0 8rem; }
+  &__eyebrow {
+    font-family: typography.$font-secondary;
+    font-size: 1.7rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    color: var(--color-dark-blue);
+  }
+  h1 { font-size: 4rem; line-height: 1.15; max-width: 75rem; overflow-wrap: anywhere; }
+  &__description {
+    font-family: typography.$font-secondary;
+    font-size: 2rem;
+    line-height: 1.65;
+    max-width: 70rem;
+    margin-top: 2.4rem;
+  }
+  &__details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem 5rem;
+    margin-block: 3.5rem;
+    font-family: typography.$font-secondary;
+    font-size: 1.8rem;
+    line-height: 1.6;
+    dt { font-weight: 600; color: var(--color-dark-blue); }
+    dd { margin: 0; }
+  }
+  &__download {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+    min-height: 5.6rem;
+    max-width: 100%;
+    border-radius: 0.3rem;
+    background: var(--color-deep);
+    color: var(--color-sand);
+    font-family: typography.$font-secondary;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    padding: 1.8rem 2.5rem;
+    transition: background-color 180ms ease;
+    &:visited { color: var(--color-sand); }
+    &:hover { background: var(--color-dark-blue); }
+    &:focus-visible { outline: 0.3rem solid var(--color-dark-blue); outline-offset: 0.5rem; }
+    svg { width: 2.4rem; height: 2.4rem; flex-shrink: 0; }
+  }
+  &__help {
+    padding: 4rem 0;
+    border-top: 0.2rem solid var(--color-carmine);
+    background: var(--color-morning);
+    h2 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      font-family: typography.$font-secondary;
+      font-size: 1.8rem;
+      color: var(--color-dark-blue);
+      text-underline-offset: 0.4rem;
+      svg { width: 2rem; height: 2rem; }
+      &:focus-visible { outline: 0.3rem solid var(--color-dark-blue); outline-offset: 0.5rem; }
+    }
+  }
+  @include mixins.respond(medium) {
+    &__intro { padding-top: 20rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &__download { transition: none; }
+  }
+}

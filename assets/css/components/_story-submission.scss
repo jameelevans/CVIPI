@@ -204,6 +204,19 @@
   label span {
     font-weight: 400;
   }
+  label .story-dialog__label-text { font-weight: 700; }
+  &__file-hint { font-size: 1.2rem; margin-top: 0.6rem; color: var(--color-dark-grey); }
+  input[type='file'] { font-size: 1.4rem; overflow: hidden; }
+  input[type='file']::file-selector-button {
+    background: var(--color-deep);
+    color: var(--color-sand);
+    border: 0;
+    border-radius: 0.3rem;
+    padding: 0.8rem 1rem;
+    margin-right: 1rem;
+    font: inherit;
+    cursor: pointer;
+  }
   input:not([type='checkbox']):not([type='radio']),
   textarea {
     display: block;

@@ -86,7 +86,8 @@
                             <h4 class="footer__cat-heading">Connect</h4>
                             <nav class="footer__nav">
                                 <ul class="footer__list">
-                                    <li class="footer__item"><a href="<?php echo esc_url( home_url( '/success-stories' ) ); ?>" class="footer__link">Our Stories</a></li>
+                                    <li class="footer__item"><a href="<?php echo esc_url( home_url( '/success-stories' ) ); ?>" class="footer__link">Success Stories</a></li>
+                                    <li class="footer__item"><button type="button" class="footer__link footer__link--submit" data-story-open aria-haspopup="dialog" aria-controls="story-dialog" title="Open the content submission form for review by the CVIPI team">Submit Content</button></li>
                                     <li class="footer__item"><a href="<?php echo esc_url( home_url( '/what-is-cvipi#who-we-serve' ) ); ?>" class="footer__link">Who We Serve</a></li>
                                     <li class="footer__item"><a href="<?php echo esc_url( home_url( '/contact' ) ); ?>" class="footer__link">Contact Us</a></li>
                                 </ul>
