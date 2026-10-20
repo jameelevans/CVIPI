@@ -17,6 +17,7 @@ require_once get_template_directory() . '/inc/analytics-dashboard.php';
 require_once get_template_directory() . '/inc/seo.php';
 require_once get_template_directory() . '/inc/event-calendar.php';
 require_once get_template_directory() . '/inc/grantee-templates.php';
+require_once get_template_directory() . '/inc/digital-style-guide.php';
 
 // Use Google's native compact widget where the Contact form is narrow.
 add_filter( 'wpforms_frontend_captcha_inline_script', 'cvipi_contact_captcha_size' );

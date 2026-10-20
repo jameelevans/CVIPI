@@ -43,7 +43,7 @@ function cvipi_seo_post_indexable( $post ) {
   return $post instanceof WP_Post && 'publish' === $post->post_status && ! $post->post_password
     && in_array( $post->post_type, cvipi_seo_types(), true )
     && ! in_array( $post->ID, cvipi_seo_excluded_pages(), true )
-    && 'page-grantee-template.php' !== get_post_meta( $post->ID, '_wp_page_template', true )
+    && ! in_array( get_post_meta( $post->ID, '_wp_page_template', true ), array( 'page-grantee-template.php', 'page-digital-style-guide.php' ), true )
     && '1' !== get_post_meta( $post->ID, '_cvipi_seo_noindex', true );
 }
 

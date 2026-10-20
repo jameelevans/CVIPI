@@ -92,7 +92,7 @@ add_action( 'template_redirect', function () {
 }, 1 );
 
 function cvipi_grantee_template_exclusion() {
-  return array( 'relation' => 'OR', array( 'key' => '_wp_page_template', 'compare' => 'NOT EXISTS' ), array( 'key' => '_wp_page_template', 'value' => 'page-grantee-template.php', 'compare' => '!=' ) );
+  return array( 'relation' => 'OR', array( 'key' => '_wp_page_template', 'compare' => 'NOT EXISTS' ), array( 'key' => '_wp_page_template', 'value' => array( 'page-grantee-template.php', 'page-digital-style-guide.php' ), 'compare' => 'NOT IN' ) );
 }
 
 add_action( 'pre_get_posts', function ( $query ) {
@@ -106,10 +106,10 @@ add_filter( 'wp_sitemaps_posts_query_args', function ( $args, $type ) {
 }, 20, 2 );
 add_filter( 'get_pages', function ( $pages ) {
   if ( is_admin() ) return $pages;
-  return array_values( array_filter( $pages, function ( $page ) { return 'page-grantee-template.php' !== get_post_meta( $page->ID, '_wp_page_template', true ); } ) );
+  return array_values( array_filter( $pages, function ( $page ) { return ! in_array( get_post_meta( $page->ID, '_wp_page_template', true ), array( 'page-grantee-template.php', 'page-digital-style-guide.php' ), true ); } ) );
 } );
 add_filter( 'wp_robots', function ( $robots ) {
-  if ( is_page_template( 'page-grantee-template.php' ) ) {
+  if ( is_page_template( 'page-grantee-template.php' ) || is_page_template( 'page-digital-style-guide.php' ) ) {
     unset( $robots['index'], $robots['follow'] );
     $robots['noindex'] = true;
     $robots['nofollow'] = true;
