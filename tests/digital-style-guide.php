@@ -11,14 +11,19 @@ $assert( $page && 'publish' === $page->post_status, 'Guide is published for dire
 $assert( 'page-digital-style-guide.php' === get_page_template_slug( $page ), 'Guide uses the dedicated template' );
 $assert( ! cvipi_seo_post_indexable( $page ), 'Guide is excluded from automatic SEO indexing' );
 $assert( '1' === get_post_meta( $page->ID, '_cvipi_seo_noindex', true ), 'Guide has explicit noindex metadata' );
+parse_str( wp_parse_url( cvipi_style_guide_image_url( 'advising.jpg' ), PHP_URL_QUERY ), $image_query );
+$assert( (int) $image_query['ver'] === filemtime( get_theme_file_path( 'assets/img/style-guide/advising.jpg' ) ), 'Guide images use their file versions to refresh cached copies' );
 $assert( abs( cvipi_style_guide_contrast( '#000000', '#FFFFFF' ) - 21 ) < 0.0001, 'Black on white has 21:1 contrast' );
 $assert( 1.0 === cvipi_style_guide_contrast( '#071820', '#071820' ), 'Identical colors have 1:1 contrast' );
 $assert( cvipi_style_guide_contrast( '#071820', '#F4EBDA' ) === cvipi_style_guide_contrast( '#F4EBDA', '#071820' ), 'Contrast calculation is symmetric' );
 $palette = cvipi_style_guide_palette();
-$assert( count( $palette ) === 12, 'Guide includes the current brand palette' );
+$assert( count( $palette ) === 13, 'Guide includes the current brand palette and Muted Text' );
 foreach ( $palette as $color ) {
-  $assert( preg_match( '/^#[0-9A-F]{6}$/', $color['hex'] ) && str_starts_with( $color['token'], '--color-' ), 'Every palette entry uses a theme color token and valid hex' );
+  $assert( preg_match( '/^#[0-9A-F]{6}$/', $color['hex'] ) && ( str_starts_with( $color['token'], '--color-' ) || '--text-3' === $color['token'] ), 'Every palette entry uses a theme color token and valid hex' );
 }
+$assert( cvipi_style_guide_contrast( $palette['muted']['hex'], $palette['sand']['hex'] ) < 3, 'Muted Text fails even the large-text threshold on sand' );
+$white_ratio = cvipi_style_guide_contrast( $palette['muted']['hex'], $palette['white']['hex'] );
+$assert( $white_ratio >= 3 && $white_ratio < 4.5, 'Muted Text is large-text-only on white, as the warnings state' );
 $checklist = cvipi_style_guide_checklist_path();
 $assert( $checklist && ! is_link( $checklist ), 'Approved checklist is present and not a symlink' );
 $assert( ! str_starts_with( $checklist, realpath( ABSPATH ) . '/' ), 'Checklist is stored outside the public webroot' );

@@ -1,5 +1,6 @@
-import { createIcons, ArrowRight, Download, ExternalLink, FileText, Mail, Menu, Plus, Presentation, X } from 'lucide';
+import { createIcons, ArrowRight, ArrowUpRight, Download, ExternalLink, FileText, Mail, Menu, Plus, Presentation, X } from 'lucide';
 import AnalyticsConsent from './AnalyticsConsent';
+import GuideContrastGroup from './GuideContrastGroup';
 
 const analytics = new AnalyticsConsent();
 
@@ -14,8 +15,9 @@ class DigitalStyleGuide {
     this.compact = window.matchMedia('(max-width: 64em)');
     this.motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     this.queued = false;
-    createIcons({ icons: { ArrowRight, Download, ExternalLink, FileText, Mail, Menu, Plus, Presentation, X }, nameAttr: 'data-guide-icon', attrs: { 'aria-hidden': 'true', focusable: 'false' } });
+    createIcons({ icons: { ArrowRight, ArrowUpRight, Download, ExternalLink, FileText, Mail, Menu, Plus, Presentation, X }, nameAttr: 'data-guide-icon', attrs: { 'aria-hidden': 'true', focusable: 'false' } });
     this.bindNavigation();
+    root.querySelectorAll('.style-guide__contrast-group').forEach(group => new GuideContrastGroup(group, this.motion));
     document.documentElement.classList.add('style-guide-enhanced');
     this.menu.hidden = false;
     this.resize = new ResizeObserver(() => this.queueUpdate());

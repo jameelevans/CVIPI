@@ -18,8 +18,20 @@ foreach ( array( 'overview', 'templates', 'voice', 'colors', 'typography', 'imag
   $assert( str_contains( $body, '<section id="' . $id . '"' ), $id . ' section is rendered' );
 }
 foreach ( cvipi_grantee_templates() as $template ) {
-  $assert( str_contains( $body, home_url( '/' . $template['slug'] . '/' ) ), 'Template card links to the existing approved download page' );
+  $assert( str_contains( $body, cvipi_grantee_template_url( $template ) ), 'Template card links directly to the approved file' );
+  $assert( str_contains( $body, 'download="' . $template['filename'] . '"' ), 'Template card supplies the approved download filename' );
+  $download = wp_remote_get( cvipi_grantee_template_url( $template ), array( 'redirection' => 0, 'timeout' => 20 ) );
+  $assert( 200 === wp_remote_retrieve_response_code( $download ) && hash( 'sha256', wp_remote_retrieve_body( $download ) ) === hash_file( 'sha256', cvipi_grantee_template_path( $template ) ), 'Direct template download returns the original file without a redirect' );
 }
+$document = new DOMDocument();
+libxml_use_internal_errors( true );
+$document->loadHTML( $body );
+libxml_clear_errors();
+$xpath = new DOMXPath( $document );
+$assert( 0 === $xpath->query( '//*[contains(concat(" ", normalize-space(@class), " "), " style-guide__overview-meta ")]//dt' )->length, 'Overview metadata headings are removed' );
+$assert( str_contains( $body, 'Questions about the template?' ) && str_contains( $body, home_url( '/contact/' ) ), 'Template help links to this environment\'s Contact page' );
+$assert( ! str_contains( $body, 'Federal Blue' ), 'Federal Blue exclusion box is removed' );
+$assert( 5 === $xpath->query( '//*[contains(concat(" ", normalize-space(@class), " "), " style-guide__group-note ")]' )->length, 'Every contrast background has a bordered usage notice' );
 $url = cvipi_style_guide_checklist_url();
 $response = wp_remote_get( $url, array( 'timeout' => 20, 'redirection' => 0 ) );
 $assert( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ), 'Checklist download returns 200 without a redirect' );

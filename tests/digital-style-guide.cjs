@@ -86,5 +86,11 @@ const css = fs.readFileSync(`${__dirname}/../assets/css/pages/_digital-style-gui
 assert(css.includes('@media (prefers-reduced-motion: reduce)'));
 assert(css.includes('&__drawer::backdrop') && css.includes('backdrop-filter: blur('));
 assert(!/font-size:[^;\n]*vw/.test(css), 'Font sizing follows the theme rem conventions, not viewport scaling');
+assert(/&__template-help-inner\s*\{\s*margin-inline: var\(--guide-gutter\);\s*text-align: left;/.test(css), 'Template help aligns with the shared content gutter');
+assert(css.includes('object-position: center 25%;') && css.includes('@media (min-width: 125em)') && css.includes('object-position: center 20%;'), 'Portrait crops preserve balanced headroom on desktop and wider screens');
 assert(!source.includes('StorySubmission'), 'The standalone guide does not initialize site exit prompts');
+for (const name of fs.readdirSync(`${__dirname}/../assets/img/style-guide`).filter(name => name.endsWith('.jpg'))) {
+  const image = fs.readFileSync(`${__dirname}/../assets/img/style-guide/${name}`);
+  assert(image[0] === 0xff && image[1] === 0xd8 && image.at(-2) === 0xff && image.at(-1) === 0xd9, `${name} is a complete JPEG, not a truncated transfer`);
+}
 console.log('Digital style guide animation and navigation checks passed.');

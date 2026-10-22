@@ -8,9 +8,11 @@ The standalone page follows the CVIPI Brand Guide Figma Sites reference. It has 
 
 - Figma file: `AWNfePP0uJNnQncfXeSAPP`, CVIPI Brand Guide.
 - Original Figma photography is copied into `assets/img/style-guide/` with descriptive alternative text where informative.
+- The advising and neighborhood originals were re-transferred in full after detecting truncated JPEGs. The image regression check verifies complete JPEG end markers. Collage cells use fixed responsive geometry and absolutely positioned cover images.
 - Fraunces, Syne, color variables, and the existing 10px desktop / 8px smaller-screen rem convention come from the theme. Color names/hex values reflect the current theme, rather than the slightly different draft palette.
 - Contrast ratios are calculated from those current colors using unrounded thresholds. Labels distinguish body-text, large-text-only, and failed combinations. Demonstrations of failed pairings are intentionally low contrast and hidden from assistive technology; readable verdicts explain them.
 - Native details/summary controls and a native mobile dialog support keyboard access, Escape, focus restoration, and a dark blurred backdrop. Without JavaScript, navigation remains visible and all content remains readable. Reduced motion disables reveals and smooth scrolling.
+- Contrast groups animate open and closed with the Web Animations API. Repeated clicks reverse from the current height, resizing releases fixed heights, reduced motion changes finish immediately, and unsupported browsers keep native details behavior. Muted Text is included in the pairing matrix; bordered usage notes reflect the actual current contrast ratios.
 
 ## Hidden, Not Private
 
@@ -18,7 +20,7 @@ The guide is published for anyone holding its link. It sends `noindex, nofollow`
 
 ## Downloads And Installation
 
-The two template cards link to the existing `/cvipi-document-template/` and `/cvipi-presentation-template/` pages and do not replace their approved files.
+The two template cards link directly to the approved file-download routes, with a Contact link immediately below. The help band retains the original template page styling and aligns its text to the guide's responsive content gutter. The existing `/cvipi-document-template/` and `/cvipi-presentation-template/` landing pages and their approved originals remain available and unchanged.
 
 The approved 508 checklist was copied byte-for-byte from the Figma reference, outside the public webroot, into the existing private grantee-template directory. Its SHA-256 is `5d36a4cce6b984c20f82be8e99ad0250fa4ef18b8ef9d709175a838e7e34bebd` (21,877 bytes). Keep the approved original available for future deployment; it is intentionally not committed as a public theme asset.
 
@@ -36,6 +38,7 @@ The installer validates the DOCX, rejects conflicting page slugs and symlink tar
 npm run style-guide
 npx gulp devstyles
 node tests/digital-style-guide.cjs
+node tests/guide-contrast-group.cjs
 wp eval-file wp-content/themes/cvipi/tests/digital-style-guide.php
 wp eval-file wp-content/themes/cvipi/tests/digital-style-guide-http.php
 wp eval-file wp-content/themes/cvipi/tests/grantee-templates.php

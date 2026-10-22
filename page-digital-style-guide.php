@@ -8,11 +8,11 @@ $palette = cvipi_style_guide_palette();
 $checklist = cvipi_style_guide_checklist_path();
 $alphabet = 'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z';
 $backgrounds = array(
-  'sand' => array( 'label' => 'On Sand', 'description' => 'Our primary background. Most pages, cards and long-form content sit on sand.' ),
-  'teal' => array( 'label' => 'On Teal Mid', 'description' => 'Our deep blue band. Voice, pull quotes and feature sections.' ),
-  'midnight' => array( 'label' => 'On Midnight Teal', 'description' => 'Our darkest brand blue. Heroes, navigation and dark panels.' ),
-  'deep' => array( 'label' => 'On Ink', 'description' => 'Near-black. Full-bleed sections, imagery sections and photo overlays.' ),
-  'white' => array( 'label' => 'On White', 'description' => 'Used sparingly, mostly cards and tables sitting on top of sand.' ),
+  'sand' => array( 'label' => 'On Sand', 'description' => 'Our primary background. Most pages, cards and long-form content sit on sand.', 'note' => 'Watch out: Muted Text and Copper Light both fail on sand. On white they are limited to large text; check each dark-blue pairing before using them for body text.' ),
+  'teal' => array( 'label' => 'On Teal Mid', 'description' => 'Our deep blue band. Voice, pull quotes and feature sections.', 'note' => 'Watch out: Copper, Copper Light, and Muted Text all fail on this background. Choose a higher-contrast pairing for text.' ),
+  'midnight' => array( 'label' => 'On Midnight Teal', 'description' => 'Our darkest brand blue. Heroes, navigation and dark panels.', 'note' => 'Watch out: Copper, Copper Light, and Muted Text are for large text only here, not body copy.' ),
+  'deep' => array( 'label' => 'On Ink', 'description' => 'Near-black. Full-bleed sections, imagery sections and photo overlays.', 'note' => 'Copper, Copper Light, and Muted Text pass for body text on Deep. Do not assume they also pass on the lighter blues.' ),
+  'white' => array( 'label' => 'On White', 'description' => 'Used sparingly, mostly cards and tables sitting on top of sand.', 'note' => 'Watch out: Copper, Copper Light, and Muted Text meet the large-text threshold only. Choose a darker color for body text.' ),
 );
 ?>
 <!doctype html>
@@ -38,7 +38,7 @@ $backgrounds = array(
   <div class="style-guide__progress" aria-hidden="true"><span data-guide-progress></span></div>
   <main id="main-content" class="style-guide__main" tabindex="-1">
     <section id="overview" class="style-guide__overview" aria-labelledby="guide-overview-title" tabindex="-1">
-      <img class="style-guide__overview-image" src="<?php echo esc_url( get_theme_file_uri( 'assets/img/style-guide/overview.jpg' ) ); ?>" alt="" fetchpriority="high" decoding="async" width="1400" height="787">
+      <img class="style-guide__overview-image" src="<?php echo esc_url( cvipi_style_guide_image_url( 'overview.jpg' ) ); ?>" alt="" fetchpriority="high" decoding="async" width="1400" height="787">
       <div class="style-guide__overview-content" data-guide-reveal>
         <p class="style-guide__eyebrow">CVIPI &middot; Design Direction 2026</p>
         <blockquote class="style-guide__opening-quote">
@@ -47,11 +47,11 @@ $backgrounds = array(
         </blockquote>
         <h1 id="guide-overview-title" class="style-guide__overview-title"><span>One Home.</span><span>Every</span><span><em>Resource.</em></span></h1>
         <p class="style-guide__overview-copy">Inspired by the editorial clarity of <em>America by Design</em>, its cinematic depth of documentary journalism, and the human warmth of our grant managers, this redesign of the CVIPI visual identity is authoritative, warm, and caring. It's deeply rooted in your stories. Preventing community-based violence inspires some of the hardest work in public safety. Use this guidance to enhance the CVIPI brand and demonstrate impact as you share your success.</p>
-        <dl class="style-guide__overview-meta">
-          <div><dt>Display Typeface</dt><dd>Fraunces</dd></div>
-          <div><dt>UI Typeface</dt><dd>Syne</dd></div>
-          <div><dt>Primary Color</dt><dd>#0D3344 &middot; Midnight Teal</dd></div>
-        </dl>
+        <ul class="style-guide__overview-meta" aria-label="Brand summary">
+          <li>Fraunces</li>
+          <li>Syne</li>
+          <li>#0D3344 &middot; Midnight Teal</li>
+        </ul>
       </div>
     </section>
 
@@ -65,13 +65,19 @@ $backgrounds = array(
         <h3>Download a template</h3><p>Start from a CVIPI-branded file so your materials read as co-branded from the first slide or page.</p>
         <div class="style-guide__download-grid">
           <?php foreach ( array( 'presentation' => 'Presentation Deck Template', 'document' => 'Report Template' ) as $key => $label ) : $template = cvipi_grantee_templates()[$key]; $file = cvipi_grantee_template_path( $template ); ?>
-            <a class="style-guide__download-card" href="<?php echo esc_url( home_url( '/' . $template['slug'] . '/' ) ); ?>" title="<?php echo esc_attr( 'Open the CVIPI ' . $label . ' download page' ); ?>">
+            <a class="style-guide__download-card" href="<?php echo esc_url( cvipi_grantee_template_url( $template ) ); ?>" download="<?php echo esc_attr( $template['filename'] ); ?>" title="<?php echo esc_attr( 'Download the CVIPI ' . $label ); ?>">
               <span class="style-guide__file-icon"><i data-guide-icon="<?php echo 'presentation' === $key ? 'presentation' : 'file-text'; ?>" aria-hidden="true"></i></span>
               <span class="style-guide__download-body"><strong><?php echo esc_html( $label ); ?></strong><span><?php echo esc_html( '.' . strtoupper( pathinfo( $template['filename'], PATHINFO_EXTENSION ) ) ); ?><?php if ( $file ) : ?> &middot; <?php echo esc_html( size_format( filesize( $file ), 1 ) ); ?><?php endif; ?></span></span>
               <i data-guide-icon="download" aria-hidden="true"></i>
             </a>
           <?php endforeach; ?>
         </div>
+        <section class="style-guide__template-help" aria-labelledby="guide-template-help-title">
+          <div class="style-guide__template-help-inner">
+            <h3 id="guide-template-help-title">Questions about the template?</h3>
+            <a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Contact the CVIPI team <i data-guide-icon="arrow-up-right" aria-hidden="true"></i></a>
+          </div>
+        </section>
       </div>
     </section>
 
@@ -89,7 +95,6 @@ $backgrounds = array(
         </ul>
         <h3 class="style-guide__label">Teal + Copper Scale</h3>
         <ul class="style-guide__color-scale"><?php foreach ( array( 'deep', 'midnight', 'teal', 'azure', 'blue', 'copper', 'carmine' ) as $key ) : $color = $palette[$key]; ?><li><span style="background:var(<?php echo esc_attr( $color['token'] ); ?>)" aria-hidden="true"></span><span class="style-guide__hex"><?php echo esc_html( $color['hex'] ); ?></span></li><?php endforeach; ?></ul>
-        <aside class="style-guide__color-exclusion"><i data-guide-icon="x" aria-hidden="true"></i><div><strong>Not in this palette &mdash; #005EA2 Federal Blue</strong><p>CVIPI's identity deliberately avoids Federal Blue to differentiate from the .gov template aesthetic and signal a modern, community-centered approach.</p></div></aside>
       </div>
 
       <div class="style-guide__accessibility">
@@ -100,10 +105,10 @@ $backgrounds = array(
             <a class="style-guide__resource-button style-guide__resource-button--outline" href="https://www.tpgi.com/color-contrast-checker/" target="_blank" rel="noopener noreferrer"><i data-guide-icon="external-link" aria-hidden="true"></i>Get the Contrast Checker<span class="sr-only"> (opens in a new tab)</span></a><span>Free &middot; Windows &amp; macOS</span>
           </div>
         </header>
-        <?php foreach ( $backgrounds as $key => $group ) : $background = $palette[$key]; $light = in_array( $key, array( 'sand', 'white' ), true ); $foregrounds = $light ? array( 'deep', 'midnight', 'teal', 'body', 'copper', 'azure', 'blue', 'copper-light' ) : array( 'white', 'sand', 'carmine', 'copper', 'copper-light', 'blue', 'body', 'azure' ); ?>
+        <?php foreach ( $backgrounds as $key => $group ) : $background = $palette[$key]; $light = in_array( $key, array( 'sand', 'white' ), true ); $foregrounds = $light ? array( 'deep', 'midnight', 'teal', 'body', 'copper', 'azure', 'blue', 'copper-light', 'muted' ) : array( 'white', 'sand', 'carmine', 'copper', 'copper-light', 'blue', 'body', 'azure', 'muted' ); ?>
           <details class="style-guide__contrast-group"<?php if ( 'sand' === $key ) : ?> open<?php endif; ?>>
-            <summary><span class="style-guide__background-chip" style="background:var(<?php echo esc_attr( $background['token'] ); ?>)" aria-hidden="true"></span><span class="style-guide__group-copy"><strong><?php echo esc_html( $group['label'] ); ?> <span><?php echo esc_html( $background['hex'] ); ?></span></strong><span><?php echo esc_html( $group['description'] ); ?></span></span><span class="style-guide__accordion-icon"><i data-guide-icon="plus" aria-hidden="true"></i></span></summary>
-            <div class="style-guide__pair-grid">
+            <summary><span class="style-guide__background-chip" style="background:var(<?php echo esc_attr( $background['token'] ); ?>)" aria-hidden="true"></span><span class="style-guide__group-copy"><strong><?php echo esc_html( $group['label'] ); ?> <span><?php echo esc_html( $background['hex'] ); ?></span></strong><span><?php echo esc_html( $group['description'] ); ?></span><span class="style-guide__group-note"><?php echo esc_html( $group['note'] ); ?></span></span><span class="style-guide__accordion-icon"><i data-guide-icon="plus" aria-hidden="true"></i></span></summary>
+            <div class="style-guide__contrast-content"><div class="style-guide__pair-grid">
               <?php foreach ( $foregrounds as $foreground_key ) :
                 $foreground = $palette[$foreground_key];
                 $ratio = cvipi_style_guide_contrast( $foreground['hex'], $background['hex'] );
@@ -116,7 +121,7 @@ $backgrounds = array(
                   <div class="style-guide__pair-info"><h4><?php echo esc_html( $foreground['name'] ); ?><span><?php echo esc_html( $foreground['hex'] ); ?></span></h4><p class="style-guide__pair-verdict"><span class="style-guide__verdict-dot style-guide__verdict-dot--<?php echo esc_attr( $status ); ?>" aria-hidden="true"></span><?php echo esc_html( $verdict ); ?></p><p class="style-guide__pair-ratio"><?php echo esc_html( number_format( $ratio, 2 ) ); ?>:1 contrast</p><p><?php echo esc_html( $guidance ); ?></p></div>
                 </div>
               <?php endforeach; ?>
-            </div>
+            </div></div>
           </details>
         <?php endforeach; ?>
         <div class="style-guide__accessibility-rules" data-guide-reveal>
@@ -154,7 +159,7 @@ $backgrounds = array(
         <?php $photos = array( array( 'community.jpg', 'Community gathering', 'Community / Gathering & connection', 1400, 787 ), array( 'collaboration.jpg', 'Collaborative work session', 'People / Working together', 1400, 933 ), array( 'advising.jpg', 'Professional advising', 'TTA / Advisor & grantee', 1335, 2000 ), array( 'training.jpg', 'Training session', 'Training / Capacity building', 1400, 933 ), array( 'neighborhood.jpg', 'Urban neighborhood', 'Place / Neighborhood & community', 1400, 933 ) ); foreach ( array( array_slice( $photos, 0, 2 ), array_slice( $photos, 2 ) ) as $row => $row_photos ) : ?>
         <div class="style-guide__collage-row style-guide__collage-row--<?php echo 0 === $row ? 'primary' : 'secondary'; ?>">
           <?php foreach ( $row_photos as $photo ) : ?>
-          <figure><img src="<?php echo esc_url( get_theme_file_uri( 'assets/img/style-guide/' . $photo[0] ) ); ?>" alt="<?php echo esc_attr( $photo[1] ); ?>" width="<?php echo esc_attr( $photo[3] ); ?>" height="<?php echo esc_attr( $photo[4] ); ?>" loading="lazy" decoding="async"><figcaption><?php echo esc_html( $photo[2] ); ?></figcaption></figure>
+          <figure><img src="<?php echo esc_url( cvipi_style_guide_image_url( $photo[0] ) ); ?>" alt="<?php echo esc_attr( $photo[1] ); ?>" width="<?php echo esc_attr( $photo[3] ); ?>" height="<?php echo esc_attr( $photo[4] ); ?>" loading="lazy" decoding="async"><figcaption><?php echo esc_html( $photo[2] ); ?></figcaption></figure>
           <?php endforeach; ?>
         </div>
         <?php endforeach; ?>

@@ -6,6 +6,12 @@ function cvipi_is_digital_style_guide() {
   return is_page_template( 'page-digital-style-guide.php' );
 }
 
+function cvipi_style_guide_image_url( $filename ) {
+  $relative = 'assets/img/style-guide/' . $filename;
+  // Refresh cached photography when an original is corrected or replaced.
+  return add_query_arg( 'ver', filemtime( get_theme_file_path( $relative ) ), get_theme_file_uri( $relative ) );
+}
+
 function cvipi_style_guide_palette() {
   return array(
     'deep' => array( 'name' => 'Deep', 'token' => '--color-deep', 'hex' => '#071820', 'use' => 'Darkest background / Dark sections' ),
@@ -18,6 +24,7 @@ function cvipi_style_guide_palette() {
     'carmine' => array( 'name' => 'Carmine', 'token' => '--color-carmine', 'hex' => '#EAC293' ),
     'sand' => array( 'name' => 'Sand', 'token' => '--color-sand', 'hex' => '#F4EBDA', 'use' => 'Page background / Editorial ground' ),
     'body' => array( 'name' => 'Body Text', 'token' => '--color-medium-blue', 'hex' => '#4A6472' ),
+    'muted' => array( 'name' => 'Muted Text', 'token' => '--text-3', 'hex' => '#7A92A0' ),
     'morning' => array( 'name' => 'Morning', 'token' => '--color-morning', 'hex' => '#F7F3EC' ),
     'white' => array( 'name' => 'White', 'token' => '--color-white', 'hex' => '#FFFFFF' ),
   );
